@@ -2,29 +2,40 @@ package org.example.Services;
 
 import org.example.Entites.User;
 import org.example.Entites.Role;
+import org.example.Entites.Status;
+import org.example.Utils.MyBD;
 import org.example.Utils.Query;
-import java.sql.SQLException;
-import java.util.List;
-import java.sql.*;
-import java.util.ArrayList;
 
+import java.sql.*;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserCRUD implements CRUDuser<User> {
-    Connection conn;
+
+    private Connection conn;
+
+    public UserCRUD() {
+        conn = MyBD.getInstance().getConnection();
+    }
+
     @Override
     public void createUser(User user) throws SQLException {
+        // Définir role et status par défaut si null
+        if (user.getRole() == null) user.setRole(Role.user);
+        if (user.getStatus() == null) user.setStatus(Status.Unbanned);
+
         String req = Query.addUserQuery;
         PreparedStatement ps = conn.prepareStatement(req);
-
         ps.setString(1, user.getNom());
         ps.setString(2, user.getPrenom());
         ps.setString(3, user.getDate_naiss());
         ps.setString(4, user.getE_mail());
         ps.setString(5, user.getNum_tel());
-        ps.setString(6, user.getMot_de_pass());
+        ps.setString(6, hashPassword(user.getMot_de_pass())); // mot de passe hashé
         ps.setString(7, user.getImage());
-        ps.setString(8, user.getRole().name().toLowerCase());
-        ps.setString(9, user.getStatus());
+        ps.setString(8, user.getRole().name()); // Role
+        ps.setString(9, user.getStatus().name()); // Status
 
         ps.executeUpdate();
         System.out.println("Utilisateur ajouté !");
@@ -39,16 +50,16 @@ public class UserCRUD implements CRUDuser<User> {
         ps.setString(3, user.getDate_naiss());
         ps.setString(4, user.getE_mail());
         ps.setString(5, user.getNum_tel());
-        ps.setString(6, user.getRole().name().toLowerCase());
-        ps.setString(7, user.getStatus());
+        ps.setString(6, user.getRole().name()); // Role
+        ps.setString(7, user.getStatus().name()); // Status
         ps.setInt(8, user.getId());
+
         ps.executeUpdate();
         System.out.println("Utilisateur modifié !");
     }
 
     @Override
     public void deleteUser(User user) throws SQLException {
-
         PreparedStatement ps = conn.prepareStatement(Query.deleteUserQuery);
         ps.setInt(1, user.getId());
         ps.executeUpdate();
@@ -69,7 +80,7 @@ public class UserCRUD implements CRUDuser<User> {
     public void updatePassword(User user) throws SQLException {
         String req = Query.updatePasswordQuery;
         PreparedStatement ps = conn.prepareStatement(req);
-        ps.setString(1, user.getMot_de_pass());
+        ps.setString(1, hashPassword(user.getMot_de_pass())); // hash du mot de passe
         ps.setInt(2, user.getId());
         ps.executeUpdate();
         System.out.println("Mot de passe utilisateur mis à jour !");
@@ -102,15 +113,14 @@ public class UserCRUD implements CRUDuser<User> {
         return users;
     }
 
-
     @Override
     public void signIn(User user) throws SQLException {
         String req = Query.signIn;
         PreparedStatement ps = conn.prepareStatement(req);
         ps.setString(1, user.getE_mail());
-        ps.setString(2, user.getMot_de_pass());
-        ResultSet rs = ps.executeQuery();
+        ps.setString(2, hashPassword(user.getMot_de_pass()));
 
+        ResultSet rs = ps.executeQuery();
         if (rs.next()) {
             System.out.println("Connexion réussie pour : " + rs.getString("nom"));
         } else {
@@ -128,11 +138,20 @@ public class UserCRUD implements CRUDuser<User> {
         u.setNum_tel(rs.getString("num_tel"));
         u.setMot_de_pass(rs.getString("mot_de_pass"));
         u.setImage(rs.getString("image"));
-        u.setRole(Role.valueOf(rs.getString("role").toUpperCase()));
-        u.setStatus(rs.getString("status"));
+        u.setRole(Role.valueOf(rs.getString("role")));  // correspond exactement à l'enum
+        u.setStatus(Status.valueOf(rs.getString("status")));   // si enum Status = Banned, Unbanned
         return u;
     }
 
-
+    private static String hashPassword(String password) {
+        try {
+            java.security.MessageDigest md = java.security.MessageDigest.getInstance("SHA-256");
+            byte[] hashed = md.digest(password.getBytes());
+            StringBuilder sb = new StringBuilder();
+            for (byte b : hashed) sb.append(String.format("%02x", b));
+            return sb.toString();
+        } catch (java.security.NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
-

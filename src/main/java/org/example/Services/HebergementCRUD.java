@@ -23,13 +23,14 @@ public class HebergementCRUD implements CRUD<Hebergement> {
         String sql = Query.addhebergementQuery;
         PreparedStatement ps = con.prepareStatement(sql);
 
-        ps.setString(7, h.getImage());
+
         ps.setString(1, h.getTitre());
         ps.setString(2, h.getDesc_hebergement());
         ps.setInt(3, h.getCapacite());
         ps.setString(4, h.getType_hebergement());
         ps.setBoolean(5, h.isDisponible_heberg());
         ps.setFloat(6, h.getPrixParNuit());
+        ps.setString(7, h.getImage());
 
 
         ps.executeUpdate();

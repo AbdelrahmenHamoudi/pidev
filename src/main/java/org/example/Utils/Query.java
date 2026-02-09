@@ -3,9 +3,10 @@ package org.example.Utils;
 public class Query {
 
     // user query
-    public static String addUserQuery ="INSERT INTO users " +
-            "(nom, prenom, date_naiss, e_mail, num_tel, mot_de_pass, image, role, status) " +
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)" ;
+    public static String addUserQuery =
+            "INSERT INTO users (nom, prenom, date_naiss, e_mail, num_tel, mot_de_pass, image, role, status) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
     public  static String deleteUserQuery ="DELETE FROM users WHERE id=?";
     public static String updateUserQuery =
             "UPDATE users SET " + "nom = ?, " +
