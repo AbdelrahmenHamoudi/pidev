@@ -1,4 +1,4 @@
-package org.example.Entites;
+package org.example.Entites.hebergement;
 
 import java.util.Objects;
 

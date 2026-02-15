@@ -1,9 +1,9 @@
-package org.example.Services;
+package org.example.Services.hebergement;
 
 
-import org.example.Entites.Hebergement;
-import org.example.Entites.Reservation;
-import org.example.Entites.User;
+import org.example.Entites.hebergement.Hebergement;
+import org.example.Entites.hebergement.Reservation;
+import org.example.Entites.user.User;
 import org.example.Services.CRUD;
 import org.example.Utils.MyBD;
 import org.example.Utils.Query;

@@ -1,10 +1,10 @@
-package org.example.Services;
+package org.example.Services.hebergement;
 
-import org.example.Entites.Hebergement;
+import org.example.Entites.hebergement.Hebergement;
+import org.example.Services.CRUD;
 import org.example.Utils.MyBD;
 import org.example.Utils.Query;
 
-import javax.smartcardio.TerminalFactory;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;

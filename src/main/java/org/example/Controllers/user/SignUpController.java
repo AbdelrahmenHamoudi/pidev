@@ -1,0 +1,477 @@
+package org.example.Controllers.user;
+
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import org.example.Entites.user.Role;
+import org.example.Entites.user.Status;
+import org.example.Entites.user.User;
+import org.example.Services.user.UserCRUD;
+
+import java.io.File;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
+
+public class SignUpController {
+
+    // ============ CHAMPS DU FORMULAIRE ============
+    @FXML private TextField prenomField;
+    @FXML private TextField nomField;
+    @FXML private DatePicker dateNaissPicker;
+    @FXML private TextField emailField;
+    @FXML private TextField telephoneField;
+    @FXML private TextField imageUrlField;
+    @FXML private PasswordField passwordField;
+    @FXML private PasswordField confirmPasswordField;
+    @FXML private CheckBox termsCheckBox;
+
+    // ============ LABELS D'ERREUR ============
+    @FXML private Label prenomError;
+    @FXML private Label nomError;
+    @FXML private Label dateError;
+    @FXML private Label emailError;
+    @FXML private Label telephoneError;
+    @FXML private Label imageUrlError;
+    @FXML private Label passwordError;
+    @FXML private Label confirmPasswordError;
+
+    // ============ APERÇU IMAGE ============
+    @FXML private VBox imagePreviewBox;
+    @FXML private ImageView previewImageView;
+    @FXML private Button chooseImageButton;
+
+    // ============ SERVICE CRUD ============
+    private final UserCRUD userCRUD = new UserCRUD();
+
+    // ============ VARIABLE POUR STOCKER LE FICHIER SÉLECTIONNÉ ============
+    private File selectedImageFile;
+    private boolean isCheckingEmail = false;
+
+    /**
+     * ✅ Initialisation automatique appelée après le chargement du FXML
+     */
+    @FXML
+    public void initialize() {
+        setupRealTimeValidation();
+
+        // Ajouter un listener pour l'aperçu de l'image (pour URL manuelle)
+        imageUrlField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null && !newValue.isEmpty()) {
+                try {
+                    Image image = new Image(newValue, 70, 70, true, true);
+                    previewImageView.setImage(image);
+                    imagePreviewBox.setVisible(true);
+                    imagePreviewBox.setManaged(true);
+                    selectedImageFile = null;
+                    clearError(imageUrlError);
+                } catch (Exception e) {
+                    if (selectedImageFile == null) {
+                        imagePreviewBox.setVisible(false);
+                        imagePreviewBox.setManaged(false);
+                    }
+                }
+            } else {
+                if (selectedImageFile == null) {
+                    imagePreviewBox.setVisible(false);
+                    imagePreviewBox.setManaged(false);
+                }
+            }
+        });
+    }
+
+    /**
+     * ✅ VALIDATION EN TEMPS RÉEL
+     */
+    private void setupRealTimeValidation() {
+        // Validation Prénom
+        prenomField.textProperty().addListener((obs, old, newVal) -> {
+            String val = newVal.trim();
+            if (val.isEmpty()) {
+                showError(prenomError, "👤 Le prénom est requis");
+            } else if (val.length() < 2) {
+                showError(prenomError, "👤 Minimum 2 caractères");
+            } else if (val.length() > 50) {
+                showError(prenomError, "👤 Maximum 50 caractères");
+            } else if (!val.matches("^[a-zA-ZÀ-ÿ\\s-]+$")) {
+                showError(prenomError, "👤 Caractères non autorisés");
+            } else {
+                clearError(prenomError);
+            }
+        });
+
+        // Validation Nom
+        nomField.textProperty().addListener((obs, old, newVal) -> {
+            String val = newVal.trim();
+            if (val.isEmpty()) {
+                showError(nomError, "👤 Le nom est requis");
+            } else if (val.length() < 2) {
+                showError(nomError, "👤 Minimum 2 caractères");
+            } else if (val.length() > 50) {
+                showError(nomError, "👤 Maximum 50 caractères");
+            } else if (!val.matches("^[a-zA-ZÀ-ÿ\\s-]+$")) {
+                showError(nomError, "👤 Caractères non autorisés");
+            } else {
+                clearError(nomError);
+            }
+        });
+
+        // Validation Email avec vérification d'unicité
+        emailField.textProperty().addListener((obs, old, newVal) -> {
+            String email = newVal.trim().toLowerCase();
+            if (email.isEmpty()) {
+                showError(emailError, "📧 L'email est requis");
+            } else if (email.length() > 100) {
+                showError(emailError, "📧 Email trop long");
+            } else if (!email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
+                showError(emailError, "📧 Format invalide");
+            } else {
+                // Vérifier si l'email existe déjà (avec un délai pour éviter trop de requêtes)
+                if (!isCheckingEmail) {
+                    isCheckingEmail = true;
+                    new Thread(() -> {
+                        try {
+                            Thread.sleep(500); // Délai de 500ms
+                            User existing = userCRUD.getUserByEmail(email);
+                            javafx.application.Platform.runLater(() -> {
+                                if (existing != null) {
+                                    showError(emailError, "📧 Cet email est déjà utilisé");
+                                } else {
+                                    clearError(emailError);
+                                }
+                                isCheckingEmail = false;
+                            });
+                        } catch (Exception e) {
+                            isCheckingEmail = false;
+                        }
+                    }).start();
+                }
+            }
+        });
+
+        // Validation Téléphone
+        telephoneField.textProperty().addListener((obs, old, newVal) -> {
+            String tel = newVal.trim();
+            if (tel.isEmpty()) {
+                showError(telephoneError, "📞 Le téléphone est requis");
+            } else if (tel.length() > 20) {
+                showError(telephoneError, "📞 Numéro trop long");
+            } else if (!tel.matches("^(\\+216|0)?[2-9][0-9]{7}$")) {
+                showError(telephoneError, "📞 Format tunisien invalide");
+            } else {
+                clearError(telephoneError);
+            }
+        });
+
+        // Validation Date naissance
+        dateNaissPicker.valueProperty().addListener((obs, old, newVal) -> {
+            if (newVal == null) {
+                showError(dateError, "📅 La date de naissance est requise");
+            } else {
+                int age = Period.between(newVal, LocalDate.now()).getYears();
+                if (age < 18) {
+                    showError(dateError, "📅 Vous devez avoir au moins 18 ans");
+                } else if (age > 120) {
+                    showError(dateError, "📅 Date invalide");
+                } else {
+                    clearError(dateError);
+                }
+            }
+        });
+
+        // Validation Mot de passe
+        passwordField.textProperty().addListener((obs, old, newVal) -> {
+            validatePassword();
+        });
+
+        // Validation Confirmation mot de passe
+        confirmPasswordField.textProperty().addListener((obs, old, newVal) -> {
+            validateConfirmPassword();
+        });
+    }
+
+    private void validatePassword() {
+        String password = passwordField.getText();
+        if (password.isEmpty()) {
+            showError(passwordError, "🔒 Le mot de passe est requis");
+        } else if (password.length() < 8) {
+            showError(passwordError, "🔒 Minimum 8 caractères");
+        } else if (password.length() > 255) {
+            showError(passwordError, "🔒 Mot de passe trop long");
+        } else if (!password.matches(".*[A-Za-z].*") || !password.matches(".*[0-9].*")) {
+            showError(passwordError, "🔒 Doit contenir lettres ET chiffres");
+        } else if (!password.matches(".*[A-Z].*")) {
+            showError(passwordError, "🔒 Doit contenir une majuscule");
+        } else if (!password.matches(".*[a-z].*")) {
+            showError(passwordError, "🔒 Doit contenir une minuscule");
+        } else {
+            clearError(passwordError);
+        }
+        // Revalider la confirmation si elle existe
+        if (!confirmPasswordField.getText().isEmpty()) {
+            validateConfirmPassword();
+        }
+    }
+
+    private void validateConfirmPassword() {
+        String password = passwordField.getText();
+        String confirm = confirmPasswordField.getText();
+        if (!confirm.equals(password)) {
+            showError(confirmPasswordError, "✓ Les mots de passe ne correspondent pas");
+        } else {
+            clearError(confirmPasswordError);
+        }
+    }
+
+    private void showError(Label label, String message) {
+        label.setText(message);
+        label.setStyle("-fx-text-fill: #E74C3C; -fx-font-size: 11px; -fx-font-weight: bold;");
+    }
+
+    private void clearError(Label label) {
+        label.setText("");
+    }
+
+    /**
+     * ✅ OUVERTURE DU FILE CHOOSER POUR SÉLECTIONNER UNE IMAGE
+     */
+    @FXML
+    private void handleChooseImage(ActionEvent event) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Choisir une photo de profil");
+
+        FileChooser.ExtensionFilter imageFilter = new FileChooser.ExtensionFilter(
+                "Fichiers image", "*.png", "*.jpg", "*.jpeg", "*.gif", "*.bmp", "*.webp");
+        fileChooser.getExtensionFilters().add(imageFilter);
+
+        fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+
+        Stage stage = (Stage) chooseImageButton.getScene().getWindow();
+        File file = fileChooser.showOpenDialog(stage);
+
+        if (file != null) {
+            try {
+                selectedImageFile = file;
+                imageUrlField.setText(file.toURI().toString());
+
+                Image image = new Image(file.toURI().toString(), 70, 70, true, true);
+                previewImageView.setImage(image);
+                imagePreviewBox.setVisible(true);
+                imagePreviewBox.setManaged(true);
+
+                clearError(imageUrlError);
+                System.out.println("✅ Image sélectionnée: " + file.getAbsolutePath());
+
+            } catch (Exception e) {
+                showError(imageUrlError, "❌ Erreur de chargement de l'image");
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * ✅ VALIDATION COMPLÈTE DU FORMULAIRE
+     */
+    private boolean validateForm() {
+        boolean isValid = true;
+
+        // Forcer les validations en appelant les listeners
+        prenomField.setText(prenomField.getText());
+        nomField.setText(nomField.getText());
+        emailField.setText(emailField.getText());
+        telephoneField.setText(telephoneField.getText());
+        dateNaissPicker.setValue(dateNaissPicker.getValue());
+        passwordField.setText(passwordField.getText());
+        confirmPasswordField.setText(confirmPasswordField.getText());
+
+        // Vérifier s'il y a des erreurs
+        if (!prenomError.getText().isEmpty()) isValid = false;
+        if (!nomError.getText().isEmpty()) isValid = false;
+        if (!emailError.getText().isEmpty()) isValid = false;
+        if (!telephoneError.getText().isEmpty()) isValid = false;
+        if (!dateError.getText().isEmpty()) isValid = false;
+        if (!passwordError.getText().isEmpty()) isValid = false;
+        if (!confirmPasswordError.getText().isEmpty()) isValid = false;
+
+        // Vérifier les conditions
+        if (!termsCheckBox.isSelected()) {
+            showAlert(Alert.AlertType.WARNING,
+                    "📋 Conditions d'utilisation",
+                    "Acceptation requise",
+                    "Veuillez accepter les conditions d'utilisation et la politique de confidentialité.");
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
+    /**
+     * ✅ Soumission du formulaire d'inscription
+     */
+    @FXML
+    private void handleSignUp(ActionEvent event) {
+        if (!validateForm()) return;
+
+        Button signUpBtn = (Button) event.getSource();
+        signUpBtn.setDisable(true);
+        signUpBtn.setText("INSCRIPTION EN COURS...");
+
+        try {
+            String prenom = prenomField.getText().trim();
+            String nom = nomField.getText().trim();
+            LocalDate dateNaiss = dateNaissPicker.getValue();
+            String email = emailField.getText().trim().toLowerCase();
+            String telephone = telephoneField.getText().trim();
+            String password = passwordField.getText();
+
+            // Image URL
+            String imageUrl = null;
+            if (selectedImageFile != null) {
+                imageUrl = selectedImageFile.toURI().toString();
+            } else if (!imageUrlField.getText().trim().isEmpty()) {
+                imageUrl = imageUrlField.getText().trim();
+            }
+
+            User newUser = new User();
+            newUser.setNom(nom);
+            newUser.setPrenom(prenom);
+            newUser.setDate_naiss(dateNaiss.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+            newUser.setE_mail(email);
+            newUser.setNum_tel(telephone);
+            newUser.setMot_de_pass(password);
+            newUser.setImage(imageUrl);
+            newUser.setRole(Role.user);
+            newUser.setStatus(Status.Unbanned);
+
+            userCRUD.createUser(newUser);
+
+            showSuccessMessage();
+            redirectToLogin(event);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR,
+                    "❌ Erreur d'inscription",
+                    "Création de compte échouée",
+                    "Erreur: " + e.getMessage());
+        } finally {
+            signUpBtn.setDisable(false);
+            signUpBtn.setText("S'INSCRIRE");
+        }
+    }
+
+    /**
+     * ✅ Redirection vers la page de connexion
+     */
+    @FXML
+    private void handleLoginRedirect(ActionEvent event) {
+        redirectToLogin(event);
+    }
+
+    /**
+     * ✅ Méthode utilitaire pour rediriger vers login
+     */
+    private void redirectToLogin(ActionEvent event) {
+        try {
+            System.out.println("🔄 Redirection vers login...");
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/user/login/login.fxml"));
+
+            if (loader.getLocation() == null) {
+                throw new Exception("Fichier login.fxml introuvable");
+            }
+
+            Parent root = loader.load();
+            Stage stage;
+
+            if (event != null) {
+                stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            } else {
+                stage = (Stage) prenomField.getScene().getWindow();
+            }
+
+            stage.setScene(new Scene(root));
+            stage.setTitle("RE7LA Tunisie - Connexion");
+            stage.centerOnScreen();
+            stage.show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR,
+                    "❌ Erreur de navigation",
+                    "Redirection impossible",
+                    "Impossible de charger la page de connexion.\n\n" +
+                            "Chemin: /user/login/login.fxml\n" +
+                            "Erreur: " + e.getMessage());
+        }
+    }
+
+    /**
+     * ✅ Réinitialiser tous les messages d'erreur
+     */
+    private void clearErrors() {
+        prenomError.setText("");
+        nomError.setText("");
+        dateError.setText("");
+        emailError.setText("");
+        telephoneError.setText("");
+        imageUrlError.setText("");
+        passwordError.setText("");
+        confirmPasswordError.setText("");
+    }
+
+    /**
+     * ✅ Afficher un message de succès d'inscription
+     */
+    private void showSuccessMessage() {
+        String fullName = prenomField.getText().trim() + " " + nomField.getText().trim();
+
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("✅ Inscription réussie");
+        alert.setHeaderText("Bienvenue sur RE7LA Tunisie !");
+        alert.setContentText(
+                "👤 " + fullName + "\n" +
+                        "📧 " + emailField.getText().trim() + "\n\n" +
+                        "✨ Votre compte a été créé avec succès.\n" +
+                        "🌍 Vous allez être redirigé vers la page de connexion."
+        );
+
+        DialogPane dialogPane = alert.getDialogPane();
+        dialogPane.setStyle("-fx-background-color: white; " +
+                "-fx-border-color: #1ABC9C; " +
+                "-fx-border-width: 2; " +
+                "-fx-border-radius: 15; " +
+                "-fx-background-radius: 15;");
+        dialogPane.lookup(".header-panel").setStyle("-fx-background-color: linear-gradient(to right, #1ABC9C20, #F39C1220);");
+
+        alert.showAndWait();
+    }
+
+    /**
+     * ✅ Afficher une alerte générique
+     */
+    private void showAlert(Alert.AlertType type, String title, String header, String content) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+
+        DialogPane dialogPane = alert.getDialogPane();
+        dialogPane.setStyle("-fx-background-color: white; " +
+                "-fx-border-color: #1ABC9C; " +
+                "-fx-border-width: 2; " +
+                "-fx-border-radius: 15; " +
+                "-fx-background-radius: 15;");
+
+        alert.showAndWait();
+    }
+}

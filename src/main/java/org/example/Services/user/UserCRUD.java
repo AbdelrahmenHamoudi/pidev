@@ -1,8 +1,9 @@
-package org.example.Services;
+package org.example.Services.user;
 
-import org.example.Entites.User;
-import org.example.Entites.Role;
-import org.example.Entites.Status;
+import org.example.Controllers.user.customUserException;
+import org.example.Entites.user.User;
+import org.example.Entites.user.Role;
+import org.example.Entites.user.Status;
 import org.example.Utils.MyBD;
 import org.example.Utils.Query;
 
@@ -10,6 +11,9 @@ import java.sql.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
+
+
 
 public class UserCRUD implements CRUDuser<User> {
 
@@ -21,24 +25,30 @@ public class UserCRUD implements CRUDuser<User> {
 
     @Override
     public void createUser(User user) throws SQLException {
-        // Définir role et status par défaut si null
+
+        if (getUserByEmail(user.getE_mail()) != null) {
+            throw new customUserException("Cet email est déjà utilisé !");
+        }
+
+
         if (user.getRole() == null) user.setRole(Role.user);
         if (user.getStatus() == null) user.setStatus(Status.Unbanned);
 
         String req = Query.addUserQuery;
-        PreparedStatement ps = conn.prepareStatement(req);
-        ps.setString(1, user.getNom());
-        ps.setString(2, user.getPrenom());
-        ps.setString(3, user.getDate_naiss());
-        ps.setString(4, user.getE_mail());
-        ps.setString(5, user.getNum_tel());
-        ps.setString(6, hashPassword(user.getMot_de_pass())); // mot de passe hashé
-        ps.setString(7, user.getImage());
-        ps.setString(8, user.getRole().name()); // Role
-        ps.setString(9, user.getStatus().name()); // Status
+        try (PreparedStatement ps = conn.prepareStatement(req)) {
+            ps.setString(1, user.getNom());
+            ps.setString(2, user.getPrenom());
+            ps.setString(3, user.getDate_naiss());
+            ps.setString(4, user.getE_mail());
+            ps.setString(5, user.getNum_tel());
+            ps.setString(6, hashPassword(user.getMot_de_pass()));
+            ps.setString(7, user.getImage());
+            ps.setString(8, user.getRole().name());
+            ps.setString(9, user.getStatus().name());
 
-        ps.executeUpdate();
-        System.out.println("Utilisateur ajouté !");
+            ps.executeUpdate();
+            System.out.println("Utilisateur ajouté !");
+        }
     }
 
     @Override
@@ -68,12 +78,17 @@ public class UserCRUD implements CRUDuser<User> {
 
     @Override
     public void updateImageUser(User user) throws SQLException {
-        String req = Query.updateImageQuery;
-        PreparedStatement ps = conn.prepareStatement(req);
-        ps.setString(1, user.getImage());
-        ps.setInt(2, user.getId());
-        ps.executeUpdate();
-        System.out.println("Image utilisateur mise à jour !");
+        String req = Query.updateImageQuery ;
+        try (PreparedStatement ps = conn.prepareStatement(req)) {
+            ps.setString(1, user.getImage());
+            ps.setInt(2, user.getId());
+            int rowsAffected = ps.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("✅ Image utilisateur mise à jour pour l'ID: " + user.getId());
+            } else {
+                System.out.println("⚠️ Aucune mise à jour - utilisateur non trouvé");
+            }
+        }
     }
 
     @Override
@@ -113,20 +128,45 @@ public class UserCRUD implements CRUDuser<User> {
         return users;
     }
 
+    public User getUserByEmail(String email) {
+        String query = Query.getUserByEmailQuery;
+        User user = null;
+
+        try (PreparedStatement pst = conn.prepareStatement(query)) {
+
+            pst.setString(1, email);
+            ResultSet rs = pst.executeQuery();
+
+            if (rs.next()) {
+                user = mapResultSetToUser(rs); // 🔥 utilisation du mapper
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de la récupération de l'utilisateur par email : " + e.getMessage());
+        }
+
+        return user;
+    }
+
+
+
     @Override
-    public void signIn(User user) throws SQLException {
+    public User signIn(User user) throws SQLException {
+
         String req = Query.signIn;
         PreparedStatement ps = conn.prepareStatement(req);
         ps.setString(1, user.getE_mail());
         ps.setString(2, hashPassword(user.getMot_de_pass()));
 
         ResultSet rs = ps.executeQuery();
+
         if (rs.next()) {
-            System.out.println("Connexion réussie pour : " + rs.getString("nom"));
+            return mapResultSetToUser(rs); // 🔥 retourne le vrai user
         } else {
-            System.out.println("Email ou mot de passe incorrect !");
+            throw new customUserException("Email ou mot de passe incorrect !");
         }
     }
+
 
     private User mapResultSetToUser(ResultSet rs) throws SQLException {
         User u = new User();
@@ -155,3 +195,4 @@ public class UserCRUD implements CRUDuser<User> {
         }
     }
 }
+

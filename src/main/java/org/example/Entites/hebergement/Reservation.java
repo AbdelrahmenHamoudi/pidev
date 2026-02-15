@@ -1,4 +1,6 @@
-package org.example.Entites;
+package org.example.Entites.hebergement;
+
+import org.example.Entites.user.User;
 
 import java.util.Objects;
 
