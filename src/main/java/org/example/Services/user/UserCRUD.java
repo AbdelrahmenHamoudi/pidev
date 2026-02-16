@@ -1,8 +1,8 @@
-package org.example.Services;
+package org.example.Services.user;
 
-import org.example.Entites.User;
-import org.example.Entites.Role;
-import org.example.Entites.Status;
+import org.example.Entites.user.User;
+import org.example.Entites.user.Role;
+import org.example.Entites.user.Status;
 import org.example.Utils.MyBD;
 import org.example.Utils.Query;
 

@@ -7,7 +7,7 @@ public class Query {
             "INSERT INTO users (nom, prenom, date_naiss, e_mail, num_tel, mot_de_pass, image, role, status) " +
                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-    public  static String deleteUserQuery ="DELETE FROM users WHERE id=?";
+    public static String deleteUserQuery = "DELETE FROM users WHERE id=?";
     public static String updateUserQuery =
             "UPDATE users SET " + "nom = ?, " +
                     "prenom = ?, " +
@@ -25,9 +25,9 @@ public class Query {
             "UPDATE users SET " +
                     "image = ? " +
                     "WHERE id = ?";
-   public static String getUserByName = "SELECT * FROM users WHERE nom LIKE ?";
-   public static String showUsers = "SELECT * FROM users";
-   public static String signIn = "SELECT * FROM users WHERE e_mail = ? AND mot_de_pass = ?";
+    public static String getUserByName = "SELECT * FROM users WHERE nom LIKE ?";
+    public static String showUsers = "SELECT * FROM users";
+    public static String signIn = "SELECT * FROM users WHERE e_mail = ? AND mot_de_pass = ?";
 
 
     //hebergement
@@ -45,18 +45,52 @@ public class Query {
     public static String showhebergementQuery =
             "SELECT * FROM hebergement";
 
-    public static String addReservationQuery =
-            "INSERT INTO reservation (id_reservation,id_utilisateur, id_hebergement, dateDebutR, dateFinR, prixTotalR, prixKM, statutR) " +
-                    "VALUES (?,?, ?, ?, ?, ?, ?, ?)";
 
+    /// ///////////////Reservation/////////////////////////////////////////
+
+    public static String addReservationQuery =
+            "INSERT INTO reservation (hebergement_id, dateDebutR, dateFinR, nomR, prenomR, telR, statutR) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?)";
     public static String updateReservationQuery =
-            "UPDATE reservation SET id_user=?, id_hebergement=?, dateDebutR=?, dateFinR=?, prixTotalR=?, prixKM=?, statutR=? " +
-                    "WHERE id_reservation=?";
+            "UPDATE reservation SET hebergement_id=?, dateDebutR=?, dateFinR=?, " +
+                    "nomR=?, prenomR=?, telR=?, statutR=? WHERE id_reservation=?";
 
     public static String deleteReservationQuery =
             "DELETE FROM reservation WHERE id_reservation=?";
-
     public static String showReservationQuery =
-            "SELECT * FROM reservation";
+            "SELECT " +
+                    "r.id_reservation, " +
+                    "r.dateDebutR, " +
+                    "r.dateFinR, " +
+                    "r.nomR, " +
+                    "r.prenomR, " +
+                    "r.telR, " +
+                    "r.statutR, " +
+                    "h.id_hebergement, " +
+                    "h.titre, " +
+                    "h.desc_hebergement, " +
+                    "h.capacite, " +
+                    "h.type_hebergement, " +
+                    "h.disponible_heberg, " +
+                    "h.prixParNuit, " +
+                    "h.image " +
+                    "FROM reservation r " +
+                    "INNER JOIN hebergement h ON r.hebergement_id = h.id_hebergement";
+
+
+
+
+
+
+
+
+
+
 
 }
+
+
+
+
+
+

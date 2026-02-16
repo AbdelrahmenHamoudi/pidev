@@ -1,0 +1,16 @@
+org\example\Services\user\CRUDuser.class
+org\example\Controller\hebergement\back\HebergementController$4.class
+org\example\Entites\user\Role.class
+org\example\Entites\user\Status.class
+org\example\Services\user\UserCRUD.class
+org\example\Controller\hebergement\back\HebergementController$2.class
+org\example\Entites\user\User.class
+org\example\Services\hebergement\HebergementCRUD.class
+org\example\Controller\hebergement\front\ReservationController.class
+org\example\Services\hebergement\ReservationCRUD.class
+org\example\Entites\hebergement\Reservation.class
+org\example\Controller\hebergement\back\HebergementController$1.class
+org\example\Controller\hebergement\back\HebergementController.class
+org\example\GUI\HomePage.class
+org\example\Entites\hebergement\Hebergement.class
+org\example\Controller\hebergement\back\HebergementController$3.class

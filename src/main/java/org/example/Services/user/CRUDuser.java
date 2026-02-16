@@ -1,4 +1,4 @@
-package org.example.Services;
+package org.example.Services.user;
 
 import java.sql.SQLException;
 import java.util.List;

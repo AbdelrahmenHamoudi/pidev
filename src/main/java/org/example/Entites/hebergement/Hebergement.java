@@ -1,4 +1,4 @@
-package org.example.Entites;
+package org.example.Entites.hebergement;
 
 import java.util.Objects;
 
@@ -11,7 +11,7 @@ public class Hebergement {
     private String type_hebergement;
     private boolean disponible_heberg;
     private float prixParNuit;
-    private String image; //  nouveau attribut
+    private String image;
 
 
     public Hebergement()

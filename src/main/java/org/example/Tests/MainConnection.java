@@ -1,102 +1,70 @@
 package org.example.Tests;
 
-import org.example.Entites.Role;
-import org.example.Entites.Status;
-import org.example.Entites.User;
-import org.example.Services.UserCRUD;
+import org.example.Entites.hebergement.Hebergement;
+import org.example.Entites.hebergement.Reservation;
+import org.example.Entites.user.Role;
+import org.example.Entites.user.Status;
+import org.example.Entites.user.User;
+import org.example.Services.hebergement.HebergementCRUD;
+import org.example.Services.hebergement.ReservationCRUD;
+import org.example.Services.user.UserCRUD;
 
 import java.sql.SQLException;
-import java.util.List;
-import java.util.Scanner;
 
 public class MainConnection {
+
     public static void main(String[] args) {
+
+        HebergementCRUD hebergementCRUD = new HebergementCRUD();
+        ReservationCRUD reservationCRUD = new ReservationCRUD();
         UserCRUD userCRUD = new UserCRUD();
-        Scanner scanner = new Scanner(System.in);
+
+        Hebergement h1 = new Hebergement(
+                "Maison vue sur mer",
+                "Belle maison moderne avec vue panoramique sur la mer",
+                6,
+                "Maison",
+                true,
+                180.0f,
+                "maison_mer.jpg"
+        );
+
+
+        User u1 = new User(
+                "Ben Ali",
+                "Iheb",
+                "1999-05-14",
+                "iheb.benali@gmail.com",
+                "22123456",
+                "pass123",
+                Role.user,
+                "avatar1.png",
+                Status.Unbanned
+        );
 
         try {
+            hebergementCRUD.ajouterh(h1);
+            userCRUD.createUser(u1);
 
-            System.out.println("-- Création d'un nouvel utilisateur --");
-            System.out.print("Nom : ");
-            String nom = scanner.nextLine();
+            // ✅ CORRECTION : Respecter l'ordre des paramètres du constructeur
+            Reservation r1 = new Reservation(
+                    0,                    // id_reservation
+                    h1,                   // hebergement
+                                     // user
+                    "2026-07-10",         // dateDebutR
+                    "2026-07-20",         // dateFinR  (ajout de la date de fin)
+                    "hmidi",              // nomR      (nom de famille)
+                    "iheb",                // prenomR   (prénom)
+                    50936876,              // telR      (téléphone)
+                    "EN ATTENTE"           // statutR
+            );
 
-            System.out.print("Prénom : ");
-            String prenom = scanner.nextLine();
+            reservationCRUD.ajouterh(r1);
 
-            System.out.print("Date de naissance (YYYY-MM-DD) : ");
-            String dateNaiss = scanner.nextLine();
-
-            System.out.print("Email : ");
-            String email = scanner.nextLine();
-
-            System.out.print("Numéro de téléphone : ");
-            String numTel = scanner.nextLine();
-
-            System.out.print("Mot de passe : ");
-            String motDePass = scanner.nextLine();
-
-            System.out.print("Image : ");
-            String image = scanner.nextLine();
-
-
-            Role role = Role.user;
-            Status status = Status.Unbanned;
-
-            User newUser = new User(nom, prenom, dateNaiss, email, numTel, motDePass, role, image, status);
-            userCRUD.createUser(newUser);
-            System.out.println("Utilisateur créé avec succès !");
-
-
-            System.out.println("\n-- Tous les utilisateurs --");
-            List<User> allUsers = userCRUD.ShowUsers();
-            for (User u : allUsers) System.out.println(u);
-
-
-            System.out.print("\nRechercher un utilisateur par nom : ");
-            String searchName = scanner.nextLine();
-            List<User> foundUsers = userCRUD.getUserByName(searchName);
-            if (foundUsers.isEmpty()) {
-                System.out.println("Aucun utilisateur trouvé.");
-            } else {
-                System.out.println("-- Utilisateurs trouvés --");
-                for (User u : foundUsers) System.out.println(u);
-            }
-
-            if (!foundUsers.isEmpty()) {
-                User toUpdate = foundUsers.get(0);
-                System.out.print("\nNouveau mot de passe pour " + toUpdate.getNom() + " : ");
-                String newPass = scanner.nextLine();
-                toUpdate.setMot_de_pass(newPass);
-                userCRUD.updatePassword(toUpdate);
-                System.out.println("Mot de passe mis à jour !");
-            }
-
-
-            System.out.println("\n-- Connexion --");
-            System.out.print("Email : ");
-            String loginEmail = scanner.nextLine();
-            System.out.print("Mot de passe : ");
-            String loginPass = scanner.nextLine();
-
-            User loginUser = new User();
-            loginUser.setE_mail(loginEmail);
-            loginUser.setMot_de_pass(loginPass);
-            userCRUD.signIn(loginUser);
-
-
-            if (!foundUsers.isEmpty()) {
-                System.out.print("\nSupprimer l'utilisateur " + foundUsers.get(0).getNom() + " ? (oui/non) : ");
-                String answer = scanner.nextLine();
-                if (answer.equalsIgnoreCase("oui")) {
-                    userCRUD.deleteUser(foundUsers.get(0));
-                    System.out.println("Utilisateur supprimé !");
-                }
-            }
+            System.out.println("Données insérées avec succès ");
 
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            scanner.close();
         }
     }
 }
