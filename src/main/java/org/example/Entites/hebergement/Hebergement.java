@@ -14,7 +14,8 @@ public class Hebergement {
     private String image; //  nouveau attribut
 
 
-    public Hebergement() {
+    public Hebergement()
+    {
     }
 
 

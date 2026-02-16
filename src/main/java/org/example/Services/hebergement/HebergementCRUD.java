@@ -20,9 +20,9 @@ public class HebergementCRUD implements CRUD<Hebergement> {
     @Override
     public void ajouterh(Hebergement h) throws SQLException {
 
-        String sql = Query.addhebergementQuery;
-        PreparedStatement ps = con.prepareStatement(sql);
+        String req = Query.addhebergementQuery;
 
+        PreparedStatement ps = con.prepareStatement(req, Statement.RETURN_GENERATED_KEYS);
 
         ps.setString(1, h.getTitre());
         ps.setString(2, h.getDesc_hebergement());
@@ -32,9 +32,14 @@ public class HebergementCRUD implements CRUD<Hebergement> {
         ps.setFloat(6, h.getPrixParNuit());
         ps.setString(7, h.getImage());
 
-
         ps.executeUpdate();
-        System.out.println("✅ Hebergement ajouté !");
+
+        ResultSet rs = ps.getGeneratedKeys();
+        if (rs.next()) {
+            h.setId_hebergement(rs.getInt(1));
+        }
+
+        System.out.println("Hebergement ajouté avec ID = ");
     }
 
     @Override
@@ -53,7 +58,7 @@ public class HebergementCRUD implements CRUD<Hebergement> {
         ps.setInt(8, h.getId_hebergement());
 
         ps.executeUpdate();
-        System.out.println("✏ Hebergement modifié !");
+        System.out.println(" Hebergement modifié !");
     }
 
     @Override
@@ -69,7 +74,8 @@ public class HebergementCRUD implements CRUD<Hebergement> {
     }
 
     @Override
-    public List<Hebergement> afficherh() throws SQLException {
+    public List<Hebergement> afficherh() throws SQLException
+    {
 
         List<Hebergement> list = new ArrayList<>();
         String sql = Query.showhebergementQuery;
