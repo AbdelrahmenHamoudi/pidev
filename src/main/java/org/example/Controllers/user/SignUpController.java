@@ -24,7 +24,6 @@ import java.time.format.DateTimeFormatter;
 
 public class SignUpController {
 
-    // ============ CHAMPS DU FORMULAIRE ============
     @FXML private TextField prenomField;
     @FXML private TextField nomField;
     @FXML private DatePicker dateNaissPicker;
@@ -35,7 +34,6 @@ public class SignUpController {
     @FXML private PasswordField confirmPasswordField;
     @FXML private CheckBox termsCheckBox;
 
-    // ============ LABELS D'ERREUR ============
     @FXML private Label prenomError;
     @FXML private Label nomError;
     @FXML private Label dateError;
@@ -45,26 +43,18 @@ public class SignUpController {
     @FXML private Label passwordError;
     @FXML private Label confirmPasswordError;
 
-    // ============ APERÇU IMAGE ============
     @FXML private VBox imagePreviewBox;
     @FXML private ImageView previewImageView;
     @FXML private Button chooseImageButton;
 
-    // ============ SERVICE CRUD ============
     private final UserCRUD userCRUD = new UserCRUD();
-
-    // ============ VARIABLE POUR STOCKER LE FICHIER SÉLECTIONNÉ ============
     private File selectedImageFile;
     private boolean isCheckingEmail = false;
 
-    /**
-     * ✅ Initialisation automatique appelée après le chargement du FXML
-     */
     @FXML
     public void initialize() {
         setupRealTimeValidation();
 
-        // Ajouter un listener pour l'aperçu de l'image (pour URL manuelle)
         imageUrlField.textProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null && !newValue.isEmpty()) {
                 try {
@@ -89,11 +79,7 @@ public class SignUpController {
         });
     }
 
-    /**
-     * ✅ VALIDATION EN TEMPS RÉEL
-     */
     private void setupRealTimeValidation() {
-        // Validation Prénom
         prenomField.textProperty().addListener((obs, old, newVal) -> {
             String val = newVal.trim();
             if (val.isEmpty()) {
@@ -109,7 +95,6 @@ public class SignUpController {
             }
         });
 
-        // Validation Nom
         nomField.textProperty().addListener((obs, old, newVal) -> {
             String val = newVal.trim();
             if (val.isEmpty()) {
@@ -125,7 +110,6 @@ public class SignUpController {
             }
         });
 
-        // Validation Email avec vérification d'unicité
         emailField.textProperty().addListener((obs, old, newVal) -> {
             String email = newVal.trim().toLowerCase();
             if (email.isEmpty()) {
@@ -135,12 +119,11 @@ public class SignUpController {
             } else if (!email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
                 showError(emailError, "📧 Format invalide");
             } else {
-                // Vérifier si l'email existe déjà (avec un délai pour éviter trop de requêtes)
                 if (!isCheckingEmail) {
                     isCheckingEmail = true;
                     new Thread(() -> {
                         try {
-                            Thread.sleep(500); // Délai de 500ms
+                            Thread.sleep(500);
                             User existing = userCRUD.getUserByEmail(email);
                             javafx.application.Platform.runLater(() -> {
                                 if (existing != null) {
@@ -158,7 +141,6 @@ public class SignUpController {
             }
         });
 
-        // Validation Téléphone
         telephoneField.textProperty().addListener((obs, old, newVal) -> {
             String tel = newVal.trim();
             if (tel.isEmpty()) {
@@ -172,7 +154,6 @@ public class SignUpController {
             }
         });
 
-        // Validation Date naissance
         dateNaissPicker.valueProperty().addListener((obs, old, newVal) -> {
             if (newVal == null) {
                 showError(dateError, "📅 La date de naissance est requise");
@@ -188,12 +169,10 @@ public class SignUpController {
             }
         });
 
-        // Validation Mot de passe
         passwordField.textProperty().addListener((obs, old, newVal) -> {
             validatePassword();
         });
 
-        // Validation Confirmation mot de passe
         confirmPasswordField.textProperty().addListener((obs, old, newVal) -> {
             validateConfirmPassword();
         });
@@ -216,7 +195,6 @@ public class SignUpController {
         } else {
             clearError(passwordError);
         }
-        // Revalider la confirmation si elle existe
         if (!confirmPasswordField.getText().isEmpty()) {
             validateConfirmPassword();
         }
@@ -241,9 +219,6 @@ public class SignUpController {
         label.setText("");
     }
 
-    /**
-     * ✅ OUVERTURE DU FILE CHOOSER POUR SÉLECTIONNER UNE IMAGE
-     */
     @FXML
     private void handleChooseImage(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
@@ -278,13 +253,9 @@ public class SignUpController {
         }
     }
 
-    /**
-     * ✅ VALIDATION COMPLÈTE DU FORMULAIRE
-     */
     private boolean validateForm() {
         boolean isValid = true;
 
-        // Forcer les validations en appelant les listeners
         prenomField.setText(prenomField.getText());
         nomField.setText(nomField.getText());
         emailField.setText(emailField.getText());
@@ -293,7 +264,6 @@ public class SignUpController {
         passwordField.setText(passwordField.getText());
         confirmPasswordField.setText(confirmPasswordField.getText());
 
-        // Vérifier s'il y a des erreurs
         if (!prenomError.getText().isEmpty()) isValid = false;
         if (!nomError.getText().isEmpty()) isValid = false;
         if (!emailError.getText().isEmpty()) isValid = false;
@@ -302,7 +272,6 @@ public class SignUpController {
         if (!passwordError.getText().isEmpty()) isValid = false;
         if (!confirmPasswordError.getText().isEmpty()) isValid = false;
 
-        // Vérifier les conditions
         if (!termsCheckBox.isSelected()) {
             showAlert(Alert.AlertType.WARNING,
                     "📋 Conditions d'utilisation",
@@ -314,9 +283,6 @@ public class SignUpController {
         return isValid;
     }
 
-    /**
-     * ✅ Soumission du formulaire d'inscription
-     */
     @FXML
     private void handleSignUp(ActionEvent event) {
         if (!validateForm()) return;
@@ -333,7 +299,6 @@ public class SignUpController {
             String telephone = telephoneField.getText().trim();
             String password = passwordField.getText();
 
-            // Image URL
             String imageUrl = null;
             if (selectedImageFile != null) {
                 imageUrl = selectedImageFile.toURI().toString();
@@ -369,17 +334,11 @@ public class SignUpController {
         }
     }
 
-    /**
-     * ✅ Redirection vers la page de connexion
-     */
     @FXML
     private void handleLoginRedirect(ActionEvent event) {
         redirectToLogin(event);
     }
 
-    /**
-     * ✅ Méthode utilitaire pour rediriger vers login
-     */
     private void redirectToLogin(ActionEvent event) {
         try {
             System.out.println("🔄 Redirection vers login...");
@@ -415,9 +374,6 @@ public class SignUpController {
         }
     }
 
-    /**
-     * ✅ Réinitialiser tous les messages d'erreur
-     */
     private void clearErrors() {
         prenomError.setText("");
         nomError.setText("");
@@ -429,9 +385,6 @@ public class SignUpController {
         confirmPasswordError.setText("");
     }
 
-    /**
-     * ✅ Afficher un message de succès d'inscription
-     */
     private void showSuccessMessage() {
         String fullName = prenomField.getText().trim() + " " + nomField.getText().trim();
 
@@ -456,9 +409,6 @@ public class SignUpController {
         alert.showAndWait();
     }
 
-    /**
-     * ✅ Afficher une alerte générique
-     */
     private void showAlert(Alert.AlertType type, String title, String header, String content) {
         Alert alert = new Alert(type);
         alert.setTitle(title);

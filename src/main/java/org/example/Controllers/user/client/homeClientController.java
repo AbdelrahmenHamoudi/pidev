@@ -30,73 +30,60 @@ public class homeClientController implements Initializable {
     @FXML
     private Label userPointsLabel;
 
-    // Utilisateur connecté (sera passé depuis la page de login)
+
     private User currentUser;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Cette méthode sera appelée après le chargement du FXML
-        // Les données utilisateur seront chargées via initUserData()
+
         System.out.println("✅ Page d'accueil client initialisée");
     }
 
-    /**
-     * Méthode pour initialiser les données de l'utilisateur connecté
-     * À appeler depuis le contrôleur de login après redirection
-     */
+
     public void initUserData(User user) {
         this.currentUser = user;
 
         if (user != null) {
-            // Mettre à jour le nom de l'utilisateur
+
             String fullName = user.getPrenom() + " " + user.getNom();
             userNameLabel.setText(fullName);
 
-            // Mettre à jour l'avatar
+
             if (user.getImage() != null && !user.getImage().isEmpty()) {
                 try {
                     Image avatarImage = new Image(user.getImage(), 42, 42, true, true);
                     userAvatarImage.setImage(avatarImage);
                 } catch (Exception e) {
                     System.err.println("❌ Erreur chargement avatar: " + e.getMessage());
-                    // Garder l'image par défaut
+
                 }
             }
 
-            // Calculer les points (exemple - à adapter selon votre logique métier)
+
             int points = calculateUserPoints(user);
             userPointsLabel.setText("🏆 " + points + " points");
 
             System.out.println("✅ Utilisateur chargé: " + fullName);
         } else {
-            // Utilisateur non connecté (cas par défaut)
+
             userNameLabel.setText("Invité");
             userPointsLabel.setText("🏆 0 points");
         }
     }
 
-    /**
-     * Calculer les points de l'utilisateur basés sur ses activités
-     */
+
     private int calculateUserPoints(User user) {
-        // TODO: Implémenter la logique métier pour calculer les points
-        // Exemple: basé sur le nombre de réservations, avis, etc.
-        // Pour l'instant, on retourne une valeur basée sur l'ID
+
         return 1000 + (user.getId() * 10);
     }
 
-    /**
-     * Gestionnaire pour le clic sur le logo
-     */
+
     @FXML
     private void handleLogoClick(MouseEvent event) {
         System.out.println("🏠 Logo cliqué - Retour à l'accueil");
-        // Déjà sur la page d'accueil, on pourrait rafraîchir ou ne rien faire
+
     }
 
-    /**
-     * ✅ Gestionnaire pour le clic sur le menu utilisateur - REDIRECTION VERS LE PROFIL
-     */
     @FXML
     private void handleUserMenuClick(MouseEvent event) {
         if (currentUser != null) {
@@ -104,14 +91,12 @@ public class homeClientController implements Initializable {
             redirectToUserProfile(event);
         } else {
             System.out.println("👤 Menu utilisateur cliqué (non connecté)");
-            // ✅ CORRECTION: Appeler la version MouseEvent de redirectToLogin
+
             redirectToLogin(event);
         }
     }
 
-    /**
-     * ✅ Redirection vers la page de profil utilisateur (version MouseEvent)
-     */
+
     private void redirectToUserProfile(MouseEvent event) {
         try {
             System.out.println("🔄 Redirection vers le profil utilisateur...");
@@ -144,9 +129,7 @@ public class homeClientController implements Initializable {
         }
     }
 
-    /**
-     * Gestionnaire pour la recherche
-     */
+
     @FXML
     private void handleSearch(ActionEvent event) {
         System.out.println("🔍 Recherche effectuée");
@@ -156,9 +139,7 @@ public class homeClientController implements Initializable {
                 "La recherche sera bientôt disponible.");
     }
 
-    /**
-     * Gestionnaire pour le bouton "Voir toutes les destinations"
-     */
+
     @FXML
     private void handleViewAllDestinations(ActionEvent event) {
         System.out.println("🌍 Voir toutes les destinations");
@@ -168,9 +149,7 @@ public class homeClientController implements Initializable {
                 "Cette fonctionnalité sera bientôt disponible.");
     }
 
-    /**
-     * Gestionnaire pour le bouton "Voir tous les hébergements"
-     */
+
     @FXML
     private void handleViewAllHebergements(ActionEvent event) {
         System.out.println("🏨 Voir tous les hébergements");
@@ -180,9 +159,7 @@ public class homeClientController implements Initializable {
                 "Cette fonctionnalité sera bientôt disponible.");
     }
 
-    /**
-     * Gestionnaire pour le bouton "Voir toutes les activités"
-     */
+
     @FXML
     private void handleViewAllActivites(ActionEvent event) {
         System.out.println("🎯 Voir toutes les activités");
@@ -192,9 +169,7 @@ public class homeClientController implements Initializable {
                 "Cette fonctionnalité sera bientôt disponible.");
     }
 
-    /**
-     * Gestionnaire pour le bouton "Voir toutes les promotions"
-     */
+
     @FXML
     private void handleViewAllPromotions(ActionEvent event) {
         System.out.println("🏷️ Voir toutes les promotions");
@@ -204,9 +179,7 @@ public class homeClientController implements Initializable {
                 "Cette fonctionnalité sera bientôt disponible.");
     }
 
-    /**
-     * Gestionnaire pour le bouton "Voir tous les avis"
-     */
+
     @FXML
     private void handleViewAllReviews(ActionEvent event) {
         System.out.println("💬 Voir tous les avis");
@@ -215,10 +188,6 @@ public class homeClientController implements Initializable {
                 "Tous les avis",
                 "Cette fonctionnalité sera bientôt disponible.");
     }
-
-    /**
-     * Gestionnaire pour réserver un hébergement
-     */
     @FXML
     private void handleReserverHebergement(ActionEvent event) {
         if (currentUser != null) {
@@ -232,9 +201,7 @@ public class homeClientController implements Initializable {
         }
     }
 
-    /**
-     * Gestionnaire pour réserver une activité
-     */
+
     @FXML
     private void handleReserverActivite(ActionEvent event) {
         if (currentUser != null) {
@@ -248,11 +215,7 @@ public class homeClientController implements Initializable {
         }
     }
 
-    // ============ MÉTHODES DE REDIRECTION (VERSIONS MULTIPLES) ============
 
-    /**
-     * ✅ Version MouseEvent pour redirectToLogin (utilisée ligne 107)
-     */
     private void redirectToLogin(MouseEvent event) {
         try {
             System.out.println("🔄 Redirection vers login...");
@@ -280,9 +243,7 @@ public class homeClientController implements Initializable {
         }
     }
 
-    /**
-     * Version ActionEvent pour redirectToLogin
-     */
+
     private void redirectToLogin(ActionEvent event) {
         try {
             System.out.println("🔄 Redirection vers login...");
@@ -310,9 +271,7 @@ public class homeClientController implements Initializable {
         }
     }
 
-    /**
-     * Afficher une alerte stylisée
-     */
+
     private void showAlert(Alert.AlertType type, String title, String header, String content) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
@@ -329,9 +288,7 @@ public class homeClientController implements Initializable {
         alert.showAndWait();
     }
 
-    /**
-     * Déconnexion (optionnel)
-     */
+
     @FXML
     private void handleLogout(ActionEvent event) {
         try {

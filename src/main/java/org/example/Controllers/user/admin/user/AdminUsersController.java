@@ -7,7 +7,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -36,28 +35,23 @@ import java.util.ResourceBundle;
 
 public class AdminUsersController implements Initializable {
 
-    // ===== SIDEBAR =====
     @FXML private VBox sidebar;
     @FXML private Button btnGestionUtilisateurs, btnComptesBancaires, btnTransactions,
             btnCredits, btnCashback, btnParametres, btnDeconnexion;
 
-    // ===== MAIN CONTENT =====
     @FXML private StackPane mainContentStack;
     @FXML private VBox viewEmpty;
 
-    // ===== STATS LABELS =====
     @FXML private Label totalUsersLabel;
     @FXML private Label adminCountLabel;
     @FXML private Label userCountLabel;
     @FXML private Label bannedCountLabel;
 
-    // ===== SEARCH & FILTERS =====
     @FXML private TextField searchField;
     @FXML private ComboBox<String> filterRoleCombo;
     @FXML private ComboBox<String> filterStatusCombo;
     @FXML private Button btnResetFilters;
 
-    // ===== TABLE =====
     @FXML private TableView<User> usersTable;
     @FXML private TableColumn<User, Integer> colId;
     @FXML private TableColumn<User, String> colAvatar;
@@ -69,7 +63,6 @@ public class AdminUsersController implements Initializable {
     @FXML private TableColumn<User, Status> colStatus;
     @FXML private TableColumn<User, Void> colActions;
 
-    // ===== FORMULAIRE UTILISATEUR =====
     @FXML private TextField txtId;
     @FXML private TextField txtPrenom;
     @FXML private TextField txtNom;
@@ -86,7 +79,6 @@ public class AdminUsersController implements Initializable {
     @FXML private Button btnAnnuler;
     @FXML private Button btnParcourirImage;
 
-    // ===== LABELS D'ERREUR EN TEMPS RÉEL =====
     @FXML private Label errorPrenom;
     @FXML private Label errorNom;
     @FXML private Label errorDate;
@@ -97,12 +89,10 @@ public class AdminUsersController implements Initializable {
     @FXML private Label errorStatus;
     @FXML private Label errorImage;
 
-    // ===== IMAGE PREVIEW =====
     @FXML private VBox imagePreviewBox;
     @FXML private ImageView previewImageView;
     @FXML private Label imageFileNameLabel;
 
-    // ===== DATA =====
     private final ObservableList<User> userList = FXCollections.observableArrayList();
     private FilteredList<User> filteredData;
     private User selectedUser = null;
@@ -110,9 +100,6 @@ public class AdminUsersController implements Initializable {
     private File selectedImageFile;
     private boolean isEditing = false;
 
-    // =========================
-    // INITIALIZE
-    // =========================
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         setupTableColumns();
@@ -121,23 +108,16 @@ public class AdminUsersController implements Initializable {
         setupRealTimeValidation();
         setupFormListeners();
 
-        // Initialiser les ComboBox avec les valeurs des énums
         comboRole.setItems(FXCollections.observableArrayList(Role.values()));
         comboStatus.setItems(FXCollections.observableArrayList(Status.values()));
 
-        // Désactiver les boutons modification/suppression au démarrage
         btnModifier.setDisable(true);
         btnSupprimer.setDisable(true);
 
-        // Afficher l'image par défaut au démarrage
         setDefaultImage();
     }
 
-    // =========================
-    // VALIDATION EN TEMPS RÉEL
-    // =========================
     private void setupRealTimeValidation() {
-        // Validation Prénom
         txtPrenom.textProperty().addListener((obs, old, newVal) -> {
             if (newVal.trim().isEmpty()) {
                 showError(errorPrenom, "❌ Le prénom est requis");
@@ -152,7 +132,6 @@ public class AdminUsersController implements Initializable {
             }
         });
 
-        // Validation Nom
         txtNom.textProperty().addListener((obs, old, newVal) -> {
             if (newVal.trim().isEmpty()) {
                 showError(errorNom, "❌ Le nom est requis");
@@ -167,7 +146,6 @@ public class AdminUsersController implements Initializable {
             }
         });
 
-        // Validation Email
         txtEmail.textProperty().addListener((obs, old, newVal) -> {
             String email = newVal.trim().toLowerCase();
             if (email.isEmpty()) {
@@ -181,7 +159,6 @@ public class AdminUsersController implements Initializable {
             }
         });
 
-        // Validation Téléphone
         txtTelephone.textProperty().addListener((obs, old, newVal) -> {
             String tel = newVal.trim();
             if (!tel.isEmpty()) {
@@ -193,11 +170,10 @@ public class AdminUsersController implements Initializable {
                     clearError(errorTelephone);
                 }
             } else {
-                clearError(errorTelephone); // Téléphone optionnel
+                clearError(errorTelephone);
             }
         });
 
-        // Validation Mot de passe
         txtPassword.textProperty().addListener((obs, old, newVal) -> {
             if (!isEditing && selectedUser == null) {
                 if (newVal.isEmpty()) {
@@ -231,12 +207,11 @@ public class AdminUsersController implements Initializable {
                         clearError(errorPassword);
                     }
                 } else {
-                    clearError(errorPassword); // Optionnel en modification
+                    clearError(errorPassword);
                 }
             }
         });
 
-        // Validation Rôle
         comboRole.valueProperty().addListener((obs, old, newVal) -> {
             if (newVal == null) {
                 showError(errorRole, "❌ Le rôle est requis");
@@ -245,7 +220,6 @@ public class AdminUsersController implements Initializable {
             }
         });
 
-        // Validation Statut
         comboStatus.valueProperty().addListener((obs, old, newVal) -> {
             if (newVal == null) {
                 showError(errorStatus, "❌ Le statut est requis");
@@ -254,7 +228,6 @@ public class AdminUsersController implements Initializable {
             }
         });
 
-        // Validation Date naissance
         dpDateNaiss.valueProperty().addListener((obs, old, newVal) -> {
             if (newVal != null) {
                 int age = Period.between(newVal, LocalDate.now()).getYears();
@@ -266,7 +239,7 @@ public class AdminUsersController implements Initializable {
                     clearError(errorDate);
                 }
             } else {
-                clearError(errorDate); // Date optionnelle
+                clearError(errorDate);
             }
         });
     }
@@ -280,9 +253,6 @@ public class AdminUsersController implements Initializable {
         label.setText("");
     }
 
-    // =========================
-    // IMAGE PAR DÉFAUT
-    // =========================
     private void setDefaultImage() {
         try {
             Image defaultImage = new Image("https://i.pravatar.cc/150?u=default", 130, 130, true, true);
@@ -296,9 +266,6 @@ public class AdminUsersController implements Initializable {
         }
     }
 
-    // =========================
-    // CONFIGURATION TABLE
-    // =========================
     private void setupTableColumns() {
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
 
@@ -405,7 +372,6 @@ public class AdminUsersController implements Initializable {
             }
         });
 
-        // COLONNE ACTIONS
         colActions.setCellFactory(col -> new TableCell<User, Void>() {
             private final Button viewBtn = new Button("👁️");
             private final Button editBtn = new Button("✏️");
@@ -476,9 +442,6 @@ public class AdminUsersController implements Initializable {
         });
     }
 
-    // =========================
-    // MESSAGE DE SUCCÈS AVEC INFOS UTILISATEUR
-    // =========================
     private void showSuccessMessage(String action, User user) {
         String emoji = "";
         String title = "";
@@ -521,9 +484,6 @@ public class AdminUsersController implements Initializable {
         showAlert(emoji + " Succès", details, Alert.AlertType.INFORMATION);
     }
 
-    // =========================
-    // VOIR DÉTAILS UTILISATEUR
-    // =========================
     private void viewUserDetails(User user) {
         String fullName = user.getPrenom() + " " + user.getNom();
         String role = user.getRole() == Role.admin ? "Administrateur" : "Utilisateur";
@@ -543,9 +503,6 @@ public class AdminUsersController implements Initializable {
         showAlert("👁️ Détails utilisateur", details, Alert.AlertType.INFORMATION);
     }
 
-    // =========================
-    // CONFIGURATION FILTRES
-    // =========================
     private void setupFilters() {
         filterRoleCombo.setItems(FXCollections.observableArrayList(
                 "Tous les rôles", "Administrateurs", "Utilisateurs"
@@ -558,9 +515,6 @@ public class AdminUsersController implements Initializable {
         filterStatusCombo.getSelectionModel().selectFirst();
     }
 
-    // =========================
-    // CHARGEMENT DONNÉES
-    // =========================
     private void loadUserData() {
         try {
             userList.setAll(userCRUD.ShowUsers());
@@ -573,9 +527,6 @@ public class AdminUsersController implements Initializable {
         }
     }
 
-    // =========================
-    // MISE À JOUR STATISTIQUES
-    // =========================
     private void updateStats() {
         int total = userList.size();
         int admins = (int) userList.stream().filter(u -> u.getRole() == Role.admin).count();
@@ -588,9 +539,6 @@ public class AdminUsersController implements Initializable {
         bannedCountLabel.setText(String.valueOf(banned));
     }
 
-    // =========================
-    // LISTENERS FORMULAIRE
-    // =========================
     private void setupFormListeners() {
         searchField.textProperty().addListener((obs, old, newVal) -> applyFilters());
         filterRoleCombo.setOnAction(e -> applyFilters());
@@ -604,7 +552,6 @@ public class AdminUsersController implements Initializable {
                     imagePreviewBox.setVisible(true);
                     imageFileNameLabel.setText("URL: " + (newVal.length() > 30 ? newVal.substring(0, 30) + "..." : newVal));
                 } catch (Exception e) {
-                    // Garder l'image précédente
                 }
             } else {
                 if (selectedImageFile == null && (selectedUser == null || selectedUser.getImage() == null)) {
@@ -614,9 +561,6 @@ public class AdminUsersController implements Initializable {
         });
     }
 
-    // =========================
-    // APPLICATION FILTRES
-    // =========================
     private void applyFilters() {
         if (filteredData == null) return;
 
@@ -646,9 +590,6 @@ public class AdminUsersController implements Initializable {
         });
     }
 
-    // =========================
-    // SÉLECTION TABLE
-    // =========================
     @FXML
     private void handleRowSelection(MouseEvent event) {
         if (event.getClickCount() >= 1) {
@@ -663,9 +604,6 @@ public class AdminUsersController implements Initializable {
         }
     }
 
-    // =========================
-    // REMPLIR FORMULAIRE
-    // =========================
     private void fillForm(User user) {
         txtId.setText(String.valueOf(user.getId()));
         txtPrenom.setText(user.getPrenom());
@@ -703,9 +641,6 @@ public class AdminUsersController implements Initializable {
         selectedImageFile = null;
     }
 
-    // =========================
-    // VIDER FORMULAIRE
-    // =========================
     @FXML
     private void clearForm() {
         txtId.clear();
@@ -719,7 +654,6 @@ public class AdminUsersController implements Initializable {
         comboRole.setValue(null);
         comboStatus.setValue(null);
 
-        // Effacer tous les messages d'erreur
         clearError(errorPrenom);
         clearError(errorNom);
         clearError(errorDate);
@@ -741,9 +675,6 @@ public class AdminUsersController implements Initializable {
         btnSupprimer.setDisable(true);
     }
 
-    // =========================
-    // PARCOURIR IMAGE
-    // =========================
     @FXML
     private void handleBrowseImage(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
@@ -773,13 +704,9 @@ public class AdminUsersController implements Initializable {
         }
     }
 
-    // =========================
-    // VALIDATION FORMULAIRE COMPLÈTE
-    // =========================
     private boolean validateFormComplete(boolean isNew) {
         boolean isValid = true;
 
-        // Valider Prénom
         if (txtPrenom.getText().trim().isEmpty()) {
             showError(errorPrenom, "❌ Le prénom est requis");
             isValid = false;
@@ -794,7 +721,6 @@ public class AdminUsersController implements Initializable {
             isValid = false;
         }
 
-        // Valider Nom
         if (txtNom.getText().trim().isEmpty()) {
             showError(errorNom, "❌ Le nom est requis");
             isValid = false;
@@ -809,7 +735,6 @@ public class AdminUsersController implements Initializable {
             isValid = false;
         }
 
-        // Valider Email
         String email = txtEmail.getText().trim().toLowerCase();
         if (email.isEmpty()) {
             showError(errorEmail, "❌ L'email est requis");
@@ -822,7 +747,6 @@ public class AdminUsersController implements Initializable {
             isValid = false;
         }
 
-        // Valider Téléphone (optionnel mais format si présent)
         String tel = txtTelephone.getText().trim();
         if (!tel.isEmpty()) {
             if (tel.length() > 20) {
@@ -834,7 +758,6 @@ public class AdminUsersController implements Initializable {
             }
         }
 
-        // Valider Date naissance (optionnelle mais âge si présente)
         LocalDate dateNaiss = dpDateNaiss.getValue();
         if (dateNaiss != null) {
             int age = Period.between(dateNaiss, LocalDate.now()).getYears();
@@ -847,7 +770,6 @@ public class AdminUsersController implements Initializable {
             }
         }
 
-        // Valider Mot de passe
         String password = txtPassword.getText();
         if (isNew) {
             if (password.isEmpty()) {
@@ -890,13 +812,11 @@ public class AdminUsersController implements Initializable {
             }
         }
 
-        // Valider Rôle
         if (comboRole.getValue() == null) {
             showError(errorRole, "❌ Le rôle est requis");
             isValid = false;
         }
 
-        // Valider Statut
         if (comboStatus.getValue() == null) {
             showError(errorStatus, "❌ Le statut est requis");
             isValid = false;
@@ -905,15 +825,11 @@ public class AdminUsersController implements Initializable {
         return isValid;
     }
 
-    // =========================
-    // AJOUTER UTILISATEUR
-    // =========================
     @FXML
     private void ajouterUtilisateur(ActionEvent event) {
         if (!validateFormComplete(true)) return;
 
         try {
-            // Vérifier si l'email existe déjà
             String email = txtEmail.getText().trim().toLowerCase();
             User existing = userCRUD.getUserByEmail(email);
             if (existing != null) {
@@ -936,7 +852,6 @@ public class AdminUsersController implements Initializable {
 
             userCRUD.createUser(newUser);
 
-            // Récupérer l'utilisateur créé (avec son ID)
             User createdUser = userCRUD.getUserByEmail(email);
 
             showSuccessMessage("add", createdUser);
@@ -948,9 +863,6 @@ public class AdminUsersController implements Initializable {
         }
     }
 
-    // =========================
-    // MODIFIER UTILISATEUR
-    // =========================
     @FXML
     private void modifierUtilisateur(ActionEvent event) {
         if (selectedUser == null) {
@@ -961,7 +873,6 @@ public class AdminUsersController implements Initializable {
         if (!validateFormComplete(false)) return;
 
         try {
-            // Vérifier si l'email existe déjà (sauf pour l'utilisateur actuel)
             String email = txtEmail.getText().trim().toLowerCase();
             if (!email.equals(selectedUser.getE_mail())) {
                 User existing = userCRUD.getUserByEmail(email);
@@ -1011,9 +922,6 @@ public class AdminUsersController implements Initializable {
         }
     }
 
-    // =========================
-    // SUPPRIMER UTILISATEUR
-    // =========================
     @FXML
     private void supprimerUtilisateur(ActionEvent event) {
         if (selectedUser == null) {
@@ -1033,7 +941,7 @@ public class AdminUsersController implements Initializable {
         Optional<ButtonType> result = confirm.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
             try {
-                User deletedUser = selectedUser; // Copie pour le message
+                User deletedUser = selectedUser;
                 userCRUD.deleteUser(selectedUser);
                 showSuccessMessage("delete", deletedUser);
                 loadUserData();
@@ -1044,9 +952,6 @@ public class AdminUsersController implements Initializable {
         }
     }
 
-    // =========================
-    // CHANGER STATUT
-    // =========================
     private void toggleUserStatus(User user) {
         try {
             String action;
@@ -1069,9 +974,6 @@ public class AdminUsersController implements Initializable {
         }
     }
 
-    // =========================
-    // ÉDITER UTILISATEUR (depuis bouton)
-    // =========================
     private void editUser(User user) {
         usersTable.getSelectionModel().select(user);
         fillForm(user);
@@ -1081,17 +983,11 @@ public class AdminUsersController implements Initializable {
         isEditing = true;
     }
 
-    // =========================
-    // SUPPRIMER UTILISATEUR (depuis bouton)
-    // =========================
     private void deleteUser(User user) {
         selectedUser = user;
         supprimerUtilisateur(null);
     }
 
-    // =========================
-    // RÉINITIALISER FILTRES
-    // =========================
     @FXML
     private void resetFilters() {
         searchField.clear();
@@ -1099,9 +995,6 @@ public class AdminUsersController implements Initializable {
         filterStatusCombo.getSelectionModel().selectFirst();
     }
 
-    // =========================
-    // ALERTE
-    // =========================
     private void showAlert(String title, String message, Alert.AlertType type) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
@@ -1114,9 +1007,6 @@ public class AdminUsersController implements Initializable {
         alert.showAndWait();
     }
 
-    // =========================
-    // SIDEBAR ACTIONS
-    // =========================
     @FXML private void handleShowUsers(ActionEvent event) {}
 
     @FXML private void handleShowAccounts(ActionEvent event) {

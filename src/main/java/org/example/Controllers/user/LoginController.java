@@ -35,8 +35,6 @@ public class LoginController implements Initializable {
     private Label passwordError;
 
     private final UserCRUD userCRUD = new UserCRUD();
-
-    // Flag pour éviter les vérifications multiples
     private boolean isCheckingEmail = false;
 
     @Override
@@ -45,15 +43,10 @@ public class LoginController implements Initializable {
         System.out.println("✅ Page de login initialisée avec contrôle de saisie en temps réel");
     }
 
-    /**
-     * ✅ VALIDATION EN TEMPS RÉEL - EMAIL ET MOT DE PASSE
-     */
     private void setupRealTimeValidation() {
-        // === VALIDATION EMAIL EN TEMPS RÉEL ===
         emailField.textProperty().addListener((obs, old, newVal) -> {
             String email = newVal.trim().toLowerCase();
 
-            // Validation de base
             if (email.isEmpty()) {
                 showError(emailError, "✉ L'email est requis");
             } else if (email.length() > 100) {
@@ -65,19 +58,17 @@ public class LoginController implements Initializable {
             } else {
                 clearError(emailError);
 
-                // ✅ Vérification si l'email existe (utile pour feedback)
                 if (!isCheckingEmail) {
                     isCheckingEmail = true;
                     String emailToCheck = email;
 
                     new Thread(() -> {
                         try {
-                            Thread.sleep(500); // Délai pour éviter trop de requêtes
+                            Thread.sleep(500);
                             User existing = userCRUD.getUserByEmail(emailToCheck);
 
                             javafx.application.Platform.runLater(() -> {
                                 if (existing != null) {
-                                    // On ne met pas d'erreur, juste une info visuelle (optionnel)
                                     emailField.setStyle("-fx-border-color: #27AE60; -fx-border-width: 2;");
                                 } else {
                                     emailField.setStyle("-fx-border-color: #F39C12; -fx-border-width: 2;");
@@ -92,15 +83,11 @@ public class LoginController implements Initializable {
             }
         });
 
-        // === VALIDATION MOT DE PASSE EN TEMPS RÉEL ===
         passwordField.textProperty().addListener((obs, old, newVal) -> {
             validatePassword(newVal);
         });
     }
 
-    /**
-     * ✅ VALIDATION DU MOT DE PASSE
-     */
     private void validatePassword(String password) {
         if (password.isEmpty()) {
             showError(passwordError, "🔒 Le mot de passe est requis");
@@ -117,65 +104,48 @@ public class LoginController implements Initializable {
         }
     }
 
-    /**
-     * ✅ AFFICHER UNE ERREUR
-     */
     private void showError(Label label, String message) {
         label.setText(message);
         label.setStyle("-fx-text-fill: #F39C12; -fx-font-weight: bold; -fx-font-size: 12px;");
     }
 
-    /**
-     * ✅ EFFACER UNE ERREUR
-     */
     private void clearError(Label label) {
         label.setText("");
     }
 
-    /**
-     * ✅ VÉRIFIER S'IL Y A DES ERREURS
-     */
     private boolean hasErrors() {
         return !emailError.getText().isEmpty() || !passwordError.getText().isEmpty();
     }
 
     @FXML
     private void handleLogin(ActionEvent event) {
-        // Réinitialiser les messages d'erreur
         emailError.setText("");
         passwordError.setText("");
 
-        // Forcer la validation
         String email = emailField.getText().trim();
         String password = passwordField.getText().trim();
 
         validatePassword(password);
 
-        // Vérifier email avec regex
         if (email.isEmpty()) {
             showError(emailError, "✉ L'email est requis");
         } else if (!email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
             showError(emailError, "⚠ Format d'email invalide");
         }
 
-        // ✅ Arrêter s'il y a des erreurs de validation
         if (hasErrors()) {
             return;
         }
 
-        // ========== DÉSACTIVER LE BOUTON PENDANT LE TRAITEMENT ==========
         Button loginBtn = (Button) emailField.getScene().lookup(".tunisia-login-btn");
         if (loginBtn != null) {
             loginBtn.setDisable(true);
             loginBtn.setText("CONNEXION EN COURS...");
         }
 
-        // ========== TENTATIVE DE CONNEXION ==========
         try {
-            // 1️⃣ Vérifier d'abord si l'email existe dans la base
             User existingUser = userCRUD.getUserByEmail(email);
 
-            // 2️⃣ Vérifier le statut (BANNED / UNBANNED)
             if (existingUser == null) {
                 throw new customUserException("❌ Aucun compte trouvé avec cet email");
             }
@@ -184,26 +154,20 @@ public class LoginController implements Initializable {
                 throw new customUserException("🚫 Votre compte a été suspendu. Veuillez contacter l'administrateur.");
             }
 
-            // 3️⃣ Authentification avec email et mot de passe
             User user = new User();
             user.setE_mail(email);
             user.setMot_de_pass(password);
 
             User authenticatedUser = userCRUD.signIn(user);
 
-            // 4️⃣ Vérification supplémentaire du rôle
             if (authenticatedUser.getRole() == null) {
                 throw new customUserException("⚠ Erreur de configuration du compte");
             }
 
-            // ✅ SUCCÈS - Animation et redirection selon le rôle
             showSuccessAnimation(loginBtn);
-
-            // ✅ REDIRECTION SELON LE RÔLE
             redirectBasedOnRole(event, authenticatedUser);
 
         } catch (customUserException e) {
-            // ❌ Erreurs métier (compte inexistant, banned, mdp incorrect)
             passwordField.clear();
             passwordField.requestFocus();
 
@@ -223,7 +187,6 @@ public class LoginController implements Initializable {
             }
 
         } catch (Exception e) {
-            // ❌ Erreurs système (base de données, réseau, etc.)
             showAlert(AlertType.ERROR,
                     "🌍 Erreur système",
                     "Service temporairement indisponible",
@@ -231,7 +194,6 @@ public class LoginController implements Initializable {
             e.printStackTrace();
 
         } finally {
-            // ✅ Réactiver le bouton dans tous les cas
             if (loginBtn != null) {
                 loginBtn.setDisable(false);
                 loginBtn.setText("SE CONNECTER");
@@ -239,18 +201,13 @@ public class LoginController implements Initializable {
         }
     }
 
-    /**
-     * ✅ REDIRECTION SELON LE RÔLE (ADMIN ou CLIENT)
-     */
     private void redirectBasedOnRole(ActionEvent event, User user) {
         try {
             FXMLLoader loader;
             Parent root;
             String title;
 
-            // Vérification du rôle
             if (user.getRole() == Role.admin) {
-                // 🔴 REDIRECTION VERS users.fxml (dans le dossier back)
                 System.out.println("👑 Redirection vers Gestion des utilisateurs...");
 
                 java.net.URL adminUrl = getClass().getResource("/user/back/users.fxml");
@@ -263,7 +220,6 @@ public class LoginController implements Initializable {
                 title = "RE7LA Tunisie - Gestion des utilisateurs";
 
             } else {
-                // 🔵 REDIRECTION VERS PAGE CLIENT - AVEC PASSAGE DE L'UTILISATEUR
                 System.out.println("👤 Redirection vers Home Client avec utilisateur: " + user.getPrenom() + " " + user.getNom());
 
                 java.net.URL clientUrl = getClass().getResource("/user/dashboard/homeClient.fxml");
@@ -274,14 +230,12 @@ public class LoginController implements Initializable {
                 loader = new FXMLLoader(clientUrl);
                 root = loader.load();
 
-                // ✅ Récupérer le contrôleur de la page d'accueil et passer l'utilisateur
                 homeClientController clientController = loader.getController();
                 clientController.initUserData(user);
 
                 title = "RE7LA Tunisie - Accueil";
             }
 
-            // Changer de scène
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Scene scene = new Scene(root);
             stage.setScene(scene);
@@ -304,9 +258,6 @@ public class LoginController implements Initializable {
         }
     }
 
-    /**
-     * ✅ Animation de succès sur le bouton de connexion
-     */
     private void showSuccessAnimation(Button loginBtn) {
         if (loginBtn != null) {
             String originalColor = "-fx-background-color: linear-gradient(to right, #F39C12, #e67e22, #F39C12);";
@@ -325,9 +276,6 @@ public class LoginController implements Initializable {
         }
     }
 
-    /**
-     * ✅ Affiche une alerte stylisée
-     */
     private void showAlert(Alert.AlertType type, String title, String header, String content) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
@@ -346,9 +294,6 @@ public class LoginController implements Initializable {
         alert.showAndWait();
     }
 
-    /**
-     * ✅ Action pour le lien "Mot de passe oublié ?"
-     */
     @FXML
     private void handleForgotPassword(ActionEvent event) {
         showAlert(AlertType.INFORMATION,
@@ -357,9 +302,6 @@ public class LoginController implements Initializable {
                 "Un email vous sera envoyé pour réinitialiser votre mot de passe.\n\nCette fonctionnalité sera bientôt disponible !");
     }
 
-    /**
-     * ✅ Action pour le lien "Inscrivez-vous"
-     */
     @FXML
     private void handleSignUp(ActionEvent event) {
         try {
@@ -385,9 +327,6 @@ public class LoginController implements Initializable {
         }
     }
 
-    /**
-     * ✅ Action pour les boutons de connexion sociale
-     */
     @FXML
     private void handleSocialLogin(ActionEvent event) {
         Button source = (Button) event.getSource();
@@ -399,9 +338,6 @@ public class LoginController implements Initializable {
                 "Cette fonctionnalité sera bientôt disponible !\n\nMerci de votre patience.");
     }
 
-    /**
-     * ✅ Nettoyer les champs
-     */
     @FXML
     private void clearFields() {
         emailField.clear();
