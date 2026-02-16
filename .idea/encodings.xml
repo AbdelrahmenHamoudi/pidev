@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding">
+<<<<<<< HEAD
+    <file url="file://$PROJECT_DIR$/Re7la_User/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Re7la_User/src/main/resources" charset="UTF-8" />
+=======
     <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
+>>>>>>> b60fd6e55c7695038830d7815af815c637a1a7c0
   </component>
 </project>
