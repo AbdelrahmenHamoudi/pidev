@@ -160,38 +160,61 @@ public class PromotionBackOfficeController implements Initializable {
     private void loadPromotions() {
         promotions = FXCollections.observableArrayList(promotionService.getAll());
         tablePromotion.setItems(promotions);
+        updateStats();  // ⭐
     }
 //⭐  update labels
-    private void updateStats() {
-        try {
-            // Total promotions
-            int total = promotions.size();
-
-            // Packs promo
-            long packs = promotions.stream()
-                    .filter(Promotion::isPack)
-                    .count();
-
-            // Actives (entre date début et date fin)
-            java.time.LocalDate today = java.time.LocalDate.now();
-            long actives = promotions.stream()
-                    .filter(p -> {
-                        java.time.LocalDate debut = p.getStartDate().toLocalDate();
-                        java.time.LocalDate fin = p.getEndDate().toLocalDate();
-                        return !today.isBefore(debut) && !today.isAfter(fin);
-                    })
-                    .count();
-
-            // Mettre à jour les labels
-            if (statTotalPromo != null) statTotalPromo.setText(String.valueOf(total));
-            if (statPacksPromo != null) statPacksPromo.setText(String.valueOf(packs));
-            if (statActivesPromo != null) statActivesPromo.setText(String.valueOf(actives));
-
-        } catch (Exception e) {
-            System.err.println("Erreur lors de la mise à jour des stats");
-            e.printStackTrace();
+private void updateStats() {
+    try {
+        if (promotions == null || promotions.isEmpty()) {
+            // Aucune promotion
+            if (statTotalPromo != null) statTotalPromo.setText("0");
+            if (statPacksPromo != null) statPacksPromo.setText("0");
+            if (statActivesPromo != null) statActivesPromo.setText("0");
+            return;
         }
+
+        // ═══ TOTAL PROMOTIONS ═══
+        int total = promotions.size();
+
+        // ═══ PACKS PROMO ═══
+        long packs = promotions.stream()
+                .filter(Promotion::isPack)
+                .count();
+
+        // ═══ ACTIVES (date du jour entre début et fin) ═══
+        LocalDate today = LocalDate.now();
+        long actives = promotions.stream()
+                .filter(p -> {
+                    LocalDate debut = p.getStartDate().toLocalDate();
+                    LocalDate fin = p.getEndDate().toLocalDate();
+                    // Aujourd'hui doit être >= début ET <= fin
+                    return !today.isBefore(debut) && !today.isAfter(fin);
+                })
+                .count();
+
+        // ═══ METTRE À JOUR LES LABELS ═══
+        if (statTotalPromo != null) {
+            statTotalPromo.setText(String.valueOf(total));
+            System.out.println("📊 Stats - Total: " + total);
+        }
+
+        if (statPacksPromo != null) {
+            statPacksPromo.setText(String.valueOf(packs));
+            System.out.println("📊 Stats - Packs: " + packs);
+        }
+
+        if (statActivesPromo != null) {
+            statActivesPromo.setText(String.valueOf(actives));
+            System.out.println("📊 Stats - Actives: " + actives);
+        }
+
+        System.out.println("📊 Stats mises à jour avec succès !");
+
+    } catch (Exception e) {
+        System.err.println("❌ Erreur lors de la mise à jour des stats");
+        e.printStackTrace();
     }
+}
 
     private void loadOffresForSelectedType() {
         String type = comboTypeOffre.getValue();
@@ -252,65 +275,178 @@ public class PromotionBackOfficeController implements Initializable {
         try {
             String nom = txtNom.getText().trim();
             String description = txtDescription.getText().trim();
-            
+
+            // ═══════════════════════════════════════════════════════════
+            // VALIDATION 1 : CHAMPS OBLIGATOIRES
+            // ═══════════════════════════════════════════════════════════
             if (nom.isEmpty() || description.isEmpty()) {
-                showAlert(Alert.AlertType.WARNING, "Champs requis", 
-                    "Le nom et la description sont obligatoires.");
+                showAlert(Alert.AlertType.WARNING, "Champs requis",
+                        "Le nom et la description sont obligatoires.");
                 return;
             }
-            
+
+            // ═══════════════════════════════════════════════════════════
+            // VALIDATION 2 : NOM - Doit contenir au moins une lettre
+            // ═══════════════════════════════════════════════════════════
+            if (!nom.matches(".*[a-zA-ZÀ-ÿ].*")) {
+                showAlert(Alert.AlertType.WARNING, "Nom invalide",
+                        "Le nom doit contenir au moins une lettre (pas seulement des chiffres).");
+                return;
+            }
+
+            // ═══════════════════════════════════════════════════════════
+            // VALIDATION 3 : DESCRIPTION - Doit contenir au moins une lettre
+            // ═══════════════════════════════════════════════════════════
+            if (!description.matches(".*[a-zA-ZÀ-ÿ].*")) {
+                showAlert(Alert.AlertType.WARNING, "Description invalide",
+                        "La description doit contenir au moins une lettre (pas seulement des chiffres).");
+                return;
+            }
+
+            // ═══════════════════════════════════════════════════════════
+            // VALIDATION 4 : RÉDUCTIONS
+            // ═══════════════════════════════════════════════════════════
             Float pourcentage = null;
             Float fixe = null;
-            
+
             if (!txtPourcentage.getText().trim().isEmpty()) {
-                pourcentage = Float.parseFloat(txtPourcentage.getText().trim());
+                try {
+                    pourcentage = Float.parseFloat(txtPourcentage.getText().trim());
+                    if (pourcentage < 0 || pourcentage > 100) {
+                        showAlert(Alert.AlertType.WARNING, "Pourcentage invalide",
+                                "Le pourcentage doit être entre 0 et 100.");
+                        return;
+                    }
+                } catch (NumberFormatException e) {
+                    showAlert(Alert.AlertType.WARNING, "Pourcentage invalide",
+                            "Veuillez entrer un nombre valide pour le pourcentage.");
+                    return;
+                }
             }
-            
+
             if (!txtFixe.getText().trim().isEmpty()) {
-                fixe = Float.parseFloat(txtFixe.getText().trim());
+                try {
+                    fixe = Float.parseFloat(txtFixe.getText().trim());
+                    if (fixe <= 0) {
+                        showAlert(Alert.AlertType.WARNING, "Réduction fixe invalide",
+                                "La réduction fixe doit être supérieure à 0.");
+                        return;
+                    }
+                } catch (NumberFormatException e) {
+                    showAlert(Alert.AlertType.WARNING, "Réduction fixe invalide",
+                            "Veuillez entrer un nombre valide pour la réduction fixe.");
+                    return;
+                }
             }
-            
+
             if (pourcentage == null && fixe == null) {
-                showAlert(Alert.AlertType.WARNING, "Réduction requise", 
-                    "Vous devez spécifier soit un pourcentage soit une réduction fixe.");
+                showAlert(Alert.AlertType.WARNING, "Réduction requise",
+                        "Vous devez spécifier soit un pourcentage soit une réduction fixe.");
                 return;
             }
-            // ⭐ AJOUT VALIDATION PRIX PAR JOUR
+
+            // ═══════════════════════════════════════════════════════════
+            // VALIDATION 5 : PRIX PAR JOUR
+            // ═══════════════════════════════════════════════════════════
             if (txtPrixParJour.getText().trim().isEmpty()) {
                 showAlert(Alert.AlertType.WARNING, "Prix par jour requis",
                         "Vous devez spécifier le prix par jour.");
                 return;
             }
 
-            Float prixParJour = Float.parseFloat(txtPrixParJour.getText().trim());
-
-            if (prixParJour <= 0) {
-                showAlert(Alert.AlertType.WARNING, "Prix invalide",
-                        "Le prix par jour doit être supérieur à 0.");
+            Float prixParJour = null;
+            try {
+                prixParJour = Float.parseFloat(txtPrixParJour.getText().trim());
+                if (prixParJour <= 0) {
+                    showAlert(Alert.AlertType.WARNING, "Prix invalide",
+                            "Le prix par jour doit être supérieur à 0.");
+                    return;
+                }
+            } catch (NumberFormatException e) {
+                showAlert(Alert.AlertType.WARNING, "Prix par jour invalide",
+                        "Veuillez entrer un nombre valide pour le prix par jour.");
                 return;
             }
-            
+
+            // ═══════════════════════════════════════════════════════════
+            // VALIDATION 6 : DATES
+            // ═══════════════════════════════════════════════════════════
             LocalDate debut = dateDebut.getValue();
             LocalDate fin = dateFin.getValue();
-            
+
             if (debut == null || fin == null) {
-                showAlert(Alert.AlertType.WARNING, "Dates requises", 
-                    "Les dates de début et de fin sont obligatoires.");
+                showAlert(Alert.AlertType.WARNING, "Dates requises",
+                        "Les dates de début et de fin sont obligatoires.");
+                return;
+            }
+
+            if (!fin.isAfter(debut)) {
+                showAlert(Alert.AlertType.WARNING, "Dates invalides",
+                        "La date de fin doit être après la date de début.\n\n" +
+                                "Date début : " + debut + "\n" +
+                                "Date fin : " + fin);
                 return;
             }
 
             boolean isPack = chkPack.isSelected();
-            if (selectedPromotion == null) {
-                // Ajout
-                Promotion newPromo = new Promotion(nom, description, pourcentage, fixe,
-                        Date.valueOf(debut), Date.valueOf(fin), isPack, prixParJour);  // ⭐
-                promotionService.add(newPromo);
 
-                showAlert(Alert.AlertType.INFORMATION, "Succès",
-                        "Promotion ajoutée avec succès !");
-                // ✅ NOUVEAU
+            // ═══════════════════════════════════════════════════════════
+            // VALIDATION 7 : PACK DOIT AVOIR DES OFFRES
+            // ═══════════════════════════════════════════════════════════
+            if (isPack && selectedPromotion != null) {
+                // Pour une modification de pack, vérifier qu'il a des offres
+                List<PromotionTarget> targets = targetService.getByPromotionId(selectedPromotion.getId());
+                if (targets.isEmpty()) {
+                    Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+                    confirm.setTitle("Pack sans offres");
+                    confirm.setHeaderText("Ce pack ne contient aucune offre");
+                    confirm.setContentText("Un pack devrait contenir au moins une offre.\n" +
+                            "Voulez-vous quand même enregistrer ?");
+
+                    if (confirm.showAndWait().get() != ButtonType.OK) {
+                        return;
+                    }
+                }
+            }
+
+            // ═══════════════════════════════════════════════════════════
+            // ENREGISTREMENT
+            // ═══════════════════════════════════════════════════════════
+            if (selectedPromotion == null) {
+                // ═══ AJOUT ═══
+                Promotion newPromo = new Promotion(nom, description, pourcentage, fixe,
+                        Date.valueOf(debut), Date.valueOf(fin), isPack, prixParJour);
+
+                Promotion saved = promotionService.add(newPromo);
+
+                if (saved != null && saved.getId() > 0) {
+                    showAlert(Alert.AlertType.INFORMATION, "Succès",
+                            "✅ Promotion ajoutée avec succès !\n\n" +
+                                    "ID : " + saved.getId() + "\n" +
+                                    "Nom : " + saved.getName());
+
+                    // Si c'est un pack, rappeler d'ajouter des offres
+                    if (isPack) {
+                        Alert info = new Alert(Alert.AlertType.INFORMATION);
+                        info.setTitle("Pack créé");
+                        info.setHeaderText("N'oubliez pas d'ajouter des offres !");
+                        info.setContentText("Votre pack a été créé.\n" +
+                                "Vous pouvez maintenant sélectionner ce pack dans le tableau\n" +
+                                "et ajouter des offres (hébergements, activités, transports).");
+                        info.show();
+                    }
+                } else {
+                    showAlert(Alert.AlertType.ERROR, "Échec",
+                            "❌ Impossible d'enregistrer la promotion.\n\n" +
+                                    "Vérifiez que :\n" +
+                                    "- La base de données est accessible\n" +
+                                    "- Les données sont correctes\n" +
+                                    "- Consultez la console pour plus de détails.");
+                    return;
+                }
+
             } else {
-                // Modification
+                // ═══ MODIFICATION ═══
                 selectedPromotion.setName(nom);
                 selectedPromotion.setDescription(description);
                 selectedPromotion.setDiscountPercentage(pourcentage);
@@ -318,22 +454,34 @@ public class PromotionBackOfficeController implements Initializable {
                 selectedPromotion.setStartDate(Date.valueOf(debut));
                 selectedPromotion.setEndDate(Date.valueOf(fin));
                 selectedPromotion.setPack(isPack);
-                selectedPromotion.setPrixParJour(prixParJour);  // ⭐ AJOUTÉ
+                selectedPromotion.setPrixParJour(prixParJour);
 
-                promotionService.update(selectedPromotion);
+                boolean updated = promotionService.update(selectedPromotion);
 
-                showAlert(Alert.AlertType.INFORMATION, "Succès",
-                        "Promotion modifiée avec succès !");
+                if (updated) {
+                    showAlert(Alert.AlertType.INFORMATION, "Succès",
+                            "✅ Promotion modifiée avec succès !\n\n" +
+                                    "Nom : " + selectedPromotion.getName());
+                } else {
+                    showAlert(Alert.AlertType.ERROR, "Échec",
+                            "❌ Impossible de modifier la promotion.\n\n" +
+                                    "Consultez la console pour plus de détails.");
+                    return;
+                }
             }
 
             loadPromotions();
-            tablePromotion.refresh();   // ⭐
+            tablePromotion.refresh();
             handleCancel();
 
-
         } catch (NumberFormatException e) {
-            showAlert(Alert.AlertType.ERROR, "Erreur de format", 
-                "Veuillez entrer des valeurs numériques valides pour les réductions.");
+            showAlert(Alert.AlertType.ERROR, "Erreur de format",
+                    "Veuillez entrer des valeurs numériques valides.\n\n" +
+                            "Erreur : " + e.getMessage());
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Erreur inattendue",
+                    "Une erreur est survenue :\n" + e.getMessage());
+            e.printStackTrace();
         }
     }
 
