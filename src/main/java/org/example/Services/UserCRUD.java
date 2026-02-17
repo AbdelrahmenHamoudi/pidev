@@ -21,24 +21,32 @@ public class UserCRUD implements CRUDuser<User> {
 
     @Override
     public void createUser(User user) throws SQLException {
-        // Définir role et status par défaut si null
+
         if (user.getRole() == null) user.setRole(Role.user);
         if (user.getStatus() == null) user.setStatus(Status.Unbanned);
 
         String req = Query.addUserQuery;
-        PreparedStatement ps = conn.prepareStatement(req);
+
+        PreparedStatement ps = conn.prepareStatement(req, Statement.RETURN_GENERATED_KEYS);
+
         ps.setString(1, user.getNom());
         ps.setString(2, user.getPrenom());
         ps.setString(3, user.getDate_naiss());
         ps.setString(4, user.getE_mail());
         ps.setString(5, user.getNum_tel());
-        ps.setString(6, hashPassword(user.getMot_de_pass())); // mot de passe hashé
+        ps.setString(6, hashPassword(user.getMot_de_pass()));
         ps.setString(7, user.getImage());
-        ps.setString(8, user.getRole().name()); // Role
-        ps.setString(9, user.getStatus().name()); // Status
+        ps.setString(8, user.getRole().name());
+        ps.setString(9, user.getStatus().name());
 
         ps.executeUpdate();
-        System.out.println("Utilisateur ajouté !");
+
+        ResultSet rs = ps.getGeneratedKeys();
+        if (rs.next()) {
+            user.setId(rs.getInt(1));
+        }
+
+        System.out.println("Utilisateur ajouté ");
     }
 
     @Override

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.geometry.Insets?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.Controllers.CommunauteController"
+            prefHeight="700.0" prefWidth="1100.0"
+            style="-fx-background-color: #EAF2F8;">
+
+    <ScrollPane fx:id="frontOfficeScroll" fitToWidth="true" style="-fx-background: transparent;"
+                hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" pannable="true">
+        <HBox fx:id="contentHBox" spacing="30.0" style="-fx-padding: 30;">
+
+            <!-- LEFT COLUMN: Publications -->
+            <VBox spacing="30.0" prefWidth="650">
+
+                <!-- HEADER -->
+                <HBox alignment="CENTER_LEFT" spacing="20.0">
+                    <VBox spacing="6">
+                        <Label style="-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: #34495E;" text="Bienvenue sur Re7la"/>
+                        <Label style="-fx-font-size: 16px; -fx-text-fill: #5D6D7E;" text="Découvrez nos publications"/>
+                    </VBox>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <HBox alignment="CENTER_LEFT" spacing="10.0"
+                          style="-fx-background-color: #FFFFFF; -fx-background-radius: 30; -fx-padding: 8 20 8 10; -fx-effect: dropshadow(two-pass-box, rgba(0,0,0,0.08), 5,0,0,1);">
+                        <Label text="🔍" style="-fx-font-size: 16px; -fx-text-fill: #16A085;"/>
+                        <TextField fx:id="tfSearch" promptText="Rechercher..."
+                                   style="-fx-pref-width: 250; -fx-background-color: #F1C40F; -fx-background-radius: 20; -fx-padding: 5 10 5 10;"/>
+                    </HBox>
+                    <HBox alignment="CENTER" spacing="10.0"
+                          style="-fx-background-color: #16A085; -fx-background-radius: 30; -fx-padding: 5 15 5 5; -fx-effect: dropshadow(two-pass-box, rgba(0,0,0,0.15), 5,0,0,1);">
+                        <Circle fill="#ECF0F1" radius="16.0" stroke="WHITE" strokeType="INSIDE"/>
+                        <Label style="-fx-font-weight: bold; -fx-text-fill: #ECF0F1; -fx-font-size: 14px;" text="Utilisateur"/>
+                    </HBox>
+                </HBox>
+
+                <!-- PUBLICATIONS LIST -->
+                <Label style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #34495E;" text="Publications"/>
+                <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-padding: 5;">
+                    <TilePane fx:id="tilePublications" hgap="20.0" vgap="20.0" prefColumns="2" tileAlignment="TOP_LEFT"/>
+                </ScrollPane>
+            </VBox>
+
+            <!-- SEPARATOR -->
+            <VBox style="-fx-background-color: #F39C12; -fx-pref-width: 4; -fx-border-radius: 3;" />
+
+            <!-- RIGHT COLUMN: Selected Publication Details -->
+            <VBox fx:id="publicationDetailCard" spacing="20.0" visible="false" prefWidth="400"
+                  style="-fx-background-color: #FFFFFF; -fx-padding: 20; -fx-border-radius: 15; -fx-background-radius: 15;
+                         -fx-effect: dropshadow(two-pass-box, rgba(0,0,0,0.12), 12,0,0,4);">
+
+                <Label fx:id="lblPubTitle" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #34495E;" text="Publication Details"/>
+                <ImageView fx:id="imgPub" fitHeight="220" fitWidth="360" preserveRatio="true"
+                           style="-fx-effect: dropshadow(two-pass-box, rgba(0,0,0,0.2), 10,0,0,3); -fx-background-radius: 12;"/>
+                <Label fx:id="lblPubDesc" wrapText="true" style="-fx-font-size: 14px; -fx-text-fill: #5D6D7E;"/>
+                <Label fx:id="lblPubType" style="-fx-font-weight: bold; -fx-text-fill: #16A085;"/>
+                <Label fx:id="lblPubStatut" style="-fx-font-weight: bold; -fx-text-fill: #F39C12;"/>
+                <Label fx:id="lblPubVerifie" style="-fx-font-weight: bold; -fx-text-fill: #F1C40F;"/>
+
+                <!-- COMMENTS LIST -->
+                <VBox spacing="12.0">
+                    <Label text="Commentaires" style="-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: #34495E;"/>
+                    <ListView fx:id="listCommentaires" prefHeight="250"
+                              style="-fx-background-color: #F7F9FA; -fx-border-radius: 12; -fx-background-radius: 12; -fx-padding: 5;"/>
+                </VBox>
+
+                <!-- Comment Form -->
+                <HBox spacing="12">
+                    <TextField fx:id="tfNewComment" promptText="Écrire un commentaire..." HBox.hgrow="ALWAYS"
+                               style="-fx-background-color: #F1C40F; -fx-background-radius: 25; -fx-padding: 8 12;"/>
+                    <Button fx:id="btnAddComment" text="Ajouter" onAction="#handleAjouterCommentaireFront"
+                            style="-fx-background-color: #16A085; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 25;
+                                   -fx-padding: 8 20; -fx-cursor: hand;">
+                    </Button>
+                </HBox>
+
+            </VBox>
+
+        </HBox>
+    </ScrollPane>
+
+</AnchorPane>
