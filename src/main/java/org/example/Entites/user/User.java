@@ -1,4 +1,4 @@
-package org.example.Entites;
+package org.example.Entites.user;
 
 import java.util.Objects;
 
@@ -12,13 +12,13 @@ public class User {
     private String mot_de_pass;
     private String image;
     private Role role;
-    private String status;
+    private Status status;
 
 
     public User() {
     }
 
-    public User(int id, String nom, String prenom, String date_naiss, String e_mail, String num_tel, String mot_de_pass, String image, Role role, String status) {
+    public User(int id, String nom, String prenom, String date_naiss, String e_mail, String num_tel, String mot_de_pass, String image, Role role,  Status status) {
         this.id = id;
         this.nom = nom;
         this.prenom = prenom;
@@ -31,11 +31,11 @@ public class User {
         this.status = status;
     }
 
-    public User(String nom, String prenom, String e_mail, String date_naiss, String num_tel, String mot_de_pass, Role role, String image, String status) {
+    public User(String nom, String prenom,String date_naiss, String e_mail, String num_tel, String mot_de_pass, Role role, String image,  Status status) {
         this.nom = nom;
         this.prenom = prenom;
-        this.e_mail = e_mail;
         this.date_naiss = date_naiss;
+        this.e_mail = e_mail;
         this.num_tel = num_tel;
         this.mot_de_pass = mot_de_pass;
         this.role = role;
@@ -115,12 +115,24 @@ public class User {
         this.role = role;
     }
 
-    public String getStatus() {
+    public  Status getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus( Status status) {
         this.status = status;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return id == user.id && Objects.equals(nom, user.nom) && Objects.equals(prenom, user.prenom) && Objects.equals(date_naiss, user.date_naiss) && Objects.equals(e_mail, user.e_mail) && Objects.equals(num_tel, user.num_tel) && Objects.equals(mot_de_pass, user.mot_de_pass) && Objects.equals(image, user.image) && role == user.role && status == user.status;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, nom, prenom, date_naiss, e_mail, num_tel, mot_de_pass, image, role, status);
     }
 
     @Override
@@ -135,19 +147,7 @@ public class User {
                 ", mot_de_pass='" + mot_de_pass + '\'' +
                 ", image='" + image + '\'' +
                 ", role=" + role +
-                ", status='" + status + '\'' +
+                ", status=" + status +
                 '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return id == user.id && Objects.equals(nom, user.nom) && Objects.equals(prenom, user.prenom) && Objects.equals(date_naiss, user.date_naiss) && Objects.equals(e_mail, user.e_mail) && Objects.equals(num_tel, user.num_tel) && Objects.equals(mot_de_pass, user.mot_de_pass) && Objects.equals(image, user.image) && role == user.role && Objects.equals(status, user.status);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, nom, prenom, date_naiss, e_mail, num_tel, mot_de_pass, image, role, status);
     }
 }

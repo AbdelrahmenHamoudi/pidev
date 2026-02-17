@@ -1,10 +1,10 @@
-package org.example.Services;
+package org.example.Services.hebergement;
 
-import org.example.Entites.Hebergement;
+import org.example.Entites.hebergement.Hebergement;
+import org.example.Services.CRUD;
 import org.example.Utils.MyBD;
 import org.example.Utils.Query;
 
-import javax.smartcardio.TerminalFactory;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,13 +23,14 @@ public class HebergementCRUD implements CRUD<Hebergement> {
         String sql = Query.addhebergementQuery;
         PreparedStatement ps = con.prepareStatement(sql);
 
-        ps.setString(7, h.getImage());
+
         ps.setString(1, h.getTitre());
         ps.setString(2, h.getDesc_hebergement());
         ps.setInt(3, h.getCapacite());
         ps.setString(4, h.getType_hebergement());
         ps.setBoolean(5, h.isDisponible_heberg());
         ps.setFloat(6, h.getPrixParNuit());
+        ps.setString(7, h.getImage());
 
 
         ps.executeUpdate();

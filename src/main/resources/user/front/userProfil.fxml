@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.Background?>
+<?import javafx.scene.layout.BackgroundFill?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane prefHeight="800" prefWidth="1100" stylesheets="@userProfil.css"
+            xmlns="http://javafx.com/javafx/22"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.Controllers.user.client.UserProfileController">
+
+    <!-- ============ BACKGROUND GRADIENT ============ -->
+    <background>
+        <Background>
+            <fills>
+                <BackgroundFill fill="linear-gradient(from 0% 0% to 100% 100%, #FEF9F0, #FFF5EB, #FEF2E6)" />
+            </fills>
+        </Background>
+    </background>
+
+    <!-- ============ TOP NAVIGATION BAR SIMPLE ============ -->
+    <top>
+        <VBox styleClass="nav-container">
+            <HBox alignment="CENTER_LEFT" spacing="30" styleClass="nav-bar">
+                <padding>
+                    <Insets bottom="15" left="40" right="40" top="15" />
+                </padding>
+
+                <!-- Logo RE7LA -->
+                <HBox alignment="CENTER" onMouseClicked="#handleLogoClick" spacing="12" styleClass="nav-logo">
+                    <StackPane styleClass="nav-logo-bg">
+                        <Circle radius="28" styleClass="nav-logo-circle" />
+                        <ImageView fitHeight="40" fitWidth="40" preserveRatio="true">
+                            <Image url="@../image/logo.png" />
+                        </ImageView>
+                    </StackPane>
+                    <VBox alignment="CENTER_LEFT">
+                        <Label styleClass="nav-logo-text" text="RE7LA" />
+                        <Label styleClass="nav-logo-subtext" text="Voyage en Tunisie" />
+                    </VBox>
+                    <Label styleClass="nav-logo-tunisia" text="🇹🇳" />
+                </HBox>
+
+                <Region HBox.hgrow="ALWAYS" />
+
+                <!-- Bouton Retour à l'accueil -->
+                <Button styleClass="btn-home" onAction="#handleHome" text="🏠 Accueil" />
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- ============ CENTER CONTENT ============ -->
+    <center>
+        <ScrollPane fitToWidth="true" fitToHeight="true" styleClass="content-scroll" hbarPolicy="NEVER">
+            <VBox spacing="30" styleClass="profile-content" alignment="TOP_CENTER">
+                <padding>
+                    <Insets top="30" right="50" bottom="50" left="50" />
+                </padding>
+
+                <!-- ===== HEADER PROFIL AVEC PHOTO ===== -->
+                <HBox spacing="40" alignment="CENTER_LEFT" styleClass="profile-header">
+                    <!-- Photo de profil -->
+                    <VBox alignment="CENTER" spacing="15" styleClass="profile-photo-section">
+                        <StackPane styleClass="profile-photo-container">
+                            <Circle radius="60" styleClass="profile-photo-circle" />
+                            <Circle radius="55" styleClass="profile-photo-circle-inner" />
+                            <ImageView fx:id="profilePhotoImage" fitHeight="100" fitWidth="100" preserveRatio="true" styleClass="profile-photo" />
+                            <Button styleClass="photo-edit-btn" text="✏️" onAction="#handleEditPhoto" />
+                        </StackPane>
+                        <Button styleClass="photo-change-btn" onAction="#handleChangePhoto" text="📷 Changer de photo" />
+                        <Label fx:id="photoFileNameLabel" styleClass="photo-filename" text="Aucune photo" />
+                    </VBox>
+
+                    <!-- Informations utilisateur résumées -->
+                    <VBox spacing="10">
+                        <Label fx:id="userNameDisplay" styleClass="profile-name" text="Ahmed Ben Ali" />
+                        <Label fx:id="userEmailDisplay" styleClass="profile-email" text="ahmed.benali@example.com" />
+                        <Label fx:id="userPointsDisplay" styleClass="profile-points" text="🏆 1250 points" />
+                    </VBox>
+
+                    <Region HBox.hgrow="ALWAYS" />
+                </HBox>
+
+                <!-- ===== FORMULAIRE DE MODIFICATION ===== -->
+                <VBox spacing="25" styleClass="form-card">
+                    <Label styleClass="form-title" text="✏️ Modifier mes informations" />
+
+                    <GridPane hgap="20" vgap="15" styleClass="form-grid">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="20" />
+                            <ColumnConstraints percentWidth="30" />
+                            <ColumnConstraints percentWidth="20" />
+                            <ColumnConstraints percentWidth="30" />
+                        </columnConstraints>
+
+                        <!-- Prénom -->
+                        <Label styleClass="form-label" text="👤 Prénom :" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                        <TextField fx:id="firstNameField" promptText="Votre prénom" styleClass="form-field" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                        <Label fx:id="firstNameError" styleClass="error-label" text="" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                        <!-- Nom -->
+                        <Label styleClass="form-label" text="👤 Nom :" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+                        <TextField fx:id="lastNameField" promptText="Votre nom" styleClass="form-field" GridPane.columnIndex="3" GridPane.rowIndex="0" />
+                        <Label fx:id="lastNameError" styleClass="error-label" text="" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+
+                        <!-- Email -->
+                        <Label styleClass="form-label" text="📧 Email :" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                        <TextField fx:id="emailField" promptText="votre.email@example.com" styleClass="form-field" GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.columnSpan="3" />
+                        <Label fx:id="emailError" styleClass="error-label" text="" GridPane.columnIndex="1" GridPane.rowIndex="3" GridPane.columnSpan="3" />
+
+                        <!-- Téléphone -->
+                        <Label styleClass="form-label" text="📞 Téléphone :" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                        <TextField fx:id="phoneField" promptText="+216 99 999 999" styleClass="form-field" GridPane.columnIndex="1" GridPane.rowIndex="4" GridPane.columnSpan="3" />
+                        <Label fx:id="phoneError" styleClass="error-label" text="" GridPane.columnIndex="1" GridPane.rowIndex="5" GridPane.columnSpan="3" />
+
+                        <!-- Date naissance -->
+                        <Label styleClass="form-label" text="📅 Date naissance :" GridPane.columnIndex="0" GridPane.rowIndex="6" />
+                        <DatePicker fx:id="birthDatePicker" promptText="JJ/MM/AAAA" styleClass="form-datepicker" GridPane.columnIndex="1" GridPane.rowIndex="6" GridPane.columnSpan="3" />
+                        <Label fx:id="birthDateError" styleClass="error-label" text="" GridPane.columnIndex="1" GridPane.rowIndex="7" GridPane.columnSpan="3" />
+
+                        <!-- Mot de passe (optionnel) -->
+                        <Label styleClass="form-label" text="🔒 Nouveau mot de passe :" GridPane.columnIndex="0" GridPane.rowIndex="8" />
+                        <PasswordField fx:id="newPasswordField" promptText="Laisser vide pour ne pas changer" styleClass="form-field" GridPane.columnIndex="1" GridPane.rowIndex="8" GridPane.columnSpan="3" />
+                        <Label fx:id="newPasswordError" styleClass="error-label" text="" GridPane.columnIndex="1" GridPane.rowIndex="9" GridPane.columnSpan="3" />
+
+                        <!-- Confirmation mot de passe -->
+                        <Label styleClass="form-label" text="✓ Confirmer :" GridPane.columnIndex="0" GridPane.rowIndex="10" />
+                        <PasswordField fx:id="confirmPasswordField" promptText="Confirmer le nouveau mot de passe" styleClass="form-field" GridPane.columnIndex="1" GridPane.rowIndex="10" GridPane.columnSpan="3" />
+                        <Label fx:id="confirmPasswordError" styleClass="error-label" text="" GridPane.columnIndex="1" GridPane.rowIndex="11" GridPane.columnSpan="3" />
+                    </GridPane>
+
+                    <!-- Boutons d'action -->
+                    <HBox spacing="15" alignment="CENTER">
+                        <Button styleClass="btn-primary" text="💾 Enregistrer les modifications" onAction="#handleSaveProfile" />
+                        <Button styleClass="btn-secondary" text="↺ Annuler" onAction="#handleCancel" />
+                    </HBox>
+                </VBox>
+
+                <!-- ===== SECTION ACTIONS DANGEREUSES ===== -->
+                <VBox spacing="20" styleClass="danger-zone">
+                    <Label styleClass="danger-title" text="⚠️ Zone dangereuse" />
+
+                    <HBox spacing="30" alignment="CENTER">
+                        <!-- Supprimer le compte -->
+                        <VBox spacing="15" alignment="CENTER" styleClass="danger-card">
+                            <StackPane styleClass="danger-icon">
+                                <Circle radius="35" fill="rgba(231,76,60,0.1)" />
+                                <Label styleClass="danger-emoji" text="🗑️" />
+                            </StackPane>
+                            <Label styleClass="danger-text" text="Supprimer mon compte" />
+                            <Label styleClass="danger-warning" text="Cette action est irréversible" />
+                            <Button styleClass="btn-danger" text="🗑️ Supprimer" onAction="#handleDeleteAccount" />
+                        </VBox>
+
+                        <!-- Déconnexion -->
+                        <VBox spacing="15" alignment="CENTER" styleClass="danger-card">
+                            <StackPane styleClass="danger-icon">
+                                <Circle radius="35" fill="rgba(52,152,219,0.1)" />
+                                <Label styleClass="danger-emoji" text="🚪" />
+                            </StackPane>
+                            <Label styleClass="danger-text" text="Déconnexion" />
+                            <Label styleClass="danger-warning" text="Se déconnecter de l'application" />
+                            <Button styleClass="btn-logout" text="🚪 Se déconnecter" onAction="#handleLogout" />
+                        </VBox>
+                    </HBox>
+                </VBox>
+
+                <!-- Message de confirmation pour la suppression -->
+                <Label styleClass="info-note" text="Note: La suppression de compte est définitive et supprimera toutes vos données." wrapText="true" />
+            </VBox>
+        </ScrollPane>
+    </center>
+
+    <!-- ============ FOOTER SIMPLE ============ -->
+    <bottom>
+        <VBox styleClass="footer" spacing="20">
+            <padding>
+                <Insets top="30" right="50" bottom="20" left="50" />
+            </padding>
+
+            <Region styleClass="footer-divider" />
+
+            <HBox alignment="CENTER" spacing="10">
+                <Label styleClass="footer-copyright" text="© 2026 RE7LA Tunisie. Tous droits réservés." />
+                <Label styleClass="footer-tunisia" text="🇹🇳" />
+            </HBox>
+        </VBox>
+    </bottom>
+</BorderPane>
