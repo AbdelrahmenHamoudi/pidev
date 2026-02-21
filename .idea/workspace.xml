@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="431c9e6b-677b-4bff-865a-a0c0bece7cc1" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/copilot.data.migration.ask2agent.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Controllers/hebergement/back/HebergementController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Controllers/hebergement/front/ReservationController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Controllers/user/ForgotPasswordController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Controllers/user/LoginController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Controllers/user/SignUpController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Controllers/user/admin/AdminLogsController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Controllers/user/admin/AdminNotificationsController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Controllers/user/admin/adminDashboardController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Controllers/user/admin/user/AdminUsersController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Controllers/user/admin/user/EmailVerificationController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Controllers/user/client/UserProfileController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Controllers/user/client/homeClientController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Controllers/user/customUserException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Entites/user/AdminActionLog.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Entites/user/AdminNotification.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Entites/user/ConnexionLog.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Entites/user/EmailVerificationToken.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Entites/user/Status.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Entites/user/UserStats.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/GUI/HomePage.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Services/hebergement/ReservationCRUD.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Services/user/APIservices/EmailService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Services/user/APIservices/JWTService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Services/user/AdminActionLogService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Services/user/AdminNotificationService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Services/user/ConnexionLogService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Services/user/EmailVerificationService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Services/user/LoyaltyService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Services/user/UserCRUD.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Tests/TestUpdatePasswordParam.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Utils/UserSession.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/hebergement/back/HebergementBack.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/hebergement/back/StyleHB.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/hebergement/back/image/logo.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/hebergement/front/Reservation.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/hebergement/front/StyleRSV.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/hebergement/front/image/logo.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/hebergement/front/image/rehla.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/user/back/adminLogs.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/user/back/adminNotifications.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/user/back/users.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/user/back/users.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/user/dashboard/adminDashboard.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/user/dashboard/adminDashboard.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/user/dashboard/homeClient.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/user/dashboard/homeClient.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/user/front/userProfil.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/user/front/userProfil.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/user/image/logo.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/user/login/forgotPassword.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/user/login/login.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/user/login/login.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/user/signup/signup.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/user/signup/signup.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/Services/hebergement/HebergementCRUDTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/Services/hebergement/ReservationCRUDTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/Services/user/UserCRUDTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/Re7la_User.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Entites/Hebergement.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Entites/hebergement/Hebergement.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Entites/Reservation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Entites/hebergement/Reservation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Entites/Role.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Entites/user/Role.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Entites/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Entites/user/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Services/CRUDuser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Services/user/CRUDuser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Services/HebergementCRUD.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Services/hebergement/HebergementCRUD.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Services/ReservationCRUD.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Services/UserCRUD.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Tests/MainConnection.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Utils/MyBD.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Utils/MyBD.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Utils/Query.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Utils/Query.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CopilotPersistence">
+    <persistenceIdMap>
+      <entry key="_C:/Users/Abderrahmen/Desktop/ggg/Integration/Re7la_User" value="39nTNkSvctGpHYjP2htVOynlhCL" />
+    </persistenceIdMap>
+  </component>
+  <component name="EmbeddingIndexingInfo">
+    <option name="cachedIndexableFilesCount" value="74" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JUnit5 Test Class" />
+        <option value="FxmlFile" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="McpProjectServerCommands">
+    <commands />
+    <urls />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 3
+}</component>
+  <component name="ProjectId" id="39nTNkSvctGpHYjP2htVOynlhCL" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Maven.Re7la_User [org.openjfx:javafx-maven-plugin:0.0.8:run].executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit5",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5": "",
+    "git-widget-placeholder": "Merging integration",
+    "junie.onboarding.icon.badge.shown": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/Abderrahmen/Desktop/ggg/Integration/Re7la_User",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
+    "settings.editor.selected.configurable": "preferences.lookFeel",
+    "to.speed.mode.migration.done": "true",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CreateTestDialog.Recents.Supers">
+      <recent name="" />
+    </key>
+    <key name="CreateTestDialog.RecentsKey">
+      <recent name="org.example.Services.hebergement" />
+      <recent name="org.example.Services.user" />
+    </key>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-30f59d01ecdd-2fc7cc6b9a17-intellij.indexing.shared.core-IU-253.30387.90" />
+        <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-IU-253.30387.90" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="431c9e6b-677b-4bff-865a-a0c0bece7cc1" name="Changes" comment="" />
+      <created>1771330796414</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1771330796414</updated>
+      <workItem from="1771330797468" duration="1494000" />
+      <workItem from="1771357691179" duration="4668000" />
+      <workItem from="1771438903302" duration="1402000" />
+      <workItem from="1771527917736" duration="959000" />
+      <workItem from="1771531302791" duration="11319000" />
+      <workItem from="1771543072853" duration="3000" />
+      <workItem from="1771543101950" duration="4731000" />
+      <workItem from="1771687120864" duration="1963000" />
+      <workItem from="1771696491313" duration="3453000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="github-copilot-workspace">
+    <instructionFileLocations>
+      <option value=".github/instructions" />
+    </instructionFileLocations>
+    <promptFileLocations>
+      <option value=".github/prompts" />
+    </promptFileLocations>
+  </component>
+</project>

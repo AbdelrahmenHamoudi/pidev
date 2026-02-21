@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.collections.FXCollections?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.shape.Rectangle?>
+
+<?import java.lang.String?>
+<AnchorPane prefHeight="750.0" prefWidth="1200.0"
+            stylesheets="@StyleRSV.css"
+            xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.Controllers.hebergement.front.ReservationController">
+
+    <!-- ================= BACKGROUND IMAGE PLEIN ÉCRAN ================= -->
+    <ImageView fx:id="backgroundImage"
+               AnchorPane.topAnchor="0"
+               AnchorPane.bottomAnchor="0"
+               AnchorPane.leftAnchor="0"
+               AnchorPane.rightAnchor="0"
+               fitHeight="900.0"
+               fitWidth="1850.0"
+               preserveRatio="false">
+        <image>
+            <Image url="@image/rehla.png"/>
+        </image>
+    </ImageView>
+
+    <!-- ================= OVERLAY SOMBRE ================= -->
+    <Rectangle AnchorPane.topAnchor="0"
+               AnchorPane.bottomAnchor="0"
+               AnchorPane.leftAnchor="0"
+               AnchorPane.rightAnchor="0"
+               fill="rgba(0, 0, 0, 0.5)"/>
+
+    <!-- ================= CONTENU PRINCIPAL ================= -->
+    <VBox AnchorPane.topAnchor="0"
+          AnchorPane.bottomAnchor="0"
+          AnchorPane.leftAnchor="0"
+          AnchorPane.rightAnchor="0">
+
+        <!-- ================= HEADER AMÉLIORÉ ================= -->
+        <HBox alignment="CENTER_LEFT"
+              spacing="25"
+              styleClass="header">
+            <padding>
+                <Insets top="15" bottom="15" left="30" right="30"/>
+            </padding>
+
+            <!-- Logo et titre -->
+            <HBox spacing="15" alignment="CENTER_LEFT">
+                <ImageView fitHeight="40" fitWidth="40">
+                    <image>
+                        <Image url="@image/logo.png"/>
+                    </image>
+                </ImageView>
+                <VBox>
+                    <Label text="REHLA Travel" styleClass="logo-title"/>
+                    <Label text="Gestion des Réservations" styleClass="logo-subtitle"/>
+                </VBox>
+            </HBox>
+
+            <!-- Menu de navigation -->
+            <HBox spacing="25" styleClass="nav-menu" alignment="CENTER">
+                <Label text="Accueil" styleClass="nav-item-active"/>
+                <Label text="Mes Réservations" styleClass="nav-item" onMouseClicked="#handleMesReservations"/>
+            </HBox>
+
+            <!-- Boutons Accueil et Profil AJOUTÉS -->
+            <Button fx:id="btnAccueil" text="🏠 Accueil" styleClass="nav-link" onAction="#goToAccueil" />
+            <Button fx:id="btnProfil" text="👤 Profil" styleClass="nav-link" onAction="#goToProfil" />
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <!-- Profil utilisateur connecté -->
+            <HBox styleClass="profile-chip" spacing="10">
+                <Circle fill="#F7DC6F" radius="16"/>
+                <VBox>
+                    <Label fx:id="userNameLabel" text="Utilisateur" style="-fx-font-weight:bold; -fx-text-fill:white;"/>
+                    <Label fx:id="userEmailLabel" text="email@example.com" style="-fx-font-size:11px; -fx-text-fill:white;"/>
+                </VBox>
+            </HBox>
+        </HBox>
+
+        <!-- ================= CONTENT ================= -->
+        <ScrollPane fitToWidth="true"
+                    fitToHeight="true"
+                    styleClass="main-scroll-pane"
+                    VBox.vgrow="ALWAYS">
+
+            <VBox spacing="30" styleClass="content-area">
+
+                <!-- ================= SECTION ACCUEIL AVEC RECHERCHE ================= -->
+                <VBox spacing="15" styleClass="welcome-section">
+                    <padding>
+                        <Insets top="20" bottom="15"/>
+                    </padding>
+
+                    <Label text="Bienvenue sur RE7LA" styleClass="welcome-title"/>
+                    <Label text="Où souhaitez-vous séjourner ?" styleClass="welcome-subtitle"/>
+
+                    <!-- BARRE DE RECHERCHE -->
+                    <HBox spacing="8" styleClass="search-box-large" alignment="CENTER">
+                        <padding>
+                            <Insets top="10" bottom="10" left="15" right="15"/>
+                        </padding>
+                        <Label text="🔍" style="-fx-font-size: 16px;"/>
+                        <TextField fx:id="searchHebergementField"
+                                   promptText="Rechercher un hébergement par ville, nom ou prix..."
+                                   styleClass="search-field-large"
+                                   HBox.hgrow="ALWAYS"/>
+                    </HBox>
+
+                    <HBox alignment="CENTER" spacing="8" styleClass="welcome-decoration">
+                        <Circle radius="3" fill="#F7DC6F" opacity="0.6"/>
+                        <Circle radius="5" fill="#F7DC6F" opacity="0.8"/>
+                        <Circle radius="3" fill="#F7DC6F" opacity="0.6"/>
+                    </HBox>
+                </VBox>
+
+                <!-- ================= SECTION PRINCIPALE ================= -->
+                <HBox spacing="40">
+
+                    <!-- Hébergements Disponibles -->
+                    <VBox styleClass="card" spacing="20" HBox.hgrow="ALWAYS">
+                        <Label text="🏨 Hébergements Disponibles" styleClass="card-title"/>
+                        <TilePane fx:id="tileHebergements" prefColumns="3" hgap="20" vgap="20"/>
+                    </VBox>
+
+                    <!-- Formulaire Nouvelle Réservation -->
+                    <VBox styleClass="card" spacing="20" prefWidth="420">
+                        <Label text="📝 Nouvelle Réservation" styleClass="card-title"/>
+
+                        <!-- Hébergement sélectionné -->
+                        <HBox spacing="15" alignment="CENTER_LEFT">
+                            <StackPane styleClass="hebergement-image-container">
+                                <ImageView fx:id="hebergementImage"
+                                           fitHeight="90"
+                                           fitWidth="120"
+                                           preserveRatio="true"
+                                           styleClass="hebergement-image"/>
+                            </StackPane>
+                            <VBox spacing="5">
+                                <Label fx:id="selectedHebergementTitre"
+                                       text="Aucun hébergement sélectionné..."
+                                       styleClass="selected-title"/>
+                                <Label fx:id="selectedHebergementPrix"
+                                       styleClass="price-large"/>
+                            </VBox>
+                        </HBox>
+
+                        <!-- Informations utilisateur (non modifiables) -->
+                        <VBox spacing="10" styleClass="user-info-box">
+                            <Label text="👤 Vos informations" styleClass="section-subtitle"/>
+                            <GridPane hgap="10" vgap="5">
+                                <Label text="Nom:" styleClass="info-label" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                                <Label fx:id="userNomLabel" styleClass="info-value" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                                <Label text="Prénom:" styleClass="info-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                                <Label fx:id="userPrenomLabel" styleClass="info-value" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                                <Label text="Email:" styleClass="info-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                                <Label fx:id="userEmailInfoLabel" styleClass="info-value" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                                <Label text="Téléphone:" styleClass="info-label" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                                <Label fx:id="userTelLabel" styleClass="info-value" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                            </GridPane>
+                        </VBox>
+
+                        <!-- Formulaire avec validation -->
+                        <GridPane hgap="15" vgap="15">
+                            <!-- Ligne 0 : Date Début * -->
+                            <Label text="Date Début *" styleClass="form-label" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                            <DatePicker fx:id="dateDebutPicker" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                            <Label fx:id="lblDateDebutErreur" styleClass="error-label" GridPane.rowIndex="1" GridPane.columnIndex="1" visible="false" managed="false"/>
+
+                            <!-- Ligne 2 : Date Fin * -->
+                            <Label text="Date Fin *" styleClass="form-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                            <DatePicker fx:id="dateFinPicker" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                            <Label fx:id="lblDateFinErreur" styleClass="error-label" GridPane.rowIndex="3" GridPane.columnIndex="1" visible="false" managed="false"/>
+
+                            <!-- Ligne 4 : Prix Total -->
+                            <Label text="Prix Total" styleClass="form-label" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                            <TextField fx:id="txtPrixTotal" editable="false" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+
+                            <!-- Ligne 5 : Statut -->
+                            <Label text="Statut" styleClass="form-label" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+                            <ComboBox fx:id="comboStatut" GridPane.rowIndex="5" GridPane.columnIndex="1">
+                                <items>
+                                    <FXCollections fx:factory="observableArrayList">
+                                        <String fx:value="EN ATTENTE"/>
+                                        <String fx:value="CONFIRMÉE"/>
+                                        <String fx:value="ANNULÉE"/>
+                                        <String fx:value="TERMINÉE"/>
+                                    </FXCollections>
+                                </items>
+                            </ComboBox>
+                        </GridPane>
+
+                        <!-- Boutons -->
+                        <VBox spacing="12">
+                            <Button fx:id="btnReserver" text="💾 Réserver" styleClass="action-button" onAction="#reserver"/>
+                            <Button fx:id="btnAnnuler" text="↺ Annuler" styleClass="secondary-button" onAction="#annuler"/>
+                        </VBox>
+
+                    </VBox>
+                </HBox>
+            </VBox>
+        </ScrollPane>
+    </VBox>
+</AnchorPane>
