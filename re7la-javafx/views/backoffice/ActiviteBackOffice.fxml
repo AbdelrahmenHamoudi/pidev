@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" 
+            fx:controller="controllers.backoffice.ActiviteBackOfficeController"
+            styleClass="admin-container" stylesheets="@../../resources/css/re7la-styles.css">
+    
+    <!-- Header -->
+    <top>
+        <VBox styleClass="admin-header" spacing="10">
+            <HBox alignment="CENTER_LEFT" spacing="15">
+                <Text text="🎯" style="-fx-font-size: 35px;"/>
+                <VBox>
+                    <Text text="Gestion des Activités" styleClass="admin-title"/>
+                    <Text text="Administration RE7LA - Module Activités" styleClass="admin-subtitle"/>
+                </VBox>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="+ Nouvelle Activité" styleClass="btn-primary" onAction="#showAddActiviteDialog"/>
+            </HBox>
+        </VBox>
+    </top>
+    
+    <!-- Center Content -->
+    <center>
+        <VBox spacing="20" VBox.vgrow="ALWAYS">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            
+            <!-- Search and Filter Bar -->
+            <HBox spacing="15" alignment="CENTER_LEFT" styleClass="card">
+                <TextField fx:id="searchField" promptText="🔍 Rechercher une activité..." styleClass="search-box" HBox.hgrow="ALWAYS"/>
+                <ComboBox fx:id="filterTypeCombo" promptText="Type" prefWidth="150" styleClass="combo-box"/>
+                <ComboBox fx:id="filterStatutCombo" promptText="Statut" prefWidth="150" styleClass="combo-box"/>
+                <Button text="🔄 Actualiser" styleClass="btn-secondary" onAction="#refreshTable"/>
+            </HBox>
+            
+            <!-- Statistics Cards -->
+            <HBox spacing="20" alignment="CENTER">
+                <VBox styleClass="stat-card" spacing="5" HBox.hgrow="ALWAYS" alignment="CENTER">
+                    <Text fx:id="totalActivitesText" text="0" styleClass="stat-value"/>
+                    <Text text="Total Activités" styleClass="stat-label"/>
+                </VBox>
+                <VBox styleClass="stat-card" spacing="5" HBox.hgrow="ALWAYS" alignment="CENTER">
+                    <Text fx:id="activitesActivesText" text="0" styleClass="stat-value" style="-fx-text-fill: #1ABC9C;"/>
+                    <Text text="Actives" styleClass="stat-label"/>
+                </VBox>
+                <VBox styleClass="stat-card" spacing="5" HBox.hgrow="ALWAYS" alignment="CENTER">
+                    <Text fx:id="capaciteTotaleText" text="0" styleClass="stat-value" style="-fx-text-fill: #F7DC6F;"/>
+                    <Text text="Capacité Totale" styleClass="stat-label"/>
+                </VBox>
+            </HBox>
+            
+            <!-- Table -->
+            <VBox styleClass="card" VBox.vgrow="ALWAYS">
+                <VBox.margin>
+                    <Insets top="10"/>
+                </VBox.margin>
+                
+                <Text text="📋 Liste des Activités" styleClass="card-header"/>
+                
+                <TableView fx:id="activitesTable" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="idColumn" text="ID" prefWidth="60"/>
+                        <TableColumn fx:id="nomColumn" text="Nom" prefWidth="200"/>
+                        <TableColumn fx:id="lieuColumn" text="Lieu" prefWidth="150"/>
+                        <TableColumn fx:id="typeColumn" text="Type" prefWidth="120"/>
+                        <TableColumn fx:id="prixColumn" text="Prix (DT)" prefWidth="100"/>
+                        <TableColumn fx:id="capaciteColumn" text="Capacité" prefWidth="100"/>
+                        <TableColumn fx:id="statutColumn" text="Statut" prefWidth="120"/>
+                        <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="200"/>
+                    </columns>
+                    <placeholder>
+                        <VBox alignment="CENTER" spacing="10">
+                            <Text text="📭" style="-fx-font-size: 48px;"/>
+                            <Text text="Aucune activité trouvée" style="-fx-font-size: 16px; -fx-fill: #7F8C8D;"/>
+                        </VBox>
+                    </placeholder>
+                </TableView>
+            </VBox>
+        </VBox>
+    </center>
+</BorderPane>

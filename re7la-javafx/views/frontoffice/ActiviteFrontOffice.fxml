@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" 
+            fx:controller="controllers.frontoffice.ActiviteFrontOfficeController"
+            styleClass="front-container" stylesheets="@../../resources/css/re7la-styles.css">
+    
+    <!-- Header -->
+    <top>
+        <VBox styleClass="front-header" spacing="15">
+            <HBox alignment="CENTER_LEFT" spacing="20">
+                <ImageView fitWidth="80" fitHeight="80" preserveRatio="true">
+                    <!-- Logo RE7LA ici -->
+                </ImageView>
+                <VBox spacing="5">
+                    <Text text="RE7LA" styleClass="front-title"/>
+                    <Text text="Découvrez des expériences inoubliables" styleClass="front-subtitle"/>
+                </VBox>
+            </HBox>
+            
+            <!-- Search Bar -->
+            <HBox spacing="15" alignment="CENTER">
+                <TextField fx:id="searchField" promptText="🔍 Rechercher une activité, un lieu..." 
+                          styleClass="search-box" HBox.hgrow="ALWAYS" prefWidth="500"/>
+                <Button text="Rechercher" styleClass="btn-primary"/>
+            </HBox>
+        </VBox>
+    </top>
+    
+    <!-- Main Content -->
+    <center>
+        <HBox spacing="20" HBox.hgrow="ALWAYS">
+            <padding>
+                <Insets top="25" right="25" bottom="25" left="25"/>
+            </padding>
+            
+            <!-- Filters Sidebar -->
+            <VBox styleClass="filter-box" spacing="20" prefWidth="280" maxWidth="280">
+                <Text text="🔎 Filtres" styleClass="filter-title"/>
+                
+                <Separator/>
+                
+                <VBox spacing="10">
+                    <Label text="Type d'activité" style="-fx-font-weight: bold; -fx-text-fill: #2C3E50;"/>
+                    <VBox fx:id="typeFiltersBox" spacing="8">
+                        <!-- CheckBoxes will be added dynamically -->
+                    </VBox>
+                </VBox>
+                
+                <Separator/>
+                
+                <VBox spacing="10">
+                    <Label text="Prix maximum (DT)" style="-fx-font-weight: bold; -fx-text-fill: #2C3E50;"/>
+                    <Slider fx:id="prixSlider" min="0" max="200" value="200" showTickLabels="true" showTickMarks="true" 
+                           majorTickUnit="50" blockIncrement="10"/>
+                    <Text fx:id="prixText" text="0 - 200 DT" style="-fx-font-size: 13px; -fx-fill: #F39C12; -fx-font-weight: bold;"/>
+                </VBox>
+                
+                <Separator/>
+                
+                <VBox spacing="10">
+                    <Label text="Lieu" style="-fx-font-weight: bold; -fx-text-fill: #2C3E50;"/>
+                    <ComboBox fx:id="lieuCombo" promptText="Tous les lieux" prefWidth="250"/>
+                </VBox>
+                
+                <Separator/>
+                
+                <VBox spacing="10">
+                    <Label text="Disponibilité" style="-fx-font-weight: bold; -fx-text-fill: #2C3E50;"/>
+                    <CheckBox fx:id="disponibleCheckbox" text="Uniquement disponibles" selected="true"/>
+                </VBox>
+                
+                <Region VBox.vgrow="ALWAYS"/>
+                
+                <Button text="🔄 Réinitialiser les filtres" styleClass="btn-secondary" maxWidth="Infinity" 
+                       onAction="#resetFilters"/>
+            </VBox>
+            
+            <!-- Activities Grid -->
+            <VBox spacing="20" HBox.hgrow="ALWAYS">
+                <!-- Results Header -->
+                <HBox alignment="CENTER_LEFT" spacing="15">
+                    <Text fx:id="resultsCountText" text="12 activités trouvées" 
+                         style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-fill: #2C3E50;"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Label text="Trier par:" style="-fx-text-fill: #7F8C8D;"/>
+                    <ComboBox fx:id="sortCombo" value="Popularité" prefWidth="150">
+                        <items>
+                            <FXCollections fx:factory="observableArrayList">
+                                <String fx:value="Popularité"/>
+                                <String fx:value="Prix croissant"/>
+                                <String fx:value="Prix décroissant"/>
+                                <String fx:value="Nom A-Z"/>
+                            </FXCollections>
+                        </items>
+                    </ComboBox>
+                </HBox>
+                
+                <!-- ScrollPane for Activities -->
+                <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" 
+                           style="-fx-background-color: transparent; -fx-border-color: transparent;">
+                    <FlowPane fx:id="activitiesFlowPane" hgap="20" vgap="20" prefWrapLength="800">
+                        <!-- Activity cards will be added dynamically -->
+                    </FlowPane>
+                </ScrollPane>
+            </VBox>
+        </HBox>
+    </center>
+</BorderPane>

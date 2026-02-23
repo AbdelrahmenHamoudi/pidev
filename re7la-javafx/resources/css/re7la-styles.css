@@ -1,0 +1,403 @@
+/* ===========================
+   RE7LA - Charte Graphique
+   =========================== */
+/* Couleurs principales:
+   Orange: #F39C12
+   Beige: #FAFAFA
+   Jaune: #F7DC6F
+   Bleu foncé: #2C3E50
+   Turquoise: #1ABC9C
+*/
+
+/* ===========================
+   STYLES GÉNÉRAUX
+   =========================== */
+.root {
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+    -fx-background-color: #FAFAFA;
+}
+
+/* ===========================
+   BACK OFFICE - STYLES ADMIN
+   =========================== */
+.admin-container {
+    -fx-background-color: #FAFAFA;
+    -fx-padding: 20;
+}
+
+.admin-header {
+    -fx-background-color: #2C3E50;
+    -fx-padding: 20;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 10, 0, 0, 3);
+}
+
+.admin-title {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.admin-subtitle {
+    -fx-font-size: 14px;
+    -fx-text-fill: #F7DC6F;
+}
+
+/* Boutons principaux */
+.btn-primary {
+    -fx-background-color: #F39C12;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 12 25;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(243,156,18,0.4), 8, 0, 0, 2);
+}
+
+.btn-primary:hover {
+    -fx-background-color: #E67E22;
+    -fx-scale-y: 1.03;
+    -fx-scale-x: 1.03;
+}
+
+.btn-success {
+    -fx-background-color: #1ABC9C;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 10 20;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+}
+
+.btn-success:hover {
+    -fx-background-color: #16A085;
+}
+
+.btn-danger {
+    -fx-background-color: #E74C3C;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 10 20;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+}
+
+.btn-danger:hover {
+    -fx-background-color: #C0392B;
+}
+
+.btn-secondary {
+    -fx-background-color: #95A5A6;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-padding: 10 20;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+}
+
+.btn-secondary:hover {
+    -fx-background-color: #7F8C8D;
+}
+
+/* Cards et Panels */
+.card {
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-padding: 20;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 15, 0, 0, 5);
+}
+
+.card-header {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2C3E50;
+    -fx-padding: 0 0 15 0;
+}
+
+/* Formulaires */
+.form-label {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2C3E50;
+}
+
+.text-field, .text-area, .combo-box {
+    -fx-background-color: white;
+    -fx-border-color: #E0E0E0;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 10;
+    -fx-font-size: 13px;
+}
+
+.text-field:focused, .text-area:focused, .combo-box:focused {
+    -fx-border-color: #F39C12;
+    -fx-border-width: 2;
+}
+
+/* TableView */
+.table-view {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-border-color: #E0E0E0;
+    -fx-border-radius: 10;
+}
+
+.table-view .column-header {
+    -fx-background-color: #2C3E50;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-padding: 12;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #2C3E50;
+}
+
+.table-row-cell {
+    -fx-padding: 8;
+}
+
+.table-row-cell:hover {
+    -fx-background-color: #F7DC6F33;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: #1ABC9C;
+    -fx-text-fill: white;
+}
+
+.table-cell {
+    -fx-alignment: CENTER-LEFT;
+    -fx-padding: 5 10;
+}
+
+/* SearchBar */
+.search-box {
+    -fx-background-color: white;
+    -fx-border-color: #E0E0E0;
+    -fx-border-radius: 25;
+    -fx-background-radius: 25;
+    -fx-padding: 10 20;
+    -fx-font-size: 14px;
+    -fx-pref-width: 350;
+}
+
+.search-box:focused {
+    -fx-border-color: #F39C12;
+    -fx-border-width: 2;
+}
+
+/* ===========================
+   FRONT OFFICE - STYLES CLIENT
+   =========================== */
+.front-container {
+    -fx-background-color: linear-gradient(to bottom, #FAFAFA 0%, #F5F5F5 100%);
+}
+
+.front-header {
+    -fx-background-color: linear-gradient(to right, #2C3E50 0%, #34495E 100%);
+    -fx-padding: 25;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 15, 0, 0, 5);
+}
+
+.front-title {
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.front-subtitle {
+    -fx-font-size: 16px;
+    -fx-text-fill: #F7DC6F;
+}
+
+/* Activity Cards */
+.activity-card {
+    -fx-background-color: white;
+    -fx-background-radius: 15;
+    -fx-padding: 0;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 20, 0, 0, 8);
+    -fx-cursor: hand;
+}
+
+.activity-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(243,156,18,0.3), 25, 0, 0, 10);
+    -fx-scale-y: 1.02;
+    -fx-scale-x: 1.02;
+}
+
+.activity-image {
+    -fx-background-radius: 15 15 0 0;
+}
+
+.activity-content {
+    -fx-padding: 20;
+}
+
+.activity-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2C3E50;
+}
+
+.activity-location {
+    -fx-font-size: 13px;
+    -fx-text-fill: #7F8C8D;
+}
+
+.activity-description {
+    -fx-font-size: 14px;
+    -fx-text-fill: #5D6D7E;
+    -fx-wrap-text: true;
+}
+
+.activity-price {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #F39C12;
+}
+
+.activity-type-badge {
+    -fx-background-color: #1ABC9C;
+    -fx-text-fill: white;
+    -fx-padding: 5 12;
+    -fx-background-radius: 15;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.activity-status-available {
+    -fx-background-color: #27AE60;
+    -fx-text-fill: white;
+    -fx-padding: 5 12;
+    -fx-background-radius: 15;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.activity-status-complet {
+    -fx-background-color: #E74C3C;
+    -fx-text-fill: white;
+    -fx-padding: 5 12;
+    -fx-background-radius: 15;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+/* Planning Cards */
+.planning-card {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-padding: 15;
+    -fx-border-color: #E0E0E0;
+    -fx-border-radius: 10;
+    -fx-border-width: 1;
+}
+
+.planning-card:hover {
+    -fx-border-color: #F39C12;
+    -fx-border-width: 2;
+}
+
+.planning-date {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2C3E50;
+}
+
+.planning-time {
+    -fx-font-size: 14px;
+    -fx-text-fill: #F39C12;
+    -fx-font-weight: bold;
+}
+
+.planning-places {
+    -fx-font-size: 13px;
+    -fx-text-fill: #1ABC9C;
+}
+
+/* Filters */
+.filter-box {
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-padding: 20;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 10, 0, 0, 3);
+}
+
+.filter-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2C3E50;
+}
+
+/* Badges et Labels */
+.badge-orange {
+    -fx-background-color: #F39C12;
+    -fx-text-fill: white;
+    -fx-padding: 4 10;
+    -fx-background-radius: 12;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.badge-turquoise {
+    -fx-background-color: #1ABC9C;
+    -fx-text-fill: white;
+    -fx-padding: 4 10;
+    -fx-background-radius: 12;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.badge-blue {
+    -fx-background-color: #2C3E50;
+    -fx-text-fill: white;
+    -fx-padding: 4 10;
+    -fx-background-radius: 12;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+/* ScrollPane */
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+/* Separators */
+.separator {
+    -fx-background-color: #E0E0E0;
+}
+
+/* Stats Cards (Dashboard) */
+.stat-card {
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-padding: 20;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 12, 0, 0, 4);
+}
+
+.stat-value {
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #F39C12;
+}
+
+.stat-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #7F8C8D;
+}
+
+.stat-icon {
+    -fx-font-size: 48px;
+    -fx-text-fill: #1ABC9C;
+}

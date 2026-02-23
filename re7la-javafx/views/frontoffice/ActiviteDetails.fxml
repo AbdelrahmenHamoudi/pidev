@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" 
+            fx:controller="controllers.frontoffice.ActiviteDetailsController"
+            styleClass="front-container" stylesheets="@../../resources/css/re7la-styles.css"
+            prefWidth="900" prefHeight="700">
+    
+    <!-- Header -->
+    <top>
+        <VBox styleClass="front-header" spacing="10">
+            <HBox alignment="CENTER_LEFT" spacing="15">
+                <Button text="← Retour" styleClass="btn-secondary" onAction="#goBack"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Text text="RE7LA" styleClass="front-title" style="-fx-font-size: 24px;"/>
+            </HBox>
+        </VBox>
+    </top>
+    
+    <!-- Main Content -->
+    <center>
+        <ScrollPane fitToWidth="true" fitToHeight="true" style="-fx-background-color: transparent;">
+            <VBox spacing="25">
+                <padding>
+                    <Insets top="30" right="30" bottom="30" left="30"/>
+                </padding>
+                
+                <!-- Activity Hero Section -->
+                <HBox spacing="30" styleClass="card">
+                    <!-- Image -->
+                    <StackPane prefWidth="350" prefHeight="250" style="-fx-background-color: linear-gradient(to bottom right, #F39C12, #F7DC6F); -fx-background-radius: 12;">
+                        <Text fx:id="activityIcon" text="🎯" style="-fx-font-size: 80px;"/>
+                    </StackPane>
+                    
+                    <!-- Info -->
+                    <VBox spacing="15" HBox.hgrow="ALWAYS">
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <Label fx:id="typeBadge" text="Type" styleClass="activity-type-badge"/>
+                            <Label fx:id="statusBadge" text="Disponible" styleClass="activity-status-available"/>
+                        </HBox>
+                        
+                        <Text fx:id="activityTitle" text="Nom de l'activité" 
+                             style="-fx-font-size: 32px; -fx-font-weight: bold; -fx-fill: #2C3E50;"/>
+                        
+                        <HBox spacing="8" alignment="CENTER_LEFT">
+                            <Text text="📍" style="-fx-font-size: 18px;"/>
+                            <Text fx:id="activityLocation" text="Lieu" 
+                                 style="-fx-font-size: 16px; -fx-fill: #7F8C8D;"/>
+                        </HBox>
+                        
+                        <Text fx:id="activityDescription" text="Description de l'activité..." 
+                             style="-fx-font-size: 14px; -fx-fill: #5D6D7E; -fx-wrap-text: true;"/>
+                        
+                        <Separator/>
+                        
+                        <HBox spacing="40">
+                            <VBox spacing="5" alignment="CENTER">
+                                <Text text="💰" style="-fx-font-size: 28px;"/>
+                                <Text text="Prix par personne" style="-fx-font-size: 12px; -fx-fill: #7F8C8D;"/>
+                                <Text fx:id="activityPrice" text="0 DT" 
+                                     style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-fill: #F39C12;"/>
+                            </VBox>
+                            
+                            <Separator orientation="VERTICAL"/>
+                            
+                            <VBox spacing="5" alignment="CENTER">
+                                <Text text="👥" style="-fx-font-size: 28px;"/>
+                                <Text text="Capacité maximale" style="-fx-font-size: 12px; -fx-fill: #7F8C8D;"/>
+                                <Text fx:id="activityCapacity" text="0 personnes" 
+                                     style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-fill: #2C3E50;"/>
+                            </VBox>
+                        </HBox>
+                    </VBox>
+                </HBox>
+                
+                <!-- Plannings Section -->
+                <VBox styleClass="card" spacing="20">
+                    <HBox alignment="CENTER_LEFT" spacing="15">
+                        <Text text="📅 Plannings Disponibles" 
+                             style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-fill: #2C3E50;"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <ComboBox fx:id="dateFilterCombo" promptText="Filtrer par date" prefWidth="200"/>
+                    </HBox>
+                    
+                    <Separator/>
+                    
+                    <ScrollPane fitToWidth="true" prefHeight="300" 
+                               style="-fx-background-color: transparent; -fx-border-color: transparent;">
+                        <VBox fx:id="planningsContainer" spacing="15">
+                            <!-- Planning cards will be added dynamically -->
+                        </VBox>
+                    </ScrollPane>
+                    
+                    <VBox fx:id="emptyPlanningsState" alignment="CENTER" spacing="15" visible="false" managed="false">
+                        <Text text="📅" style="-fx-font-size: 48px;"/>
+                        <Text text="Aucun planning disponible pour le moment" 
+                             style="-fx-font-size: 16px; -fx-fill: #7F8C8D;"/>
+                        <Text text="Revenez plus tard ou contactez-nous pour plus d'informations" 
+                             style="-fx-font-size: 13px; -fx-fill: #95A5A6;"/>
+                    </VBox>
+                </VBox>
+                
+                <!-- Action Buttons -->
+                <HBox spacing="15" alignment="CENTER">
+                    <Button text="❤️ Ajouter aux favoris" styleClass="btn-secondary" prefWidth="200"/>
+                    <Button text="📤 Partager" styleClass="btn-secondary" prefWidth="150"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="📞 Nous contacter" styleClass="btn-primary" prefWidth="200"/>
+                </HBox>
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>
