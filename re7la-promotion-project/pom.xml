@@ -81,6 +81,26 @@
             <artifactId>io</artifactId>
             <version>7.2.5</version>
         </dependency>
+        <!-- ══ AnimateFX — Animations JavaFX ══ -->
+        <dependency>
+            <groupId>io.github.typhon0</groupId>
+            <artifactId>AnimateFX</artifactId>
+            <version>1.2.3</version>
+        </dependency>
+
+        <!-- ══ Quartz Scheduler — Jobs automatiques ══ -->
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+            <version>2.3.2</version>
+        </dependency>
+
+        <!-- SLF4J requis par Quartz (logging) -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.36</version>
+        </dependency>
     </dependencies>
 
     <build>

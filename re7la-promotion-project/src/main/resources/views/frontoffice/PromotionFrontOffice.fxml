@@ -134,11 +134,8 @@
                                 VBox.vgrow="ALWAYS"
                                 style="-fx-background-color: transparent; -fx-border-color: transparent;">
 
-                        <FlowPane fx:id="promotionsFlowPane"
-                                  hgap="20"
-                                  vgap="20"
-                                  prefWrapLength="900"
-                                  prefHeight="600"/>
+                        <GridPane fx:id="promotionsGrid"
+                                  hgap="16" vgap="16" />
                     </ScrollPane>
 
                 </VBox>

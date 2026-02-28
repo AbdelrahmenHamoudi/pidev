@@ -6,13 +6,14 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import org.example.models.Promotion;
 import org.example.models.ReservationPromo;
+import org.example.services.PromotionService;
 import org.example.services.ReservationPromoService;
+import org.example.services.SmartDiscountEngine;
 import org.example.utils.SessionManager;
 
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-
 
 public class ReservationDialogController {
 
@@ -31,84 +32,63 @@ public class ReservationDialogController {
 
     private Promotion promotion;
     private ReservationPromoService reservationService;
+    private PromotionService promotionService;
     private static final float PRIX_PAR_JOUR_DEFAUT = 50.0f;
 
     public void initialize() {
         reservationService = new ReservationPromoService();
+        promotionService   = new PromotionService();
 
-
-        // Listeners pour recalcul automatique
         dateDebutPicker.valueProperty().addListener((obs, oldVal, newVal) -> calculerPrix());
-        dateFinPicker.valueProperty().addListener((obs, oldVal, newVal) -> calculerPrix());
-
+        dateFinPicker.valueProperty().addListener((obs, oldVal, newVal)   -> calculerPrix());
     }
 
-    /**
-     * Initialiser le dialog avec une promotion
-     */
     public void setPromotion(Promotion promo) {
         this.promotion = promo;
 
-        // Afficher infos promotion
         txtNomPromo.setText(promo.getName());
-        // ✅ NOUVEAU - Afficher avec "TND"
-        txtPrixParJour.setText(String.format("%.2f TND", PRIX_PAR_JOUR_DEFAUT));
+
+        float prixParJour = promo.getPrixParJour() != null ? promo.getPrixParJour() : PRIX_PAR_JOUR_DEFAUT;
+        txtPrixParJour.setText(String.format("%.2f TND", prixParJour));
 
         String periodePromo = promo.getStartDate().toString() + " → " + promo.getEndDate().toString();
         txtPeriodePromo.setText(periodePromo);
-        float prixParJour = promo.getPrixParJour() != null ? promo.getPrixParJour() : 50.0f;
 
-        System.out.println("🔍 Prix calculé: " + prixParJour);
-        System.out.println("🔍 Avant setText: " + txtPrixParJour.getText());
-
-        txtPrixParJour.setText(String.format("%.2f TND", prixParJour));
-
-        System.out.println("🔍 Après setText: " + txtPrixParJour.getText());
-
-        // Afficher réduction
+        // Réduction — affichage propre sans mention "Smart"
         String reduction = "";
-        if (promo.getDiscountPercentage() != null) {
+        if (promo.getDiscountPercentage() != null)
             reduction = "-" + String.format("%.0f", promo.getDiscountPercentage()) + "%";
-        }
-        if (promo.getDiscountFixed() != null) {
+        if (promo.getDiscountFixed() != null)
             reduction = "-" + String.format("%.0f", promo.getDiscountFixed()) + " TND";
-        }
         txtReduction.setText(reduction);
 
-        // Configurer les dates min/max
+        // ✅ FIX nb_vues — incrémenter quand l'user ouvre le dialog
+        promotionService.incrementVues(promo.getId());
+
+        // Dates min/max
         dateDebutPicker.setDayCellFactory(picker -> new DateCell() {
-            @Override
-            public void updateItem(LocalDate date, boolean empty) {
+            @Override public void updateItem(LocalDate date, boolean empty) {
                 super.updateItem(date, empty);
-                LocalDate minDate = promo.getStartDate().toLocalDate();
-                LocalDate maxDate = promo.getEndDate().toLocalDate();
-                setDisable(empty || date.isBefore(minDate) || date.isAfter(maxDate));
+                setDisable(empty || date.isBefore(promo.getStartDate().toLocalDate())
+                        || date.isAfter(promo.getEndDate().toLocalDate()));
             }
         });
 
         dateFinPicker.setDayCellFactory(picker -> new DateCell() {
-            @Override
-            public void updateItem(LocalDate date, boolean empty) {
+            @Override public void updateItem(LocalDate date, boolean empty) {
                 super.updateItem(date, empty);
-                LocalDate minDate = promo.getStartDate().toLocalDate();
-                LocalDate maxDate = promo.getEndDate().toLocalDate();
                 LocalDate dateDebut = dateDebutPicker.getValue();
-
-                boolean disable = empty || date.isBefore(minDate) || date.isAfter(maxDate);
-                if (dateDebut != null) {
-                    disable = disable || date.isBefore(dateDebut.plusDays(1));
-                }
+                boolean disable = empty || date.isBefore(promo.getStartDate().toLocalDate())
+                        || date.isAfter(promo.getEndDate().toLocalDate());
+                if (dateDebut != null) disable = disable || date.isBefore(dateDebut.plusDays(1));
                 setDisable(disable);
             }
         });
     }
 
-    /**
-     * Calculer automatiquement les prix
-     */
     private void calculerPrix() {
         LocalDate dateDebut = dateDebutPicker.getValue();
-        LocalDate dateFin = dateFinPicker.getValue();
+        LocalDate dateFin   = dateFinPicker.getValue();
 
         if (dateDebut == null || dateFin == null) {
             txtNbJours.setText("0 jour(s)");
@@ -118,17 +98,14 @@ public class ReservationDialogController {
             return;
         }
 
-        // Valider les dates
         if (dateFin.isBefore(dateDebut) || dateFin.isEqual(dateDebut)) {
             txtAvertissement.setText("⚠️ La date de fin doit être après la date de début");
             btnConfirmer.setDisable(true);
             return;
         }
 
-        LocalDate promoDebut = promotion.getStartDate().toLocalDate();
-        LocalDate promoFin = promotion.getEndDate().toLocalDate();
-
-        if (dateDebut.isBefore(promoDebut) || dateFin.isAfter(promoFin)) {
+        if (dateDebut.isBefore(promotion.getStartDate().toLocalDate())
+                || dateFin.isAfter(promotion.getEndDate().toLocalDate())) {
             txtAvertissement.setText("⚠️ Les dates doivent être dans la période de la promotion");
             btnConfirmer.setDisable(true);
             return;
@@ -137,39 +114,29 @@ public class ReservationDialogController {
         txtAvertissement.setText("✅ Période valide");
         btnConfirmer.setDisable(false);
 
-        // Calcul nombre de jours
         long nbJours = ChronoUnit.DAYS.between(dateDebut, dateFin);
         txtNbJours.setText(nbJours + " jour(s)");
 
-        // Récupérer prix par jour
-        float prixParJour = PRIX_PAR_JOUR_DEFAUT;
-
-
-        // Prix original
+        float prixParJour = promotion.getPrixParJour() != null
+                ? promotion.getPrixParJour() : PRIX_PAR_JOUR_DEFAUT;
         float prixOriginal = prixParJour * nbJours;
         txtPrixOriginal.setText(String.format("%.2f TND", prixOriginal));
 
-        // Calculer réduction
         float reduction = 0;
-        if (promotion.getDiscountPercentage() != null) {
+        if (promotion.getDiscountPercentage() != null)
             reduction = prixOriginal * (promotion.getDiscountPercentage() / 100);
-        } else if (promotion.getDiscountFixed() != null) {
+        else if (promotion.getDiscountFixed() != null)
             reduction = promotion.getDiscountFixed();
-        }
         txtReductionMontant.setText(String.format("-%.2f TND", reduction));
 
-        // Prix final
         float prixFinal = prixOriginal - reduction;
         txtPrixFinal.setText(String.format("%.2f TND", prixFinal));
     }
 
-    /**
-     * Confirmer la réservation
-     */
     @FXML
     private void handleConfirmer() {
         LocalDate dateDebut = dateDebutPicker.getValue();
-        LocalDate dateFin = dateFinPicker.getValue();
+        LocalDate dateFin   = dateFinPicker.getValue();
 
         if (dateDebut == null || dateFin == null) {
             showAlert(Alert.AlertType.WARNING, "Dates requises",
@@ -177,24 +144,21 @@ public class ReservationDialogController {
             return;
         }
 
-        // Récupérer les valeurs calculées
-        long nbJours = ChronoUnit.DAYS.between(dateDebut, dateFin);
-        // ✅ NOUVEAU
-        float prixParJour = PRIX_PAR_JOUR_DEFAUT;
+        long nbJours      = ChronoUnit.DAYS.between(dateDebut, dateFin);
+        float prixParJour = promotion.getPrixParJour() != null
+                ? promotion.getPrixParJour() : PRIX_PAR_JOUR_DEFAUT;
         float prixOriginal = prixParJour * nbJours;
 
         float reduction = 0;
-        if (promotion.getDiscountPercentage() != null) {
+        if (promotion.getDiscountPercentage() != null)
             reduction = prixOriginal * (promotion.getDiscountPercentage() / 100);
-        } else if (promotion.getDiscountFixed() != null) {
+        else if (promotion.getDiscountFixed() != null)
             reduction = promotion.getDiscountFixed();
-        }
 
         float prixFinal = prixOriginal - reduction;
 
-        // Créer la réservation
         ReservationPromo reservation = new ReservationPromo(
-                SessionManager.getCurrentUserId(),  // User hardcodé (id=1)
+                SessionManager.getCurrentUserId(),
                 promotion.getId(),
                 Date.valueOf(dateDebut),
                 Date.valueOf(dateFin),
@@ -205,11 +169,15 @@ public class ReservationDialogController {
                 prixFinal
         );
 
-        // Enregistrer en BD
+        // ✅ add() appelle déjà incrementReservations() en interne
         ReservationPromo saved = reservationService.add(reservation);
 
         if (saved != null) {
-            showAlert(Alert.AlertType.INFORMATION, "Succès",
+            // ✅ SmartDiscount recalcule en background — SANS notification visible par l'user
+            new Thread(() -> SmartDiscountEngine.getInstance()
+                    .recalculateForPromoSilent(promotion.getId())).start();
+
+            showAlert(Alert.AlertType.INFORMATION, "Réservation confirmée",
                     "✅ Réservation enregistrée avec succès !\n\n" +
                             "Montant total : " + String.format("%.2f TND", prixFinal));
             closeDialog();
@@ -219,25 +187,13 @@ public class ReservationDialogController {
         }
     }
 
-    /**
-     * Annuler
-     */
-    @FXML
-    private void handleCancel() {
-        closeDialog();
-    }
+    @FXML private void handleCancel() { closeDialog(); }
 
-    /**
-     * Fermer le dialog
-     */
     private void closeDialog() {
         Stage stage = (Stage) btnConfirmer.getScene().getWindow();
         stage.close();
     }
 
-    /**
-     * Afficher une alerte
-     */
     private void showAlert(Alert.AlertType type, String title, String content) {
         Alert alert = new Alert(type);
         alert.setTitle(title);

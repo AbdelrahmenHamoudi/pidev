@@ -1,12 +1,18 @@
 package org.example.controllers.backoffice;
 
+import animatefx.animation.*;
+import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingNode;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.util.Duration;
+import org.example.utils.AnimationHelper;
 import org.example.utils.DatabaseConnection;
 
 import org.jfree.chart.ChartFactory;
@@ -22,44 +28,70 @@ import org.jfree.chart.renderer.category.StandardBarPainter;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
 
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class StatistiquesReservationsController implements Initializable {
 
+    // ── Chart panes ──
     @FXML private StackPane chartTopPromos;
     @FXML private StackPane chartTopUsers;
     @FXML private StackPane chartLeastUsers;
     @FXML private StackPane chartTypePromo;
     @FXML private StackPane chartCombosPacks;
 
-    // KPI labels dans le header
+    // ── KPI labels ──
     @FXML private Label kpiTotalLabel;
     @FXML private Label kpiReservationsLabel;
 
-    // ═══ Palette RE7LA (identique au CSS) ═══
-    private static final Color ORANGE       = new Color(0xF3, 0x9C, 0x12); // #F39C12
-    private static final Color JAUNE        = new Color(0xF7, 0xDC, 0x6F); // #F7DC6F
-    private static final Color BLEU_NUIT    = new Color(0x2C, 0x3E, 0x50); // #2C3E50
-    private static final Color TURQUOISE    = new Color(0x1A, 0xBC, 0x9C); // #1ABC9C
-    private static final Color BG_LIGHT     = new Color(0xEE, 0xF2, 0xF6); // #eef2f6
-    private static final Color WHITE        = Color.WHITE;
-    private static final Color GRID_COLOR   = new Color(0xE2, 0xE8, 0xF0); // #E2E8F0
-    private static final Color TEXT_COLOR   = new Color(0x64, 0x74, 0x8B); // #64748B
+    // ── Containers pour animation (à binder dans FXML si présents) ──
+    @FXML private HBox kpiRow;
+    @FXML private VBox chartsGrid;
+
+    // ═══ Palette RE7LA ═══
+    private static final Color ORANGE    = new Color(0xF3, 0x9C, 0x12);
+    private static final Color JAUNE     = new Color(0xF7, 0xDC, 0x6F);
+    private static final Color BLEU_NUIT = new Color(0x2C, 0x3E, 0x50);
+    private static final Color TURQUOISE = new Color(0x1A, 0xBC, 0x9C);
+    private static final Color WHITE     = Color.WHITE;
+    private static final Color GRID_COLOR= new Color(0xE2, 0xE8, 0xF0);
+    private static final Color TEXT_COLOR= new Color(0x64, 0x74, 0x8B);
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // ⭐ ANIMATEFX — animation d'entrée du dashboard stats
         Platform.runLater(() -> {
+            // 1. KPI labels arrivent avec BounceIn
+            if (kpiRow != null) {
+                List<javafx.scene.Node> kpiNodes = new ArrayList<>(kpiRow.getChildren());
+                AnimationHelper.staggeredBounceIn(kpiNodes, 150);
+            } else {
+                // Fallback si pas de kpiRow FXML : animer les labels directement
+                if (kpiTotalLabel != null)        new BounceIn(kpiTotalLabel).play();
+                if (kpiReservationsLabel != null) {
+                    PauseTransition pause = new PauseTransition(Duration.millis(150));
+                    pause.setOnFinished(e -> new BounceIn(kpiReservationsLabel).play());
+                    pause.play();
+                }
+            }
+
+            // 2. Charger les données
             loadKpis();
-            loadAllCharts();
+
+            // 3. Charts apparaissent en cascade après 300ms
+            PauseTransition delay = new PauseTransition(Duration.millis(300));
+            delay.setOnFinished(e -> loadAllCharts());
+            delay.play();
         });
     }
 
     // ═══════════════════════════════════════════════════
-    // KPI HEADER
+    // KPI — avec CountUp AnimateFX
     // ═══════════════════════════════════════════════════
     private void loadKpis() {
         try (Connection conn = DatabaseConnection.getConnection()) {
@@ -68,17 +100,26 @@ public class StatistiquesReservationsController implements Initializable {
             // Total promotions
             try (Statement st = conn.createStatement();
                  ResultSet rs = st.executeQuery("SELECT COUNT(*) FROM promotion")) {
-                if (rs.next() && kpiTotalLabel != null)
-                    kpiTotalLabel.setText(String.valueOf(rs.getInt(1)));
+                if (rs.next() && kpiTotalLabel != null) {
+                    int total = rs.getInt(1);
+                    // ⭐ CountUp 0 → total en 1.2s
+                    AnimationHelper.countUp(kpiTotalLabel, 0, total, 1200);
+                }
             }
-            // Total réservations avec promo
+
+            // Total réservations
             try (Statement st = conn.createStatement();
                  ResultSet rs = st.executeQuery("SELECT COUNT(*) FROM reservation_promo")) {
-                if (rs.next() && kpiReservationsLabel != null)
-                    kpiReservationsLabel.setText(String.valueOf(rs.getInt(1)));
+                if (rs.next() && kpiReservationsLabel != null) {
+                    int resa = rs.getInt(1);
+                    // ⭐ CountUp avec délai 400ms
+                    PauseTransition d = new PauseTransition(Duration.millis(400));
+                    d.setOnFinished(e -> AnimationHelper.countUp(kpiReservationsLabel, 0, resa, 1200));
+                    d.play();
+                }
             }
         } catch (Exception e) {
-            if (kpiTotalLabel != null) kpiTotalLabel.setText("—");
+            if (kpiTotalLabel        != null) kpiTotalLabel.setText("—");
             if (kpiReservationsLabel != null) kpiReservationsLabel.setText("—");
         }
     }
@@ -93,29 +134,39 @@ public class StatistiquesReservationsController implements Initializable {
 
     @FXML
     private void handleRefresh() {
-        chartTopPromos.getChildren().clear();
-        chartTopUsers.getChildren().clear();
-        chartLeastUsers.getChildren().clear();
-        chartTypePromo.getChildren().clear();
-        chartCombosPacks.getChildren().clear();
-        loadKpis();
-        loadAllCharts();
+        // ⭐ Flash sur chaque pane avant refresh
+        for (StackPane pane : List.of(chartTopPromos, chartTopUsers, chartLeastUsers, chartTypePromo, chartCombosPacks)) {
+            if (pane != null) new Flash(pane).play();
+        }
+
+        // Petit délai puis rechargement
+        PauseTransition delay = new PauseTransition(Duration.millis(300));
+        delay.setOnFinished(e -> {
+            for (StackPane pane : List.of(chartTopPromos, chartTopUsers, chartLeastUsers, chartTypePromo, chartCombosPacks)) {
+                if (pane != null) pane.getChildren().clear();
+            }
+            loadKpis();
+            loadAllCharts();
+        });
+        delay.play();
     }
 
     @FXML
     private void handleRetour() {
         Stage stage = (Stage) chartTopPromos.getScene().getWindow();
-        stage.close();
+        // ⭐ FadeOut avant fermeture
+        javafx.scene.Node root = chartTopPromos.getScene().getRoot();
+        AnimationHelper.fadeOut(root, stage::close);
     }
 
     // ═══════════════════════════════════════════════════
-    // HELPER : style commun pour tous les charts
+    // HELPER STYLE CHART
     // ═══════════════════════════════════════════════════
     private void styleChart(JFreeChart chart) {
         chart.setBackgroundPaint(WHITE);
         chart.setBorderVisible(false);
-        chart.getTitle().setFont(new Font("SansSerif", Font.BOLD, 0)); // titre caché (déjà dans FXML)
-        chart.getTitle().setPaint(WHITE); // invisible
+        chart.getTitle().setFont(new Font("SansSerif", Font.BOLD, 0));
+        chart.getTitle().setPaint(WHITE);
         if (chart.getLegend() != null) {
             chart.getLegend().setBackgroundPaint(WHITE);
             chart.getLegend().setItemFont(new Font("SansSerif", Font.PLAIN, 11));
@@ -150,11 +201,15 @@ public class StatistiquesReservationsController implements Initializable {
         rangeAxis.setTickMarksVisible(false);
     }
 
-    private void addChartToPane(JFreeChart chart, StackPane pane) {
+    /**
+     * Ajoute un chart dans un StackPane avec animation ZoomIn AnimateFX.
+     * @param delayMs délai avant l'animation (cascade)
+     */
+    private void addChartToPane(JFreeChart chart, StackPane pane, int delayMs) {
         SwingUtilities.invokeLater(() -> {
             ChartPanel cp = new ChartPanel(chart);
             cp.setPreferredSize(new Dimension(600, 240));
-            cp.setBackground(java.awt.Color.WHITE);
+            cp.setBackground(WHITE);
             cp.setMouseWheelEnabled(false);
             cp.setDomainZoomable(false);
             cp.setRangeZoomable(false);
@@ -165,12 +220,22 @@ public class StatistiquesReservationsController implements Initializable {
             Platform.runLater(() -> {
                 pane.getChildren().clear();
                 pane.getChildren().add(node);
+
+                // ⭐ AnimateFX — ZoomIn en cascade
+                pane.setOpacity(0);
+                PauseTransition pause = new PauseTransition(Duration.millis(delayMs));
+                pause.setOnFinished(e -> {
+                    pane.setOpacity(1);
+                    ZoomIn anim = new ZoomIn(pane);
+                    anim.play();
+                });
+                pause.play();
             });
         });
     }
 
     // ═══════════════════════════════════════════════════
-    // GRAPHIQUE 1 — Top Promotions (barre horizontale, ORANGE)
+    // GRAPHIQUE 1 — Top Promotions (ORANGE) — délai 0ms
     // ═══════════════════════════════════════════════════
     private void createTopPromosChart() {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
@@ -194,11 +259,11 @@ public class StatistiquesReservationsController implements Initializable {
         JFreeChart chart = ChartFactory.createBarChart("", "", "", dataset, PlotOrientation.HORIZONTAL, false, false, false);
         styleChart(chart);
         styleBarPlot(chart.getCategoryPlot(), ORANGE);
-        addChartToPane(chart, chartTopPromos);
+        addChartToPane(chart, chartTopPromos, 0);
     }
 
     // ═══════════════════════════════════════════════════
-    // GRAPHIQUE 2 — Top Users actifs (barre vertical, TURQUOISE)
+    // GRAPHIQUE 2 — Top Users (TURQUOISE) — délai 120ms
     // ═══════════════════════════════════════════════════
     private void createTopUsersChart() {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
@@ -223,11 +288,11 @@ public class StatistiquesReservationsController implements Initializable {
         JFreeChart chart = ChartFactory.createBarChart("", "", "", dataset, PlotOrientation.VERTICAL, false, false, false);
         styleChart(chart);
         styleBarPlot(chart.getCategoryPlot(), TURQUOISE);
-        addChartToPane(chart, chartTopUsers);
+        addChartToPane(chart, chartTopUsers, 120);
     }
 
     // ═══════════════════════════════════════════════════
-    // GRAPHIQUE 3 — Users moins actifs (barre vertical, BLEU NUIT)
+    // GRAPHIQUE 3 — Users moins actifs (BLEU NUIT) — délai 240ms
     // ═══════════════════════════════════════════════════
     private void createLeastUsersChart() {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
@@ -252,11 +317,11 @@ public class StatistiquesReservationsController implements Initializable {
         JFreeChart chart = ChartFactory.createBarChart("", "", "", dataset, PlotOrientation.VERTICAL, false, false, false);
         styleChart(chart);
         styleBarPlot(chart.getCategoryPlot(), BLEU_NUIT);
-        addChartToPane(chart, chartLeastUsers);
+        addChartToPane(chart, chartLeastUsers, 240);
     }
 
     // ═══════════════════════════════════════════════════
-    // GRAPHIQUE 4 — Camembert (ORANGE + TURQUOISE uniquement)
+    // GRAPHIQUE 4 — Camembert ORANGE/TURQUOISE — délai 360ms
     // ═══════════════════════════════════════════════════
     private void createTypePromoChart() {
         DefaultPieDataset dataset = new DefaultPieDataset();
@@ -282,9 +347,8 @@ public class StatistiquesReservationsController implements Initializable {
         plot.setBackgroundPaint(WHITE);
         plot.setOutlineVisible(false);
         plot.setShadowPaint(null);
-        // Seulement les couleurs de la charte — pas de rouge
         plot.setSectionPaint("Individuelles", ORANGE);
-        plot.setSectionPaint("Packs",         TURQUOISE);
+        plot.setSectionPaint("Packs", TURQUOISE);
         plot.setSectionPaint(0, ORANGE);
         plot.setSectionPaint(1, TURQUOISE);
         plot.setLabelFont(new Font("SansSerif", Font.BOLD, 12));
@@ -293,16 +357,13 @@ public class StatistiquesReservationsController implements Initializable {
         plot.setLabelOutlineStroke(null);
         plot.setLabelShadowPaint(null);
         plot.setLabelGap(0.02);
+        if (chart.getLegend() != null) chart.getLegend().setVisible(true);
 
-        if (chart.getLegend() != null) {
-            chart.getLegend().setVisible(true);
-        }
-
-        addChartToPane(chart, chartTypePromo);
+        addChartToPane(chart, chartTypePromo, 360);
     }
 
     // ═══════════════════════════════════════════════════
-    // GRAPHIQUE 5 — Combos Packs (barre horizontal, JAUNE→ORANGE gradient visuel)
+    // GRAPHIQUE 5 — Combos Packs (ORANGE) — délai 480ms
     // ═══════════════════════════════════════════════════
     private void createComboPacksChart() {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
@@ -311,7 +372,7 @@ public class StatistiquesReservationsController implements Initializable {
                 String sql = "SELECT GROUP_CONCAT(DISTINCT pt.target_type ORDER BY pt.target_type) as combo, COUNT(r.id) as nb " +
                         "FROM promotion p " +
                         "LEFT JOIN promotion_target pt ON p.id=pt.promotion_id " +
-                        "LEFT JOIN reservation_promo r ON p.id=r.promotion_id " +
+                        "LEFT JOIN reservation_promo r  ON p.id=r.promotion_id " +
                         "WHERE p.is_pack=1 GROUP BY p.id ORDER BY nb DESC";
                 try (PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
@@ -331,12 +392,8 @@ public class StatistiquesReservationsController implements Initializable {
 
         JFreeChart chart = ChartFactory.createBarChart("", "", "", dataset, PlotOrientation.HORIZONTAL, false, false, false);
         styleChart(chart);
-        styleBarPlot(chart.getCategoryPlot(), JAUNE);
+        styleBarPlot(chart.getCategoryPlot(), ORANGE);
 
-        // Rendre les barres jaune foncé pour être lisibles
-        BarRenderer renderer = (BarRenderer) chart.getCategoryPlot().getRenderer();
-        renderer.setSeriesPaint(0, new Color(0xF3, 0x9C, 0x12)); // orange pour contraste
-
-        addChartToPane(chart, chartCombosPacks);
+        addChartToPane(chart, chartCombosPacks, 480);
     }
 }
