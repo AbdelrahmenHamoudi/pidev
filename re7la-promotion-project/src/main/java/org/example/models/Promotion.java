@@ -12,144 +12,68 @@ public class Promotion {
     private Date startDate;
     private Date endDate;
     private boolean isPack;
-    private Float prixParJour;  // ⭐ NOUVEAU
+    private Float prixParJour;
+    private boolean isLocked;
+    private int nbVues;
+    private int nbReservations;
 
-    // ========== CONSTRUCTEUR VIDE ==========
-    public Promotion() {
-    }
+    public Promotion() {}
 
-    // ========== CONSTRUCTEUR SANS ID (pour création) ==========
     public Promotion(String name, String description, Float discountPercentage,
-                     Float discountFixed, Date startDate, Date endDate, boolean isPack, Float prixParJour) {
-        this.name = name;
-        this.description = description;
-        this.discountPercentage = discountPercentage;
-        this.discountFixed = discountFixed;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.isPack = isPack;
-        this.prixParJour = prixParJour;  // ⭐ NOUVEAU
+                     Float discountFixed, Date startDate, Date endDate,
+                     boolean isPack, Float prixParJour) {
+        this.name = name; this.description = description;
+        this.discountPercentage = discountPercentage; this.discountFixed = discountFixed;
+        this.startDate = startDate; this.endDate = endDate;
+        this.isPack = isPack; this.prixParJour = prixParJour;
     }
 
-    // ========== CONSTRUCTEUR COMPLET (pour lecture BD) ==========
     public Promotion(int id, String name, String description, Float discountPercentage,
-                     Float discountFixed, Date startDate, Date endDate, boolean isPack, Float prixParJour) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.discountPercentage = discountPercentage;
-        this.discountFixed = discountFixed;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.isPack = isPack;
-        this.prixParJour = prixParJour;  // ⭐ NOUVEAU
+                     Float discountFixed, Date startDate, Date endDate,
+                     boolean isPack, Float prixParJour, boolean isLocked,
+                     int nbVues, int nbReservations) {
+        this.id = id; this.name = name; this.description = description;
+        this.discountPercentage = discountPercentage; this.discountFixed = discountFixed;
+        this.startDate = startDate; this.endDate = endDate;
+        this.isPack = isPack; this.prixParJour = prixParJour;
+        this.isLocked = isLocked; this.nbVues = nbVues; this.nbReservations = nbReservations;
     }
 
-    // ========== GETTERS ET SETTERS ==========
-    public int getId() {
-        return id;
-    }
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+    public Float getDiscountPercentage() { return discountPercentage; }
+    public void setDiscountPercentage(Float v) { this.discountPercentage = v; }
+    public Float getDiscountFixed() { return discountFixed; }
+    public void setDiscountFixed(Float v) { this.discountFixed = v; }
+    public Date getStartDate() { return startDate; }
+    public void setStartDate(Date d) { this.startDate = d; }
+    public Date getEndDate() { return endDate; }
+    public void setEndDate(Date d) { this.endDate = d; }
+    public boolean isPack() { return isPack; }
+    public void setPack(boolean p) { this.isPack = p; }
+    public Float getPrixParJour() { return prixParJour; }
+    public void setPrixParJour(Float v) { this.prixParJour = v; }
+    public boolean isLocked() { return isLocked; }
+    public void setLocked(boolean v) { this.isLocked = v; }
+    public int getNbVues() { return nbVues; }
+    public void setNbVues(int v) { this.nbVues = v; }
+    public int getNbReservations() { return nbReservations; }
+    public void setNbReservations(int v) { this.nbReservations = v; }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Float getDiscountPercentage() {
-        return discountPercentage;
-    }
-
-    public void setDiscountPercentage(Float discountPercentage) {
-        this.discountPercentage = discountPercentage;
-    }
-
-    public Float getDiscountFixed() {
-        return discountFixed;
-    }
-
-    public void setDiscountFixed(Float discountFixed) {
-        this.discountFixed = discountFixed;
-    }
-
-    public Date getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
-    }
-
-    public Date getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
-    }
-
-    public boolean isPack() {
-        return isPack;
-    }
-
-    public void setPack(boolean pack) {
-        isPack = pack;
-    }
-
-    // ⭐ NOUVEAUX GETTERS/SETTERS POUR PRIX PAR JOUR
-    public Float getPrixParJour() {
-        return prixParJour;
-    }
-
-    public void setPrixParJour(Float prixParJour) {
-        this.prixParJour = prixParJour;
-    }
-
-    // ========== MÉTHODES UTILITAIRES ==========
     public boolean isActive() {
         java.time.LocalDate today = java.time.LocalDate.now();
-        java.time.LocalDate start = startDate.toLocalDate();
-        java.time.LocalDate end = endDate.toLocalDate();
-
-        return !today.isBefore(start) && !today.isAfter(end);
+        return !today.isBefore(startDate.toLocalDate()) && !today.isAfter(endDate.toLocalDate());
     }
 
-    @Override
-    public boolean equals(Object o) {
+    @Override public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Promotion promotion = (Promotion) o;
-        return id == promotion.id;
+        if (!(o instanceof Promotion p)) return false;
+        return id == p.id;
     }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
-
-    @Override
-    public String toString() {
-        return "Promotion{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", discountPercentage=" + discountPercentage +
-                ", discountFixed=" + discountFixed +
-                ", prixParJour=" + prixParJour +
-                ", isPack=" + isPack +
-                '}';
-    }
+    @Override public int hashCode() { return Objects.hash(id); }
+    @Override public String toString() { return "Promotion{id=" + id + ", name='" + name + "'}"; }
 }

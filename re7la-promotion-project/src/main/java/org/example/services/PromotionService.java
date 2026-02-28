@@ -11,246 +11,98 @@ import java.util.Optional;
 public class PromotionService {
 
     public List<Promotion> getAll() {
-        List<Promotion> promotions = new ArrayList<>();
-        String sql = "SELECT * FROM promotion ORDER BY id DESC";
-
-        try (Connection conn = DatabaseConnection.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-
-            while (rs.next()) {
-                Promotion promo = extractPromotionFromResultSet(rs);
-                promotions.add(promo);
+        List<Promotion> list = new ArrayList<>();
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            if (conn == null) return list;
+            try (Statement st = conn.createStatement();
+                 ResultSet rs = st.executeQuery("SELECT * FROM promotion ORDER BY id DESC")) {
+                while (rs.next()) list.add(extract(rs));
             }
-
-        } catch (SQLException e) {
-            System.err.println("Erreur lors de la récupération des promotions");
-            e.printStackTrace();
-        }
-
-        return promotions;
+        } catch (SQLException e) { e.printStackTrace(); }
+        return list;
     }
 
     public Optional<Promotion> getById(int id) {
-        String sql = "SELECT * FROM promotion WHERE id = ?";
-
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setInt(1, id);
-            ResultSet rs = pstmt.executeQuery();
-
-            if (rs.next()) {
-                return Optional.of(extractPromotionFromResultSet(rs));
-            }
-
-        } catch (SQLException e) {
-            System.err.println("Erreur lors de la récupération de la promotion #" + id);
-            e.printStackTrace();
-        }
-
+             PreparedStatement ps = conn.prepareStatement("SELECT * FROM promotion WHERE id=?")) {
+            if (conn == null) return Optional.empty();
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return Optional.of(extract(rs));
+        } catch (SQLException e) { e.printStackTrace(); }
         return Optional.empty();
     }
 
-    public Promotion add(Promotion promotion) {
-        // ⭐ MODIFIÉ - Ajout de prix_par_jour
-        String sql = "INSERT INTO promotion (name, description, discount_percentage, " +
-                "discount_fixed, start_date, end_date, is_pack, prix_par_jour) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-
+    public Promotion add(Promotion p) {
+        String sql = "INSERT INTO promotion (name,description,discount_percentage,discount_fixed," +
+                "start_date,end_date,is_pack,prix_par_jour,is_locked) VALUES(?,?,?,?,?,?,?,?,?)";
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-
-            pstmt.setString(1, promotion.getName());
-            pstmt.setString(2, promotion.getDescription());
-
-            if (promotion.getDiscountPercentage() != null) {
-                pstmt.setFloat(3, promotion.getDiscountPercentage());
-            } else {
-                pstmt.setNull(3, Types.FLOAT);
-            }
-
-            if (promotion.getDiscountFixed() != null) {
-                pstmt.setFloat(4, promotion.getDiscountFixed());
-            } else {
-                pstmt.setNull(4, Types.FLOAT);
-            }
-
-            pstmt.setDate(5, promotion.getStartDate());
-            pstmt.setDate(6, promotion.getEndDate());
-            pstmt.setBoolean(7, promotion.isPack());
-            pstmt.setFloat(8, promotion.getPrixParJour() != null ? promotion.getPrixParJour() : 50.0f);  // ⭐ AJOUTÉ
-
-            int affectedRows = pstmt.executeUpdate();
-
-            if (affectedRows > 0) {
-                ResultSet generatedKeys = pstmt.getGeneratedKeys();
-                if (generatedKeys.next()) {
-                    promotion.setId(generatedKeys.getInt(1));
-                }
-            }
-
-            System.out.println("✅ Promotion ajoutée: " + promotion.getName());
-            return promotion;
-
-        } catch (SQLException e) {
-            System.err.println("Erreur lors de l'ajout de la promotion");
-            e.printStackTrace();
-            return null;
-        }
+             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            if (conn == null) return null;
+            ps.setString(1, p.getName()); ps.setString(2, p.getDescription());
+            if (p.getDiscountPercentage()!=null) ps.setFloat(3,p.getDiscountPercentage()); else ps.setNull(3,Types.FLOAT);
+            if (p.getDiscountFixed()!=null) ps.setFloat(4,p.getDiscountFixed()); else ps.setNull(4,Types.FLOAT);
+            ps.setDate(5,p.getStartDate()); ps.setDate(6,p.getEndDate());
+            ps.setBoolean(7,p.isPack());
+            ps.setFloat(8,p.getPrixParJour()!=null?p.getPrixParJour():50f);
+            ps.setBoolean(9,p.isLocked());
+            ps.executeUpdate();
+            ResultSet keys = ps.getGeneratedKeys();
+            if (keys.next()) p.setId(keys.getInt(1));
+            return p;
+        } catch (SQLException e) { e.printStackTrace(); return null; }
     }
 
-    public boolean update(Promotion promotion) {
-        // ⭐ MODIFIÉ - Ajout de prix_par_jour
-        String sql = "UPDATE promotion SET name = ?, description = ?, " +
-                "discount_percentage = ?, discount_fixed = ?, " +
-                "start_date = ?, end_date = ?, is_pack = ?, prix_par_jour = ? " +
-                "WHERE id = ?";
-
+    public boolean update(Promotion p) {
+        String sql = "UPDATE promotion SET name=?,description=?,discount_percentage=?,discount_fixed=?," +
+                "start_date=?,end_date=?,is_pack=?,prix_par_jour=?,is_locked=? WHERE id=?";
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setString(1, promotion.getName());
-            pstmt.setString(2, promotion.getDescription());
-
-            if (promotion.getDiscountPercentage() != null) {
-                pstmt.setFloat(3, promotion.getDiscountPercentage());
-            } else {
-                pstmt.setNull(3, Types.FLOAT);
-            }
-
-            if (promotion.getDiscountFixed() != null) {
-                pstmt.setFloat(4, promotion.getDiscountFixed());
-            } else {
-                pstmt.setNull(4, Types.FLOAT);
-            }
-
-            pstmt.setDate(5, promotion.getStartDate());
-            pstmt.setDate(6, promotion.getEndDate());
-            pstmt.setBoolean(7, promotion.isPack());
-            pstmt.setFloat(8, promotion.getPrixParJour() != null ? promotion.getPrixParJour() : 50.0f);  // ⭐ AJOUTÉ
-            pstmt.setInt(9, promotion.getId());  // ⚠️ CHANGÉ DE 8 à 9
-
-            int affectedRows = pstmt.executeUpdate();
-
-            if (affectedRows > 0) {
-                System.out.println("✅ Promotion modifiée: " + promotion.getName());
-                return true;
-            }
-
-        } catch (SQLException e) {
-            System.err.println("Erreur lors de la modification de la promotion");
-            e.printStackTrace();
-        }
-
-        return false;
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            if (conn == null) return false;
+            ps.setString(1,p.getName()); ps.setString(2,p.getDescription());
+            if (p.getDiscountPercentage()!=null) ps.setFloat(3,p.getDiscountPercentage()); else ps.setNull(3,Types.FLOAT);
+            if (p.getDiscountFixed()!=null) ps.setFloat(4,p.getDiscountFixed()); else ps.setNull(4,Types.FLOAT);
+            ps.setDate(5,p.getStartDate()); ps.setDate(6,p.getEndDate());
+            ps.setBoolean(7,p.isPack());
+            ps.setFloat(8,p.getPrixParJour()!=null?p.getPrixParJour():50f);
+            ps.setBoolean(9,p.isLocked()); ps.setInt(10,p.getId());
+            return ps.executeUpdate()>0;
+        } catch (SQLException e) { e.printStackTrace(); return false; }
     }
 
     public boolean delete(int id) {
-        String sql = "DELETE FROM promotion WHERE id = ?";
-
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setInt(1, id);
-            int affectedRows = pstmt.executeUpdate();
-
-            if (affectedRows > 0) {
-                System.out.println("✅ Promotion supprimée (ID: " + id + ")");
-                return true;
-            }
-
-        } catch (SQLException e) {
-            System.err.println("Erreur lors de la suppression de la promotion");
-            e.printStackTrace();
-        }
-
-        return false;
+             PreparedStatement ps = conn.prepareStatement("DELETE FROM promotion WHERE id=?")) {
+            if (conn == null) return false;
+            ps.setInt(1,id); return ps.executeUpdate()>0;
+        } catch (SQLException e) { e.printStackTrace(); return false; }
     }
 
-    public List<Promotion> searchByName(String keyword) {
-        List<Promotion> promotions = new ArrayList<>();
-        String sql = "SELECT * FROM promotion WHERE name LIKE ? ORDER BY id DESC";
-
+    public void incrementVues(int id) {
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setString(1, "%" + keyword + "%");
-            ResultSet rs = pstmt.executeQuery();
-
-            while (rs.next()) {
-                promotions.add(extractPromotionFromResultSet(rs));
-            }
-
-        } catch (SQLException e) {
-            System.err.println("Erreur lors de la recherche de promotions");
-            e.printStackTrace();
-        }
-
-        return promotions;
+             PreparedStatement ps = conn.prepareStatement("UPDATE promotion SET nb_vues=nb_vues+1 WHERE id=?")) {
+            if (conn==null) return; ps.setInt(1,id); ps.executeUpdate();
+        } catch (SQLException e) { e.printStackTrace(); }
     }
 
-    public List<Promotion> getPackPromotions() {
-        List<Promotion> promotions = new ArrayList<>();
-        String sql = "SELECT * FROM promotion WHERE is_pack = TRUE ORDER BY id DESC";
-
+    public void incrementReservations(int id) {
         try (Connection conn = DatabaseConnection.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-
-            while (rs.next()) {
-                promotions.add(extractPromotionFromResultSet(rs));
-            }
-
-        } catch (SQLException e) {
-            System.err.println("Erreur lors de la récupération des packs");
-            e.printStackTrace();
-        }
-
-        return promotions;
+             PreparedStatement ps = conn.prepareStatement("UPDATE promotion SET nb_reservations=nb_reservations+1 WHERE id=?")) {
+            if (conn==null) return; ps.setInt(1,id); ps.executeUpdate();
+        } catch (SQLException e) { e.printStackTrace(); }
     }
 
-    public List<Promotion> getIndividualPromotions() {
-        List<Promotion> promotions = new ArrayList<>();
-        String sql = "SELECT * FROM promotion WHERE is_pack = FALSE ORDER BY id DESC";
-
-        try (Connection conn = DatabaseConnection.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-
-            while (rs.next()) {
-                promotions.add(extractPromotionFromResultSet(rs));
-            }
-
-        } catch (SQLException e) {
-            System.err.println("Erreur lors de la récupération des promotions individuelles");
-            e.printStackTrace();
-        }
-
-        return promotions;
-    }
-
-    // ⭐ MODIFIÉ - Ajout extraction prix_par_jour
-    private Promotion extractPromotionFromResultSet(ResultSet rs) throws SQLException {
-        int id = rs.getInt("id");
-        String name = rs.getString("name");
-        String description = rs.getString("description");
-
-        Float discountPercentage = rs.getFloat("discount_percentage");
-        if (rs.wasNull()) discountPercentage = null;
-
-        Float discountFixed = rs.getFloat("discount_fixed");
-        if (rs.wasNull()) discountFixed = null;
-
-        Date startDate = rs.getDate("start_date");
-        Date endDate = rs.getDate("end_date");
-        boolean isPack = rs.getBoolean("is_pack");
-
-        Float prixParJour = rs.getFloat("prix_par_jour");  // ⭐ AJOUTÉ
-        if (rs.wasNull()) prixParJour = 50.0f;
-        System.out.println("🔍 DEBUG - Promotion chargée: " + name + " | Prix par jour: " + prixParJour + " TND");  // ⭐ DEBUG
-
-        return new Promotion(id, name, description, discountPercentage,
-                discountFixed, startDate, endDate, isPack, prixParJour);  // ⭐ AJOUTÉ
+    private Promotion extract(ResultSet rs) throws SQLException {
+        Float pct = rs.getFloat("discount_percentage"); if (rs.wasNull()) pct = null;
+        Float fix = rs.getFloat("discount_fixed");      if (rs.wasNull()) fix = null;
+        Float ppj = rs.getFloat("prix_par_jour");       if (rs.wasNull()) ppj = 50f;
+        boolean locked = false;
+        try { locked = rs.getBoolean("is_locked"); } catch (SQLException ignored) {}
+        int vues = 0, resa = 0;
+        try { vues = rs.getInt("nb_vues"); } catch (SQLException ignored) {}
+        try { resa = rs.getInt("nb_reservations"); } catch (SQLException ignored) {}
+        return new Promotion(rs.getInt("id"), rs.getString("name"), rs.getString("description"),
+                pct, fix, rs.getDate("start_date"), rs.getDate("end_date"),
+                rs.getBoolean("is_pack"), ppj, locked, vues, resa);
     }
 }
