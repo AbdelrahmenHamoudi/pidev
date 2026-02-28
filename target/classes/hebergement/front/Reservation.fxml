@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.collections.FXCollections?>
+<?import javafx.scene.text.Text?>
+<?import java.lang.String?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.Controllers.hebergement.front.ReservationController"
+            styleClass="front-container"
+            stylesheets="@StyleRSV.css">
+
+    <!-- ═══════════════════ HEADER ═══════════════════ -->
+    <top>
+        <VBox styleClass="front-header" spacing="15">
+            <HBox alignment="CENTER_LEFT" spacing="20">
+
+                <!-- Logo -->
+                <ImageView fitWidth="90" preserveRatio="true">
+                    <image><Image url="@image/logo.png"/></image>
+                </ImageView>
+
+                <HBox alignment="CENTER_LEFT" spacing="15" HBox.hgrow="ALWAYS">
+
+                    <!-- Titre -->
+                    <VBox spacing="5">
+                        <Text text="RE7LA" styleClass="front-title"/>
+                        <Text text="Réservez votre hébergement idéal" styleClass="front-subtitle"/>
+                    </VBox>
+
+                    <Region HBox.hgrow="ALWAYS"/>
+
+                    <!-- Nav -->
+                    <Button fx:id="btnAccueil" text="🏠 Accueil"
+                            styleClass="btn-nav" onAction="#goToAccueil"/>
+                    <Button fx:id="btnProfil" text="👤 Profil"
+                            styleClass="btn-nav" onAction="#goToProfil"/>
+
+                    <!-- Langue -->
+                    <Button fx:id="btnLanguage" text="🇬🇧 EN"
+                            onAction="#toggleLanguage" styleClass="btn-lang"/>
+
+                    <!-- Notifications -->
+                    <StackPane>
+                        <Label fx:id="navMyBookingsLabel"
+                               text="🔔 Notifications"
+                               onMouseClicked="#handleMesReservations"
+                               style="-fx-background-color: #F39C12; -fx-text-fill: white;
+                                      -fx-font-weight: bold; -fx-padding: 10 20;
+                                      -fx-background-radius: 15; -fx-cursor: hand;
+                                      -fx-effect: dropshadow(gaussian, rgba(243,156,18,0.4), 8, 0, 0, 2);"/>
+                        <Label fx:id="badgeNotifLabel"
+                               text="0" visible="false"
+                               style="-fx-background-color: #E74C3C; -fx-text-fill: white;
+                                      -fx-font-size: 10px; -fx-font-weight: bold;
+                                      -fx-padding: 2 6; -fx-background-radius: 10;
+                                      -fx-min-width: 18; -fx-alignment: center;"
+                               StackPane.alignment="TOP_RIGHT"/>
+                    </StackPane>
+
+                    <!-- User info -->
+                    <HBox spacing="10" alignment="CENTER"
+                          style="-fx-background-color: #F9FAFB; -fx-padding: 8 15;
+                                 -fx-background-radius: 20; -fx-border-color: #E2E8F0;
+                                 -fx-border-radius: 20;">
+                        <Text text="👤" style="-fx-font-size: 16px;"/>
+                        <VBox>
+                            <Label fx:id="userNameLabel" text="Utilisateur"
+                                   style="-fx-font-size: 13px; -fx-text-fill: #2C3E50; -fx-font-weight: bold;"/>
+                            <Label fx:id="userEmailLabel" text="email@example.com"
+                                   style="-fx-font-size: 11px; -fx-text-fill: #7F8C8D;"/>
+                        </VBox>
+                    </HBox>
+
+                </HBox>
+            </HBox>
+
+            <!-- Bandeau notification -->
+            <HBox fx:id="bandeauNotification"
+                  visible="false" managed="false"
+                  spacing="15" alignment="CENTER_LEFT"
+                  style="-fx-background-color: #D1F2EB; -fx-padding: 12 20;
+                         -fx-background-radius: 12; -fx-border-color: #1ABC9C;
+                         -fx-border-width: 1; -fx-border-radius: 12;">
+                <Label text="🔔" style="-fx-font-size: 18px;"/>
+                <Label fx:id="bandeauNotifTexte" text=""
+                       style="-fx-font-size: 13px; -fx-text-fill: #1A5276; -fx-font-weight: bold;"
+                       wrapText="true" HBox.hgrow="ALWAYS"/>
+                <Button text="✕" onAction="#fermerBandeau"
+                        style="-fx-background-color: transparent; -fx-text-fill: #1ABC9C;
+                               -fx-font-weight: bold; -fx-font-size: 14px; -fx-cursor: hand;"/>
+            </HBox>
+
+            <!-- Barre de recherche -->
+            <HBox spacing="15" alignment="CENTER">
+                <TextField fx:id="searchHebergementField"
+                           promptText="🔍 Rechercher un hébergement par ville, nom ou prix..."
+                           styleClass="search-box" HBox.hgrow="ALWAYS"/>
+                <Button text="Rechercher" styleClass="btn-primary"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- ═══════════════════ CENTER ═══════════════════ -->
+    <center>
+        <ScrollPane fitToWidth="true" fitToHeight="true" pannable="true"
+                    style="-fx-background-color: transparent; -fx-border-color: transparent;">
+            <HBox spacing="25">
+                <padding>
+                    <Insets top="25" right="25" bottom="25" left="25"/>
+                </padding>
+
+                <!-- ═══ SIDEBAR FILTRES ═══ -->
+                <VBox styleClass="filter-box" spacing="20" prefWidth="240" maxWidth="240">
+                    <Text text="🔎 Filtres" styleClass="filter-title"/>
+                    <Separator/>
+                    <VBox spacing="10">
+                        <Label fx:id="labelFilterType" text="Type d'hébergement" styleClass="filter-label"/>
+                        <VBox fx:id="typeCheckBoxContainer" spacing="8"/>
+                    </VBox>
+                    <Separator/>
+                    <VBox spacing="10">
+                        <Label fx:id="labelFilterDispo" text="Disponibilité" styleClass="filter-label"/>
+                        <CheckBox fx:id="checkDisponible" text="Uniquement disponibles" selected="true"/>
+                    </VBox>
+                    <Separator/>
+                    <VBox spacing="10">
+                        <Label fx:id="labelFilterPrix" text="Prix max / nuit (TND)" styleClass="filter-label"/>
+                        <TextField fx:id="fieldPrixMax" promptText="ex: 500" styleClass="search-box"/>
+                    </VBox>
+                    <Region VBox.vgrow="ALWAYS"/>
+                    <Button fx:id="btnResetFilters"
+                            text="🔄 Réinitialiser les filtres"
+                            styleClass="btn-secondary"
+                            maxWidth="Infinity"
+                            onAction="#resetFilters"/>
+                </VBox>
+
+                <!-- ═══ HÉBERGEMENTS ═══ -->
+                <VBox spacing="20" HBox.hgrow="ALWAYS">
+                    <HBox alignment="CENTER_LEFT" spacing="15">
+                        <Label fx:id="sectionAvailableLabel"
+                               text="0 hébergements trouvés"
+                               style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2C3E50;"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label text="Trier par:" style="-fx-text-fill: #7F8C8D;"/>
+                        <ComboBox fx:id="sortComboHeb" value="Nom A-Z" prefWidth="165">
+                            <items>
+                                <FXCollections fx:factory="observableArrayList">
+                                    <String fx:value="Nom A-Z"/>
+                                    <String fx:value="Prix croissant"/>
+                                    <String fx:value="Prix décroissant"/>
+                                    <String fx:value="Capacité"/>
+                                </FXCollections>
+                            </items>
+                        </ComboBox>
+                    </HBox>
+                    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
+                                style="-fx-background-color: transparent; -fx-border-color: transparent;">
+                        <TilePane fx:id="tileHebergements"
+                                  prefColumns="2" hgap="20" vgap="20" prefTileWidth="260"/>
+                    </ScrollPane>
+                </VBox>
+
+                <!-- ═══ FORMULAIRE RÉSERVATION (droite) ═══ -->
+                <VBox styleClass="filter-box" spacing="14" prefWidth="320" maxWidth="320">
+                    <Label fx:id="formTitleLabel" text="📝 Nouvelle Réservation" styleClass="filter-title"/>
+                    <Separator/>
+
+                    <!-- Hébergement sélectionné -->
+                    <VBox spacing="6">
+                        <Label text="Hébergement sélectionné" styleClass="filter-label"/>
+                        <HBox spacing="10" alignment="CENTER_LEFT"
+                              style="-fx-background-color: #F9FAFB; -fx-padding: 10;
+                                     -fx-background-radius: 12; -fx-border-color: #E2E8F0; -fx-border-radius: 12;">
+                            <StackPane style="-fx-background-color: linear-gradient(to bottom right, #1ABC9C, #3498DB);
+                                             -fx-background-radius: 10;" prefWidth="65" prefHeight="55">
+                                <ImageView fx:id="hebergementImage" fitHeight="55" fitWidth="65" preserveRatio="true"/>
+                                <Text text="🏨" style="-fx-font-size: 22px;"/>
+                            </StackPane>
+                            <VBox spacing="3">
+                                <Label fx:id="selectedHebergementTitre" text="Aucun sélectionné..."
+                                       styleClass="selected-title" wrapText="true" maxWidth="185"/>
+                                <Label fx:id="selectedHebergementPrix" styleClass="price-large"/>
+                            </VBox>
+                        </HBox>
+                    </VBox>
+
+                    <!-- ✅ Boutons Lieux Proches + Météo côte à côte -->
+                    <GridPane hgap="8">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="50"/>
+                            <ColumnConstraints percentWidth="50"/>
+                        </columnConstraints>
+                        <Button fx:id="btnNearbyPlaces"
+                                text="📍 Lieux proches"
+                                onAction="#openNearbyPlaces"
+                                styleClass="btn-nearby"
+                                maxWidth="Infinity"
+                                disable="true"
+                                GridPane.columnIndex="0"/>
+                        <!-- ✅ NOUVEAU bouton Météo -->
+                        <Button fx:id="btnWeather"
+                                text="🌤 Météo"
+                                onAction="#openWeather"
+                                styleClass="btn-weather"
+                                maxWidth="Infinity"
+                                disable="true"
+                                GridPane.columnIndex="1"/>
+                    </GridPane>
+
+                    <Separator/>
+
+                    <!-- Infos utilisateur -->
+                    <VBox spacing="6">
+                        <Label fx:id="userInfoSectionLabel" text="👤 Vos informations" styleClass="filter-label"/>
+                        <VBox spacing="5"
+                              style="-fx-background-color: #F9FAFB; -fx-padding: 10; -fx-background-radius: 10;
+                                     -fx-border-color: #E2E8F0; -fx-border-radius: 10;">
+                            <HBox spacing="8">
+                                <Label fx:id="labelNom" text="Nom:" styleClass="info-label" minWidth="60"/>
+                                <Label fx:id="userNomLabel" styleClass="info-value"/>
+                            </HBox>
+                            <HBox spacing="8">
+                                <Label fx:id="labelPrenom" text="Prénom:" styleClass="info-label" minWidth="60"/>
+                                <Label fx:id="userPrenomLabel" styleClass="info-value"/>
+                            </HBox>
+                            <HBox spacing="8">
+                                <Label fx:id="labelEmail" text="Email:" styleClass="info-label" minWidth="60"/>
+                                <Label fx:id="userEmailInfoLabel" styleClass="info-value"/>
+                            </HBox>
+                            <HBox spacing="8">
+                                <Label fx:id="labelTel" text="Tél:" styleClass="info-label" minWidth="60"/>
+                                <Label fx:id="userTelLabel" styleClass="info-value"/>
+                            </HBox>
+                        </VBox>
+                    </VBox>
+                    <Separator/>
+
+                    <!-- Période de séjour -->
+                    <VBox spacing="10">
+                        <Label text="📅 Période de séjour" styleClass="filter-label"/>
+                        <VBox spacing="3">
+                            <Label fx:id="labelDateDebut" text="Date Début *" styleClass="form-label"/>
+                            <DatePicker fx:id="dateDebutPicker" maxWidth="Infinity"/>
+                            <Label fx:id="lblDateDebutErreur" styleClass="error-label" visible="false" managed="false"/>
+                        </VBox>
+                        <VBox spacing="3">
+                            <Label fx:id="labelDateFin" text="Date Fin *" styleClass="form-label"/>
+                            <DatePicker fx:id="dateFinPicker" maxWidth="Infinity"/>
+                            <Label fx:id="lblDateFinErreur" styleClass="error-label" visible="false" managed="false"/>
+                        </VBox>
+                        <VBox spacing="3">
+                            <Label fx:id="labelPrixTotal" text="Prix Total" styleClass="form-label"/>
+                            <TextField fx:id="txtPrixTotal" editable="false" promptText="Calculé automatiquement"/>
+                        </VBox>
+                        <VBox spacing="3">
+                            <Label fx:id="labelStatut" text="Statut" styleClass="form-label"/>
+                            <ComboBox fx:id="comboStatut" maxWidth="Infinity">
+                                <items>
+                                    <FXCollections fx:factory="observableArrayList">
+                                        <String fx:value="EN ATTENTE"/>
+                                        <String fx:value="CONFIRMÉE"/>
+                                        <String fx:value="ANNULÉE"/>
+                                        <String fx:value="TERMINÉE"/>
+                                    </FXCollections>
+                                </items>
+                            </ComboBox>
+                        </VBox>
+                    </VBox>
+
+                    <Region VBox.vgrow="ALWAYS"/>
+
+                    <VBox spacing="10">
+                        <Button fx:id="btnReserver"
+                                text="💾 Réserver maintenant ➜"
+                                onAction="#reserver"
+                                styleClass="btn-reserve"
+                                maxWidth="Infinity"
+                                disable="true"/>
+                        <Button fx:id="btnAnnuler"
+                                text="↺ Annuler"
+                                onAction="#annuler"
+                                styleClass="btn-secondary"
+                                maxWidth="Infinity"/>
+                    </VBox>
+                </VBox>
+
+            </HBox>
+        </ScrollPane>
+    </center>
+
+</BorderPane>
