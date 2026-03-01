@@ -48,7 +48,7 @@ public class PromotionPdfService {
         fr.put("title","FICHE PROMOTION"); fr.put("details","Détails de la Promotion");
         fr.put("name","Nom"); fr.put("description","Description");
         fr.put("discount_pct","Réduction (%)"); fr.put("discount_fix","Réduction Fixe (TND)");
-        fr.put("prix_jour","Prix / Jour (TND)"); fr.put("date_debut","Date de Début");
+        fr.put("date_debut","Date de Début");
         fr.put("date_fin","Date de Fin"); fr.put("type","Type");
         fr.put("pack","Pack Combiné"); fr.put("individuel","Individuel");
         fr.put("stats","Statistiques"); fr.put("vues","Vues totales");
@@ -65,7 +65,7 @@ public class PromotionPdfService {
         en.put("title","PROMOTION SHEET"); en.put("details","Promotion Details");
         en.put("name","Name"); en.put("description","Description");
         en.put("discount_pct","Discount (%)"); en.put("discount_fix","Fixed Discount (TND)");
-        en.put("prix_jour","Price / Day (TND)"); en.put("date_debut","Start Date");
+        en.put("date_debut","Start Date");
         en.put("date_fin","End Date"); en.put("type","Type");
         en.put("pack","Combined Pack"); en.put("individuel","Individual");
         en.put("stats","Statistics"); en.put("vues","Total Views");
@@ -94,8 +94,8 @@ public class PromotionPdfService {
 
         addHeader(doc, promo, lang);
 
-        doc.setLeftMargin(40);
-        doc.setRightMargin(40);
+        doc.setLeftMargin(50);
+        doc.setRightMargin(50);
         doc.add(new Paragraph(" ").setMarginTop(15));
 
         addDetailsSection(doc, promo, lang);
@@ -112,82 +112,102 @@ public class PromotionPdfService {
 
     // ═══ HEADER BANNIÈRE ═══
     private void addHeader(Document doc, Promotion promo, String lang) {
-        Table t = new Table(UnitValue.createPercentArray(new float[]{1.2f, 2.5f, 1.2f}))
-                .useAllAvailableWidth().setMargin(0).setPadding(0);
+        // ── Single-color top bar ──
+        Table topBar = new Table(1).useAllAvailableWidth().setMargin(0).setPadding(0);
+        Cell topCell = new Cell().setBorder(Border.NO_BORDER)
+                .setBackgroundColor(BLEU_NUIT).setPadding(0);
 
-        // Logo cell
+        // Logo + title in a single clean row
+        Table inner = new Table(UnitValue.createPercentArray(new float[]{1f, 3f, 1f}))
+                .useAllAvailableWidth().setPadding(0).setMargin(0);
+
+        // Left — logo
         Cell logoCell = new Cell().setBorder(Border.NO_BORDER)
-                .setBackgroundColor(BLEU_NUIT).setPadding(28).setVerticalAlignment(VerticalAlignment.MIDDLE);
+                .setBackgroundColor(BLEU_NUIT).setPadding(24).setVerticalAlignment(VerticalAlignment.MIDDLE);
         try {
             URL logoUrl = getClass().getResource("/images/logo.png");
             if (logoUrl != null) {
-                Image logo = new Image(ImageDataFactory.create(logoUrl)).setWidth(75);
+                Image logo = new Image(ImageDataFactory.create(logoUrl)).setWidth(65);
                 logoCell.add(logo.setHorizontalAlignment(HorizontalAlignment.CENTER));
             } else {
-                logoCell.add(new Paragraph("RE7LA").setFontColor(ORANGE).setFontSize(24).setBold()
+                logoCell.add(new Paragraph("RE7LA").setFontColor(ORANGE).setFontSize(22).setBold()
                         .setTextAlignment(TextAlignment.CENTER));
             }
         } catch (Exception e) {
-            logoCell.add(new Paragraph("RE7LA").setFontColor(ORANGE).setFontSize(24).setBold()
+            logoCell.add(new Paragraph("RE7LA").setFontColor(ORANGE).setFontSize(22).setBold()
                     .setTextAlignment(TextAlignment.CENTER));
         }
-        logoCell.add(new Paragraph("Tourism Platform").setFontColor(new DeviceRgb(180,180,180))
-                .setFontSize(8).setTextAlignment(TextAlignment.CENTER).setMarginTop(4));
 
-        // Title cell
+        // Center — title block
         Cell titleCell = new Cell().setBorder(Border.NO_BORDER)
-                .setBackgroundColor(ORANGE).setPadding(30).setVerticalAlignment(VerticalAlignment.MIDDLE);
-        titleCell.add(new Paragraph(t("title", lang))
-                .setFontColor(WHITE).setFontSize(26).setBold()
-                .setTextAlignment(TextAlignment.CENTER).setMarginBottom(6));
-        titleCell.add(new Paragraph(promo.getName())
-                .setFontColor(WHITE).setFontSize(14).setTextAlignment(TextAlignment.CENTER).setOpacity(0.92f));
-        String idStr = "ID #" + promo.getId();
-        titleCell.add(new Paragraph(idStr).setFontColor(JAUNE).setFontSize(10)
-                .setTextAlignment(TextAlignment.CENTER).setMarginTop(4));
-
-        // Badge cell
-        Cell badgeCell = new Cell().setBorder(Border.NO_BORDER)
                 .setBackgroundColor(BLEU_NUIT).setPadding(28).setVerticalAlignment(VerticalAlignment.MIDDLE);
+        titleCell.add(new Paragraph(t("title", lang))
+                .setFontColor(ORANGE).setFontSize(10).setBold()
+                .setTextAlignment(TextAlignment.CENTER)
+                .setCharacterSpacing(3).setMarginBottom(6));
+        titleCell.add(new Paragraph(promo.getName())
+                .setFontColor(WHITE).setFontSize(20).setBold()
+                .setTextAlignment(TextAlignment.CENTER).setMarginBottom(4));
+        titleCell.add(new Paragraph("ID #" + promo.getId())
+                .setFontColor(JAUNE).setFontSize(9)
+                .setTextAlignment(TextAlignment.CENTER));
+
+        // Right — status badges
+        Cell badgeCell = new Cell().setBorder(Border.NO_BORDER)
+                .setBackgroundColor(BLEU_NUIT).setPadding(24).setVerticalAlignment(VerticalAlignment.MIDDLE);
         String typeLabel = promo.isPack() ? "📦 " + t("pack", lang) : "🎁 " + t("individuel", lang);
-        badgeCell.add(new Paragraph(typeLabel).setFontColor(JAUNE).setFontSize(11).setBold()
-                .setTextAlignment(TextAlignment.CENTER).setMarginBottom(10));
-        String lockStr = promo.isLocked() ? t("locked", lang) : t("unlocked", lang);
-        badgeCell.add(new Paragraph(lockStr).setFontColor(WHITE).setFontSize(10)
+        badgeCell.add(new Paragraph(typeLabel).setFontColor(JAUNE).setFontSize(10).setBold()
                 .setTextAlignment(TextAlignment.CENTER).setMarginBottom(8));
+        String lockStr = promo.isLocked() ? t("locked", lang) : t("unlocked", lang);
+        badgeCell.add(new Paragraph(lockStr).setFontColor(WHITE).setFontSize(9)
+                .setTextAlignment(TextAlignment.CENTER).setMarginBottom(6));
         String statusStr = promo.isActive() ? t("active", lang) : t("expired", lang);
         badgeCell.add(new Paragraph(statusStr).setFontColor(promo.isActive() ? TURQUOISE : GRAY)
-                .setFontSize(10).setBold().setTextAlignment(TextAlignment.CENTER));
+                .setFontSize(9).setBold().setTextAlignment(TextAlignment.CENTER));
 
-        t.addCell(logoCell); t.addCell(titleCell); t.addCell(badgeCell);
-        doc.add(t);
+        inner.addCell(logoCell); inner.addCell(titleCell); inner.addCell(badgeCell);
+        topCell.add(inner);
+        topBar.addCell(topCell);
+        doc.add(topBar);
+
+        // ── Orange accent stripe ──
+        Table stripe = new Table(1).useAllAvailableWidth().setMargin(0);
+        Cell sc = new Cell().setBorder(Border.NO_BORDER).setBackgroundColor(ORANGE)
+                .setHeight(5).setPadding(0);
+        stripe.addCell(sc);
+        doc.add(stripe);
     }
 
     // ═══ SECTION DÉTAILS ═══
     private void addDetailsSection(Document doc, Promotion promo, String lang) {
         doc.add(sectionTitle("◆  " + t("details", lang)));
 
-        Table table = new Table(UnitValue.createPercentArray(new float[]{1, 1}))
-                .useAllAvailableWidth().setMarginBottom(18);
+        Table table = new Table(UnitValue.createPercentArray(new float[]{1, 1.6f}))
+                .useAllAvailableWidth().setMarginBottom(14);
 
         addRow(table, t("name", lang), promo.getName());
         addRow(table, t("type", lang), promo.isPack() ? t("pack", lang) : t("individuel", lang));
         addRow(table, t("date_debut", lang), promo.getStartDate().toString());
         addRow(table, t("date_fin", lang), promo.getEndDate().toString());
-        addRow(table, t("prix_jour", lang), (promo.getPrixParJour() != null ? promo.getPrixParJour() : 50f) + " TND");
+
         if (promo.getDiscountPercentage() != null)
             addRow(table, t("discount_pct", lang), promo.getDiscountPercentage() + " %");
         if (promo.getDiscountFixed() != null)
             addRow(table, t("discount_fix", lang), promo.getDiscountFixed() + " TND");
+
         doc.add(table);
 
-        // Description
+        // Description block with improved alignment
         doc.add(new Paragraph("◆  " + t("description", lang))
-                .setFontColor(BLEU_NUIT).setBold().setFontSize(11).setMarginBottom(5));
+                .setFontColor(BLEU_NUIT).setBold().setFontSize(11)
+                .setMarginBottom(5).setMarginTop(2));
         doc.add(new Paragraph(promo.getDescription())
-                .setFontColor(GRAY).setFontSize(10).setBackgroundColor(BG_LIGHT)
-                .setPadding(14).setMarginBottom(20)
-                .setBorderLeft(new SolidBorder(ORANGE, 3)));
+                .setFontColor(GRAY).setFontSize(9.5f)
+                .setBackgroundColor(BG_LIGHT)
+                .setPaddingLeft(16).setPaddingRight(16).setPaddingTop(12).setPaddingBottom(12)
+                .setMarginBottom(18)
+                .setBorderLeft(new SolidBorder(ORANGE, 3))
+                .setTextAlignment(TextAlignment.JUSTIFIED));
     }
 
     // ═══ SECTION STATS ═══
@@ -303,13 +323,15 @@ public class PromotionPdfService {
 
     private void addRow(Table table, String label, String value) {
         Cell lc = new Cell().setBorder(Border.NO_BORDER)
-                .setBackgroundColor(BG_LIGHT).setPadding(9);
-        lc.add(new Paragraph(label).setFontColor(GRAY).setFontSize(9).setBold());
+                .setBackgroundColor(BG_LIGHT).setPadding(10)
+                .setBorderBottom(new SolidBorder(WHITE, 1));
+        lc.add(new Paragraph(label).setFontColor(GRAY).setFontSize(8.5f).setBold());
 
         Cell vc = new Cell().setBorder(Border.NO_BORDER)
-                .setBackgroundColor(WHITE).setPadding(9)
-                .setBorderLeft(new SolidBorder(JAUNE, 2));
-        vc.add(new Paragraph(value).setFontColor(BLEU_NUIT).setFontSize(10));
+                .setBackgroundColor(WHITE).setPadding(10)
+                .setBorderLeft(new SolidBorder(ORANGE, 2))
+                .setBorderBottom(new SolidBorder(BG_LIGHT, 1));
+        vc.add(new Paragraph(value != null ? value : "—").setFontColor(BLEU_NUIT).setFontSize(10));
 
         table.addCell(lc); table.addCell(vc);
     }

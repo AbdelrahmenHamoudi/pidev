@@ -48,6 +48,7 @@ public class StatistiquesReservationsController implements Initializable {
     // ── KPI labels ──
     @FXML private Label kpiTotalLabel;
     @FXML private Label kpiReservationsLabel;
+    @FXML private Label kpiUsersLabel;
 
     // ── Containers pour animation (à binder dans FXML si présents) ──
     @FXML private HBox kpiRow;
@@ -116,6 +117,16 @@ public class StatistiquesReservationsController implements Initializable {
                     PauseTransition d = new PauseTransition(Duration.millis(400));
                     d.setOnFinished(e -> AnimationHelper.countUp(kpiReservationsLabel, 0, resa, 1200));
                     d.play();
+                }
+            }
+            // Total users
+            try (Statement st = conn.createStatement();
+                 ResultSet rs = st.executeQuery("SELECT COUNT(*) FROM users")) {
+                if (rs.next() && kpiUsersLabel != null) {
+                    int totalUsers = rs.getInt(1);
+                    PauseTransition d2 = new PauseTransition(Duration.millis(800));
+                    d2.setOnFinished(e -> AnimationHelper.countUp(kpiUsersLabel, 0, totalUsers, 1200));
+                    d2.play();
                 }
             }
         } catch (Exception e) {
@@ -250,11 +261,7 @@ public class StatistiquesReservationsController implements Initializable {
             }
         } catch (Exception e) { System.err.println("Chart1: " + e.getMessage()); }
 
-        if (dataset.getRowCount() == 0) {
-            dataset.addValue(12, "Réservations", "Promo Été");
-            dataset.addValue(8,  "Réservations", "Black Friday");
-            dataset.addValue(5,  "Réservations", "Pack Famille");
-        }
+
 
         JFreeChart chart = ChartFactory.createBarChart("", "", "", dataset, PlotOrientation.HORIZONTAL, false, false, false);
         styleChart(chart);
@@ -270,7 +277,7 @@ public class StatistiquesReservationsController implements Initializable {
         try (Connection conn = DatabaseConnection.getConnection()) {
             if (conn != null) {
                 String sql = "SELECT u.nom, u.prenom, COUNT(r.id) as nb " +
-                        "FROM user u LEFT JOIN reservation_promo r ON u.id = r.user_id " +
+                        "FROM users u LEFT JOIN reservation_promo r ON u.id = r.user_id " +
                         "GROUP BY u.id, u.nom, u.prenom ORDER BY nb DESC LIMIT 10";
                 try (PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
                     while (rs.next())
@@ -279,11 +286,7 @@ public class StatistiquesReservationsController implements Initializable {
             }
         } catch (Exception e) { System.err.println("Chart2: " + e.getMessage()); }
 
-        if (dataset.getRowCount() == 0) {
-            dataset.addValue(15, "Réservations", "Ahmed B.");
-            dataset.addValue(10, "Réservations", "Sana M.");
-            dataset.addValue(7,  "Réservations", "Youssef K.");
-        }
+
 
         JFreeChart chart = ChartFactory.createBarChart("", "", "", dataset, PlotOrientation.VERTICAL, false, false, false);
         styleChart(chart);
@@ -299,7 +302,7 @@ public class StatistiquesReservationsController implements Initializable {
         try (Connection conn = DatabaseConnection.getConnection()) {
             if (conn != null) {
                 String sql = "SELECT u.nom, u.prenom, COUNT(r.id) as nb " +
-                        "FROM user u LEFT JOIN reservation_promo r ON u.id = r.user_id " +
+                        "FROM users u LEFT JOIN reservation_promo r ON u.id = r.user_id " +
                         "GROUP BY u.id, u.nom, u.prenom ORDER BY nb ASC LIMIT 10";
                 try (PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
                     while (rs.next())
@@ -308,11 +311,7 @@ public class StatistiquesReservationsController implements Initializable {
             }
         } catch (Exception e) { System.err.println("Chart3: " + e.getMessage()); }
 
-        if (dataset.getRowCount() == 0) {
-            dataset.addValue(0, "Réservations", "Ali T.");
-            dataset.addValue(1, "Réservations", "Rima S.");
-            dataset.addValue(2, "Réservations", "Omar F.");
-        }
+
 
         JFreeChart chart = ChartFactory.createBarChart("", "", "", dataset, PlotOrientation.VERTICAL, false, false, false);
         styleChart(chart);
@@ -335,10 +334,7 @@ public class StatistiquesReservationsController implements Initializable {
             }
         } catch (Exception e) { System.err.println("Chart4: " + e.getMessage()); }
 
-        if (dataset.getItemCount() == 0) {
-            dataset.setValue("Individuelles", 60);
-            dataset.setValue("Packs", 40);
-        }
+
 
         JFreeChart chart = ChartFactory.createPieChart("", dataset, true, false, false);
         styleChart(chart);
@@ -383,12 +379,7 @@ public class StatistiquesReservationsController implements Initializable {
             }
         } catch (Exception e) { System.err.println("Chart5: " + e.getMessage()); }
 
-        if (dataset.getRowCount() == 0) {
-            dataset.addValue(20, "Réservations", "Héberg+Activité+Trajet");
-            dataset.addValue(14, "Réservations", "Héberg+Activité");
-            dataset.addValue(9,  "Réservations", "Activité+Trajet");
-            dataset.addValue(6,  "Réservations", "Trajet+Héberg");
-        }
+
 
         JFreeChart chart = ChartFactory.createBarChart("", "", "", dataset, PlotOrientation.HORIZONTAL, false, false, false);
         styleChart(chart);

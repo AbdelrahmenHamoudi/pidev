@@ -1,55 +1,78 @@
 package org.example.models;
 
+/**
+ * ✅ FIXED: Aligned with re7la_3a9 `hebergement` table.
+ *
+ * Changes:
+ *  - id field maps to `id_hebergement`
+ *  - nom → titre (matches `titre` column in DB)
+ *  - Added prixParNuit (maps to `prixParNuit` column)
+ *  - Added typeHebergement (maps to `type_hebergement`)
+ *  - Added disponible (maps to `disponible_heberg`)
+ */
 public class Hebergement {
-    private int id;
-    private String nom;
-    private String ville;
-    private String type;
 
-    public Hebergement() {
-    }
+    private int    id;               // id_hebergement
+    private String titre;            // titre
+    private String descHebergement;  // desc_hebergement
+    private int    capacite;
+    private String typeHebergement;  // type_hebergement
+    private boolean disponible;      // disponible_heberg
+    private float  prixParNuit;      // prixParNuit ← KEY FIELD for price calculation
 
-    public Hebergement(int id, String nom, String ville, String type) {
+    public Hebergement() {}
+
+    /** Constructor for display in ComboBox / TableView */
+    public Hebergement(int id, String titre, String typeHebergement, float prixParNuit) {
         this.id = id;
-        this.nom = nom;
-        this.ville = ville;
-        this.type = type;
+        this.titre = titre;
+        this.typeHebergement = typeHebergement;
+        this.prixParNuit = prixParNuit;
+        this.disponible = true;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
+    /** Full constructor for DB read */
+    public Hebergement(int id, String titre, String descHebergement, int capacite,
+                       String typeHebergement, boolean disponible, float prixParNuit) {
         this.id = id;
+        this.titre = titre;
+        this.descHebergement = descHebergement;
+        this.capacite = capacite;
+        this.typeHebergement = typeHebergement;
+        this.disponible = disponible;
+        this.prixParNuit = prixParNuit;
     }
 
-    public String getNom() {
-        return nom;
-    }
+    // ── Getters & Setters ──
+    public int     getId()               { return id; }
+    public void    setId(int id)         { this.id = id; }
 
-    public void setNom(String nom) {
-        this.nom = nom;
-    }
+    public String  getTitre()            { return titre; }
+    public void    setTitre(String t)    { this.titre = t; }
 
-    public String getVille() {
-        return ville;
-    }
+    /** Alias for backward compatibility with any controller calling getNom() */
+    public String  getNom()              { return titre; }
 
-    public void setVille(String ville) {
-        this.ville = ville;
-    }
+    public String  getDescHebergement()  { return descHebergement; }
+    public void    setDescHebergement(String d) { this.descHebergement = d; }
 
-    public String getType() {
-        return type;
-    }
+    public int     getCapacite()         { return capacite; }
+    public void    setCapacite(int c)    { this.capacite = c; }
 
-    public void setType(String type) {
-        this.type = type;
-    }
+    public String  getTypeHebergement()  { return typeHebergement; }
+    public void    setTypeHebergement(String t) { this.typeHebergement = t; }
+
+    /** Alias: getType() for backward compat */
+    public String  getType()             { return typeHebergement; }
+
+    public boolean isDisponible()        { return disponible; }
+    public void    setDisponible(boolean d) { this.disponible = d; }
+
+    public float   getPrixParNuit()      { return prixParNuit; }
+    public void    setPrixParNuit(float p) { this.prixParNuit = p; }
 
     @Override
     public String toString() {
-        return nom + " - " + ville + " (" + type + ")";
+        return titre + " (" + typeHebergement + ") — " + String.format("%.0f TND/nuit", prixParNuit);
     }
 }

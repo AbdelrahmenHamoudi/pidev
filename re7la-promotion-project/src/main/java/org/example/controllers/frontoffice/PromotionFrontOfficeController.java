@@ -21,12 +21,20 @@ import javafx.util.Duration;
 import org.example.models.*;
 import org.example.services.*;
 import org.example.utils.AnimationHelper;
+import org.example.utils.SessionManager;
 
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.*;
+import org.example.models.ReservationPromo;
 
+/**
+ * ✅ FIXED:
+ *  - OffresStaticData → OffresService (real DB)
+ *  - userNameText now uses SessionManager.getCurrentUserName() dynamically
+ *  - All other logic, animations, and features preserved
+ */
 public class PromotionFrontOfficeController implements Initializable {
 
     @FXML private TextField        searchField;
@@ -35,10 +43,18 @@ public class PromotionFrontOfficeController implements Initializable {
     @FXML private ComboBox<String> sortCombo;
     @FXML private GridPane         promotionsGrid;
     @FXML private Button           btnMesReservations;
+    @FXML private Text             userNameText;
+
+    // ── Sidebar panels ──
+    @FXML private Text  sidebarUserName;
+    @FXML private Label sidebarReservCount;
+    @FXML private Label loyaltyBadge;
+    @FXML private VBox  sidebarTrendingBox;
+    @FXML private VBox  sidebarUpcomingBox;
 
     private PromotionService       promotionService;
     private PromotionTargetService targetService;
-    private OffresStaticData       offresData;
+    private Offresservice offresService;  // ✅ FIXED: was OffresStaticData
     private PromoCodeService       promoCodeService;
     private TrendingService        trendingService;
     private NotificationService    notifService;
@@ -58,15 +74,21 @@ public class PromotionFrontOfficeController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         promotionService = new PromotionService();
         targetService    = new PromotionTargetService();
-        offresData       = OffresStaticData.getInstance();
+        offresService    = Offresservice.getInstance();  // ✅ FIXED
         promoCodeService = new PromoCodeService();
         trendingService  = TrendingService.getInstance();
         notifService     = NotificationService.getInstance();
+
+        // ✅ FIXED: Set dynamic user name from SessionManager
+        if (userNameText != null) {
+            userNameText.setText(SessionManager.getCurrentUserName());
+        }
 
         setupGrid();
         setupFilters();
         loadPromotions();
         setupListeners();
+        Platform.runLater(this::loadSidebar);
 
         Platform.runLater(() -> { if (promotionsGrid != null) AnimationHelper.fadeIn(promotionsGrid); });
     }
@@ -99,6 +121,140 @@ public class PromotionFrontOfficeController implements Initializable {
         searchField.textProperty().addListener((obs, o, n) -> applyFilters());
     }
 
+    // ════════════════════════════════════════════════════
+    // SIDEBAR — loads dynamically for the logged-in user
+    // ════════════════════════════════════════════════════
+
+    private void loadSidebar() {
+        int userId = SessionManager.getCurrentUserId();
+        String userName = SessionManager.getCurrentUserName();
+
+        // ── Mon Profil ──
+        if (sidebarUserName != null)
+            sidebarUserName.setText(userName);
+
+        ReservationPromoService resaService = new ReservationPromoService();
+        List<ReservationPromo> myResa = resaService.getByUserId(userId);
+
+        if (sidebarReservCount != null)
+            sidebarReservCount.setText(myResa.size() + " réservation(s)");
+
+        if (loyaltyBadge != null) {
+            String badge = myResa.size() >= 10 ? "🥇 Expert"
+                    : myResa.size() >= 5  ? "🥈 Régulier"
+                    : "🥉 Débutant";
+            loyaltyBadge.setText(badge);
+        }
+
+        // ── En Tendance — show top 3 by score (not just strict isTrending threshold) ──
+        if (sidebarTrendingBox != null) {
+            // Remove anything after the Separator (index 0 = label, 1 = separator)
+            while (sidebarTrendingBox.getChildren().size() > 2)
+                sidebarTrendingBox.getChildren().remove(2);
+
+            // Sort ALL promos by score descending, take top 3
+            List<Promotion> sorted = trendingService.sortWithTrendingFirst(new ArrayList<>(allPromotions));
+            List<Promotion> topTrending = sorted.stream()
+                    .filter(p -> trendingService.getTrendingScore(p) > 0)
+                    .limit(3)
+                    .toList();
+
+            if (topTrending.isEmpty()) {
+                Label none = new Label("Aucune promotion en tendance");
+                none.setStyle("-fx-font-size: 11px; -fx-text-fill: #94A3B8;");
+                sidebarTrendingBox.getChildren().add(none);
+            } else {
+                for (Promotion p : topTrending) {
+                    boolean isTrend = trendingService.isTrending(p);
+                    HBox row = new HBox(8);
+                    row.setAlignment(Pos.CENTER_LEFT);
+                    row.setStyle("-fx-background-color: " + (isTrend ? "#FFF5F5" : "#F9FAFB") +
+                            "; -fx-padding: 7 10; -fx-background-radius: 8; -fx-cursor: hand;");
+
+                    Label flame = new Label(isTrend ? "🔥" : "📈");
+                    flame.setStyle("-fx-font-size: 13px;");
+
+                    VBox info = new VBox(1);
+                    Label name = new Label(p.getName());
+                    name.setStyle("-fx-font-size: 11px; -fx-font-weight: 700; -fx-text-fill: #2C3E50;");
+                    name.setWrapText(true);
+                    name.setMaxWidth(160);
+
+                    String scoreLabel = trendingService.getScoreLabel(p);
+                    String scoreColor = trendingService.getScoreColor(p);
+                    Label scoreLbl = new Label(scoreLabel + " · score " +
+                            String.format("%.0f", trendingService.getTrendingScore(p)));
+                    scoreLbl.setStyle("-fx-font-size: 9px; -fx-text-fill: " + scoreColor + "; -fx-font-weight: 600;");
+
+                    info.getChildren().addAll(name, scoreLbl);
+                    row.getChildren().addAll(flame, info);
+                    sidebarTrendingBox.getChildren().add(row);
+                }
+            }
+        }
+
+        // ── Prochaines Réservations — next upcoming (today or future) ──
+        if (sidebarUpcomingBox != null) {
+            while (sidebarUpcomingBox.getChildren().size() > 2)
+                sidebarUpcomingBox.getChildren().remove(2);
+
+            LocalDate today = LocalDate.now();
+            List<ReservationPromo> upcoming = myResa.stream()
+                    .filter(r -> !r.getDateDebutReservation().toLocalDate().isBefore(today))
+                    .sorted(Comparator.comparing(r -> r.getDateDebutReservation().toLocalDate()))
+                    .limit(3)
+                    .toList();
+
+            if (upcoming.isEmpty()) {
+                // Also show the 3 most recent past reservations if no upcoming
+                List<ReservationPromo> recent = myResa.stream()
+                        .sorted(Comparator.comparing((ReservationPromo r) ->
+                                r.getDateDebutReservation().toLocalDate()).reversed())
+                        .limit(3)
+                        .toList();
+
+                if (recent.isEmpty()) {
+                    Label none = new Label("Aucune réservation");
+                    none.setStyle("-fx-font-size: 11px; -fx-text-fill: #94A3B8;");
+                    sidebarUpcomingBox.getChildren().add(none);
+                } else {
+                    for (ReservationPromo r : recent) {
+                        promotionService.getById(r.getPromotionId()).ifPresent(p -> {
+                            sidebarUpcomingBox.getChildren().add(buildResaRow(p, r, false));
+                        });
+                    }
+                }
+            } else {
+                for (ReservationPromo r : upcoming) {
+                    promotionService.getById(r.getPromotionId()).ifPresent(p -> {
+                        sidebarUpcomingBox.getChildren().add(buildResaRow(p, r, true));
+                    });
+                }
+            }
+        }
+    }
+
+    private VBox buildResaRow(Promotion p, ReservationPromo r, boolean upcoming) {
+        VBox row = new VBox(3);
+        row.setStyle("-fx-background-color: " + (upcoming ? "#EEF2F6" : "#F9FAFB") +
+                "; -fx-padding: 8 10; -fx-background-radius: 8;");
+
+        Label name = new Label((p.isPack() ? "🎁 " : "🎟 ") + p.getName());
+        name.setStyle("-fx-font-size: 11px; -fx-font-weight: 700; -fx-text-fill: #2C3E50;");
+        name.setWrapText(true);
+        name.setMaxWidth(200);
+
+        Label date = new Label("📅 " + r.getDateDebutReservation() + " → " + r.getDateFinReservation());
+        date.setStyle("-fx-font-size: 9px; -fx-text-fill: #64748B;");
+
+        String prixStr = String.format("%.2f TND", r.getMontantTotal());
+        Label prix = new Label("💰 " + prixStr);
+        prix.setStyle("-fx-font-size: 9px; -fx-text-fill: #1ABC9C; -fx-font-weight: 600;");
+
+        row.getChildren().addAll(name, date, prix);
+        return row;
+    }
+
     private void loadPromotions() {
         allPromotions.addAll(promotionService.getAll());
         filteredPromotions.addAll(allPromotions);
@@ -124,15 +280,15 @@ public class PromotionFrontOfficeController implements Initializable {
     private void sortPromotions() {
         String sort = sortCombo.getValue(); if (sort == null) sort = "🔥 Tendance d'abord";
         switch (sort) {
-            case "Réduction croissante"  -> filteredPromotions.sort((a, b) -> Float.compare(a.getDiscountPercentage() != null ? a.getDiscountPercentage() : 0f, b.getDiscountPercentage() != null ? b.getDiscountPercentage() : 0f));
-            case "Réduction décroissante"-> filteredPromotions.sort((a, b) -> Float.compare(b.getDiscountPercentage() != null ? b.getDiscountPercentage() : 0f, a.getDiscountPercentage() != null ? a.getDiscountPercentage() : 0f));
-            case "Plus récentes"         -> filteredPromotions.sort((a, b) -> b.getStartDate().compareTo(a.getStartDate()));
+            case "Réduction croissante"   -> filteredPromotions.sort((a, b) -> Float.compare(a.getDiscountPercentage() != null ? a.getDiscountPercentage() : 0f, b.getDiscountPercentage() != null ? b.getDiscountPercentage() : 0f));
+            case "Réduction décroissante" -> filteredPromotions.sort((a, b) -> Float.compare(b.getDiscountPercentage() != null ? b.getDiscountPercentage() : 0f, a.getDiscountPercentage() != null ? a.getDiscountPercentage() : 0f));
+            case "Plus récentes"          -> filteredPromotions.sort((a, b) -> b.getStartDate().compareTo(a.getStartDate()));
             default -> filteredPromotions.setAll(trendingService.sortWithTrendingFirst(new ArrayList<>(filteredPromotions)));
         }
     }
 
     // ════════════════════════════════════════════════════
-    // AFFICHAGE
+    // DISPLAY
     // ════════════════════════════════════════════════════
 
     private void displayPromotions() {
@@ -158,11 +314,16 @@ public class PromotionFrontOfficeController implements Initializable {
     }
 
     // ════════════════════════════════════════════════════
-    // CARD — vue utilisateur propre
+    // CARD
     // ════════════════════════════════════════════════════
 
     private VBox createCard(Promotion promo) {
         boolean trending = trendingService.isTrending(promo);
+
+        // ✅ FIXED: Increment nb_vues when USER sees the card in FrontOffice.
+        // This is the correct place — only real user interactions count.
+        promotionService.incrementVues(promo.getId());
+        promo.setNbVues(promo.getNbVues() + 1);
 
         VBox card = new VBox(0);
         card.setMaxWidth(Double.MAX_VALUE);
@@ -177,7 +338,7 @@ public class PromotionFrontOfficeController implements Initializable {
         });
         card.setOnMouseExited(e -> applyCardStyle(card, trending));
 
-        // ── HEADER ──
+        // Header
         StackPane header = new StackPane();
         header.setPrefHeight(130);
         header.setStyle((trending
@@ -191,7 +352,6 @@ public class PromotionFrontOfficeController implements Initializable {
         bigIcon.setStyle("-fx-font-size: 42px;");
         header.getChildren().add(bigIcon);
 
-        // ✅ Badge TRENDING — toujours visible sur les cards tendance
         if (trending) {
             Label tb = new Label("🔥 TRENDING");
             tb.setId("trendingBadge");
@@ -209,7 +369,6 @@ public class PromotionFrontOfficeController implements Initializable {
             header.getChildren().add(lb);
         }
 
-        // Badge PACK / PROMO
         Label typeBadge = new Label(promo.isPack() ? "📦 PACK" : "🎁 PROMO");
         typeBadge.setStyle("-fx-background-color: rgba(255,255,255,0.9); -fx-text-fill: " +
                 (promo.isPack() ? ORANGE : TURQUOISE) +
@@ -218,7 +377,7 @@ public class PromotionFrontOfficeController implements Initializable {
         StackPane.setMargin(typeBadge, new Insets(8));
         header.getChildren().add(typeBadge);
 
-        // ── CONTENT — PAS d'infos internes (pas de score, pas de Dormant/Smart) ──
+        // Content
         VBox content = new VBox(7);
         content.setPadding(new Insets(12, 14, 12, 14));
         content.setStyle("-fx-background-color: white; -fx-background-radius: 0 0 14 14;");
@@ -233,7 +392,6 @@ public class PromotionFrontOfficeController implements Initializable {
         descLabel.setStyle("-fx-font-size: 10px; -fx-text-fill: " + GRAY + ";");
         descLabel.setWrapText(true);
 
-        // Réduction — propre, sans badge 🧠
         HBox discountRow = new HBox(6); discountRow.setAlignment(Pos.CENTER_LEFT);
         if (promo.getDiscountPercentage() != null) {
             Label d = new Label("-" + String.format("%.0f", promo.getDiscountPercentage()) + "%");
@@ -244,6 +402,29 @@ public class PromotionFrontOfficeController implements Initializable {
             Label d = new Label("-" + String.format("%.0f", promo.getDiscountFixed()) + " TND");
             d.setStyle("-fx-font-size: 15px; -fx-font-weight: 700; -fx-text-fill: #E67E22;");
             discountRow.getChildren().add(d);
+        }
+
+        // Show pack offer types as small chips
+        if (promo.isPack()) {
+            List<PromotionTarget> targets = targetService.getByPromotionId(promo.getId());
+            if (!targets.isEmpty()) {
+                HBox chipsRow = new HBox(5); chipsRow.setAlignment(Pos.CENTER_LEFT);
+                Set<TargetType> seen = new HashSet<>();
+                for (PromotionTarget t : targets) {
+                    if (seen.add(t.getTargetType())) {
+                        String chip = switch (t.getTargetType()) {
+                            case HEBERGEMENT -> "🏨";
+                            case ACTIVITE    -> "🎯";
+                            case VOITURE     -> "🚗";
+                        };
+                        Label chipLbl = new Label(chip);
+                        chipLbl.setStyle("-fx-background-color: " + BG + "; -fx-padding: 2 6;" +
+                                "-fx-background-radius: 8; -fx-font-size: 11px;");
+                        chipsRow.getChildren().add(chipLbl);
+                    }
+                }
+                content.getChildren().add(chipsRow);
+            }
         }
 
         Label datesLabel = new Label("📅 " + promo.getStartDate() + " → " + promo.getEndDate());
@@ -364,8 +545,9 @@ public class PromotionFrontOfficeController implements Initializable {
             stage.setScene(new Scene(root));
             stage.setResizable(false);
             stage.showAndWait();
-            // Rafraîchir après fermeture
+            // Refresh promotions AND sidebar after closing
             allPromotions.clear(); allPromotions.addAll(promotionService.getAll()); applyFilters();
+            Platform.runLater(this::loadSidebar);
         } catch (IOException e) {
             notifService.danger("Erreur", "Impossible d'ouvrir le formulaire de réservation.");
         }
@@ -382,6 +564,64 @@ public class PromotionFrontOfficeController implements Initializable {
     @FXML private void resetFilters() {
         searchField.clear(); packCheckbox.setSelected(true); individuCheckbox.setSelected(true);
         activeCheckbox.setSelected(true); sortCombo.setValue("🔥 Tendance d'abord"); applyFilters();
+    }
+
+    @FXML private void handleRefresh() {
+        int countBefore = allPromotions.size();
+        allPromotions.clear();
+        allPromotions.addAll(promotionService.getAll());
+        int countAfter = allPromotions.size();
+        applyFilters();
+        Platform.runLater(this::loadSidebar);
+        int newCount = countAfter - countBefore;
+        if (newCount > 0) {
+            showNewPromoNotification(newCount);
+        }
+    }
+
+    private void showNewPromoNotification(int count) {
+        // Create a toast-style notification bar
+        HBox toast = new HBox(10);
+        toast.setAlignment(Pos.CENTER_LEFT);
+        toast.setStyle("-fx-background-color: #2C3E50; -fx-padding: 12 20; -fx-background-radius: 10;" +
+                "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 14, 0, 0, 4);");
+        toast.setMaxWidth(380);
+
+        Label icon = new Label("🔔");
+        icon.setStyle("-fx-font-size: 16px;");
+        Label msg = new Label(count + " nouvelle" + (count > 1 ? "s" : "") + " promotion" + (count > 1 ? "s" : "") + " disponible" + (count > 1 ? "s" : "") + " !");
+        msg.setStyle("-fx-font-size: 12px; -fx-font-weight: 700; -fx-text-fill: white;");
+        Region sp = new Region(); HBox.setHgrow(sp, Priority.ALWAYS);
+        Button btnClose = new Button("✕");
+        btnClose.setStyle("-fx-background-color: transparent; -fx-text-fill: #94A3B8;" +
+                "-fx-font-size: 11px; -fx-cursor: hand; -fx-padding: 2 6;");
+
+        toast.getChildren().addAll(icon, msg, sp, btnClose);
+
+        // Add to top-right of the promotions grid area by overlaying
+        StackPane overlay = new StackPane(toast);
+        overlay.setAlignment(Pos.TOP_RIGHT);
+        overlay.setStyle("-fx-padding: 0 20 0 0;");
+        overlay.setPickOnBounds(false);
+        overlay.setMouseTransparent(false);
+
+        // Insert above the grid
+        if (promotionsGrid.getParent() instanceof ScrollPane sp2 &&
+                sp2.getParent() instanceof VBox vb) {
+            vb.getChildren().add(0, overlay);
+            btnClose.setOnAction(e -> vb.getChildren().remove(overlay));
+
+            // Auto-remove after 5 seconds
+            PauseTransition pause = new PauseTransition(Duration.seconds(5));
+            pause.setOnFinished(e -> {
+                FadeTransition fade = new FadeTransition(Duration.millis(400), overlay);
+                fade.setFromValue(1); fade.setToValue(0);
+                fade.setOnFinished(ev -> vb.getChildren().remove(overlay));
+                fade.play();
+            });
+            pause.play();
+            new animatefx.animation.SlideInDown(toast).play();
+        }
     }
 
     @FXML private void handleMesReservations() {

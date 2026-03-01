@@ -9,6 +9,12 @@
 <?import java.lang.String?>
 <?import javafx.scene.image.Image?>
 
+<!--
+  ✅ FIXED:
+   - userNameText now has fx:id="userNameText" so controller can set it dynamically from SessionManager
+   - Removed hardcoded "John Doe"
+   - All styles, animations, layout preserved
+-->
 <BorderPane xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="org.example.controllers.frontoffice.PromotionFrontOfficeController"
@@ -25,7 +31,6 @@
                     </image>
                 </ImageView>
 
-                <!-- ✅ NOUVEAU HEADER avec user et bouton -->
                 <HBox alignment="CENTER_LEFT" spacing="20" HBox.hgrow="ALWAYS">
                     <VBox spacing="5">
                         <Text text="RE7LA" styleClass="front-title"/>
@@ -34,11 +39,12 @@
 
                     <Region HBox.hgrow="ALWAYS"/>
 
-                    <!-- Info user connecté -->
+                    <!-- ✅ FIXED: fx:id="userNameText" — filled dynamically by controller via SessionManager -->
                     <HBox spacing="10" alignment="CENTER"
                           style="-fx-background-color: #F9FAFB; -fx-padding: 8 15; -fx-background-radius: 20;">
                         <Text text="👤" style="-fx-font-size: 16px;"/>
-                        <Text text="John Doe"
+                        <Text fx:id="userNameText"
+                              text="Chargement..."
                               style="-fx-font-size: 13px; -fx-fill: #2C3E50; -fx-font-weight: bold;"/>
                     </HBox>
 
@@ -64,7 +70,6 @@
 
     <!-- ================= CENTER ================= -->
     <center>
-        <!-- Scroll global de la page -->
         <ScrollPane fitToWidth="true"
                     fitToHeight="true"
                     pannable="true"
@@ -75,34 +80,71 @@
                     <Insets top="25" right="25" bottom="25" left="25"/>
                 </padding>
 
-                <!-- ================= SIDEBAR ================= -->
-                <VBox styleClass="filter-box" spacing="20" prefWidth="280" maxWidth="280">
-                    <Text text="🔎 Filtres" styleClass="filter-title"/>
-                    <Separator/>
+                <!-- ================= SIDEBAR LEFT ================= -->
+                <VBox spacing="14" prefWidth="280" maxWidth="280">
 
-                    <VBox spacing="10">
-                        <Label text="Type de promotion" styleClass="filter-label"/>
-                        <VBox spacing="8">
-                            <CheckBox fx:id="packCheckbox" text="Packs combinés" selected="true"/>
-                            <CheckBox fx:id="individuCheckbox" text="Promotions individuelles" selected="true"/>
+                    <!-- FILTRES -->
+                    <VBox styleClass="filter-box" spacing="16">
+                        <Text text="🔎 Filtres" styleClass="filter-title"/>
+                        <Separator/>
+                        <VBox spacing="10">
+                            <Label text="Type de promotion" styleClass="filter-label"/>
+                            <VBox spacing="8">
+                                <CheckBox fx:id="packCheckbox" text="Packs combinés" selected="true"/>
+                                <CheckBox fx:id="individuCheckbox" text="Promotions individuelles" selected="true"/>
+                            </VBox>
                         </VBox>
+                        <Separator/>
+                        <VBox spacing="10">
+                            <Label text="Disponibilité" styleClass="filter-label"/>
+                            <CheckBox fx:id="activeCheckbox" text="Uniquement actives" selected="true"/>
+                        </VBox>
+                        <Button text="🔄 Réinitialiser les filtres"
+                                styleClass="btn-secondary"
+                                maxWidth="Infinity"
+                                onAction="#resetFilters"/>
                     </VBox>
 
-                    <Separator/>
-
-                    <VBox spacing="10">
-                        <Label text="Disponibilité" styleClass="filter-label"/>
-                        <CheckBox fx:id="activeCheckbox"
-                                  text="Uniquement actives"
-                                  selected="true"/>
+                    <!-- MON PROFIL -->
+                    <VBox spacing="10"
+                          style="-fx-background-color: white; -fx-padding: 16; -fx-background-radius: 14;
+                                 -fx-border-color: #E2E8F0; -fx-border-width: 1; -fx-border-radius: 14;
+                                 -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 10, 0, 0, 3);">
+                        <Label text="👤 Mon Profil"
+                               style="-fx-font-size: 12px; -fx-font-weight: 800; -fx-text-fill: #2C3E50;"/>
+                        <Separator/>
+                        <Text fx:id="sidebarUserName" text="—"
+                              style="-fx-font-size: 13px; -fx-font-weight: 700; -fx-fill: #2C3E50;"/>
+                        <Label fx:id="sidebarReservCount" text="0 réservation(s)"
+                               style="-fx-background-color: #EEF2F6; -fx-text-fill: #1ABC9C;
+                                      -fx-font-size: 11px; -fx-font-weight: 700;
+                                      -fx-padding: 4 10; -fx-background-radius: 8;"/>
+                        <Label fx:id="loyaltyBadge" text="🥉 Débutant"
+                               style="-fx-background-color: #FEF3C7; -fx-text-fill: #D97706;
+                                      -fx-font-size: 10px; -fx-font-weight: 700;
+                                      -fx-padding: 4 10; -fx-background-radius: 8;"/>
                     </VBox>
 
-                    <Region VBox.vgrow="ALWAYS"/>
+                    <!-- EN TENDANCE -->
+                    <VBox fx:id="sidebarTrendingBox" spacing="8"
+                          style="-fx-background-color: white; -fx-padding: 16; -fx-background-radius: 14;
+                                 -fx-border-color: #FEB2B2; -fx-border-width: 1; -fx-border-radius: 14;
+                                 -fx-effect: dropshadow(gaussian, rgba(229,62,62,0.1), 10, 0, 0, 3);">
+                        <Label text="🔥 En Tendance"
+                               style="-fx-font-size: 12px; -fx-font-weight: 800; -fx-text-fill: #E53E3E;"/>
+                        <Separator/>
+                    </VBox>
 
-                    <Button text="🔄 Réinitialiser les filtres"
-                            styleClass="btn-secondary"
-                            maxWidth="Infinity"
-                            onAction="#resetFilters"/>
+                    <!-- PROCHAINES RÉSERVATIONS -->
+                    <VBox fx:id="sidebarUpcomingBox" spacing="8"
+                          style="-fx-background-color: white; -fx-padding: 16; -fx-background-radius: 14;
+                                 -fx-border-color: #E2E8F0; -fx-border-width: 1; -fx-border-radius: 14;
+                                 -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 3);">
+                        <Label text="📅 Prochaines Réservations"
+                               style="-fx-font-size: 12px; -fx-font-weight: 800; -fx-text-fill: #2C3E50;"/>
+                        <Separator/>
+                    </VBox>
+
                 </VBox>
 
                 <!-- ================= PROMOTIONS AREA ================= -->
@@ -116,11 +158,19 @@
 
                         <Region HBox.hgrow="ALWAYS"/>
 
+                        <Button text="↺  Actualiser" onAction="#handleRefresh"
+                                style="-fx-background-color: white; -fx-text-fill: #2C3E50;
+                                       -fx-font-weight: 700; -fx-font-size: 12px;
+                                       -fx-padding: 8 16; -fx-background-radius: 18;
+                                       -fx-cursor: hand; -fx-border-color: #E2E8F0;
+                                       -fx-border-radius: 18; -fx-border-width: 1;"/>
+
                         <Label text="Trier par:" style="-fx-text-fill: #7F8C8D;"/>
 
-                        <ComboBox fx:id="sortCombo" value="Plus récentes" prefWidth="180">
+                        <ComboBox fx:id="sortCombo" value="🔥 Tendance d'abord" prefWidth="200">
                             <items>
                                 <FXCollections fx:factory="observableArrayList">
+                                    <String fx:value="🔥 Tendance d'abord"/>
                                     <String fx:value="Plus récentes"/>
                                     <String fx:value="Réduction croissante"/>
                                     <String fx:value="Réduction décroissante"/>
@@ -129,13 +179,10 @@
                         </ComboBox>
                     </HBox>
 
-                    <!-- Scroll interne des cartes -->
                     <ScrollPane fitToWidth="true"
                                 VBox.vgrow="ALWAYS"
                                 style="-fx-background-color: transparent; -fx-border-color: transparent;">
-
-                        <GridPane fx:id="promotionsGrid"
-                                  hgap="16" vgap="16" />
+                        <GridPane fx:id="promotionsGrid" hgap="16" vgap="16"/>
                     </ScrollPane>
 
                 </VBox>

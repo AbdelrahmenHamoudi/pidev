@@ -35,6 +35,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+/**
+ * ✅ FIXED:
+ *  - OffresStaticData → OffresService (real DB)
+ *  - Transport → Voiture (aligned with voiture table)
+ *  - TargetType.TRANSPORT → TargetType.VOITURE
+ *  - Removed prixParJour from form and Promotion creation
+ *  - ComboBox now shows "Hébergement / Activité / Voiture"
+ *  - Table columns aligned with new models (getNom(), getDetails())
+ */
 public class PromotionBackOfficeController implements Initializable {
 
     @FXML private Button btnGestionUtilisateurs, btnComptesBancaires,
@@ -51,7 +60,7 @@ public class PromotionBackOfficeController implements Initializable {
     @FXML private VBox viewEmpty;
 
     // ── Formulaire ──
-    @FXML private TextField  txtNom, txtPourcentage, txtFixe, txtPrixParJour;
+    @FXML private TextField  txtNom, txtPourcentage, txtFixe;
     @FXML private TextArea   txtDescription;
     @FXML private DatePicker dateDebut, dateFin;
     @FXML private CheckBox   chkPack, chkLocked;
@@ -63,16 +72,16 @@ public class PromotionBackOfficeController implements Initializable {
     @FXML private TableColumn<Object, Integer> colOffreId;
     @FXML private TableColumn<Object, String>  colOffreNom, colOffreDetails;
 
-    // ── Cards — GridPane 3 colonnes ──
-    @FXML private GridPane promoCardsGrid;   // ← GridPane remplace FlowPane
+    // ── Cards ──
+    @FXML private GridPane promoCardsGrid;
     @FXML private TextField searchPromoField;
 
-    private static final int COLS = 3;  // 3 cards par ligne
+    private static final int COLS = 3;
 
     // ── Services ──
     private PromotionService       promotionService;
     private PromotionTargetService targetService;
-    private OffresStaticData       offresData;
+    private Offresservice offresService;   // ✅ FIXED: was OffresStaticData
     private PromoCodeService       promoCodeService;
     private PromotionPdfService    pdfService;
     private NotificationService    notifService;
@@ -101,7 +110,7 @@ public class PromotionBackOfficeController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         promotionService = new PromotionService();
         targetService    = new PromotionTargetService();
-        offresData       = OffresStaticData.getInstance();
+        offresService    = Offresservice.getInstance();  // ✅ FIXED
         promoCodeService = new PromoCodeService();
         pdfService       = new PromotionPdfService();
         notifService     = NotificationService.getInstance();
@@ -125,7 +134,7 @@ public class PromotionBackOfficeController implements Initializable {
     }
 
     // ════════════════════════════════════════════════════
-    // GRID 3 COLONNES
+    // GRID
     // ════════════════════════════════════════════════════
 
     private void setupGrid() {
@@ -142,7 +151,7 @@ public class PromotionBackOfficeController implements Initializable {
     }
 
     // ════════════════════════════════════════════════════
-    // CHARGEMENT + AFFICHAGE
+    // LOAD + DISPLAY
     // ════════════════════════════════════════════════════
 
     private void loadAndDisplayPromos() {
@@ -182,13 +191,11 @@ public class PromotionBackOfficeController implements Initializable {
             promoCardsGrid.add(empty, 0, 0);
             return;
         }
-
-        // ⭐ AnimateFX cascade
         AnimationHelper.staggeredFadeIn(cards, 70);
     }
 
     // ════════════════════════════════════════════════════
-    // CARD BACKOFFICE
+    // CARD
     // ════════════════════════════════════════════════════
 
     private VBox createPromoCard(Promotion promo) {
@@ -199,43 +206,33 @@ public class PromotionBackOfficeController implements Initializable {
         card.setCursor(javafx.scene.Cursor.HAND);
         setCardStyle(card, false, trending);
 
-        card.setOnMouseEntered(e -> {
-            setCardHoverStyle(card);
-            new Pulse(card).play();
-        });
-        card.setOnMouseExited(e -> {
+        card.setOnMouseEntered(e -> { setCardHoverStyle(card); new Pulse(card).play(); });
+        card.setOnMouseExited(e  -> {
             boolean sel = selectedPromotion != null && selectedPromotion.getId() == promo.getId();
             setCardStyle(card, sel, trending);
         });
         card.setOnMouseClicked(e -> selectCard(promo, card, trending));
 
-        // ── Header ──
+        // Header
         StackPane header = new StackPane();
         header.setPrefHeight(120);
         header.setStyle(buildGradient(promo, trending) + " -fx-background-radius: 14 14 0 0;");
-
         Label bigIcon = new Label(trending ? "🔥" : getPromoIcon(promo));
         bigIcon.setStyle("-fx-font-size: 40px;");
         header.getChildren().add(bigIcon);
 
-        // Badge type
         Label typeBadge = new Label(promo.isPack() ? "📦 PACK" : "🎁 PROMO");
-        typeBadge.setStyle(
-                "-fx-background-color: rgba(255,255,255,0.9); -fx-text-fill: " +
-                        (promo.isPack() ? ORANGE : TURQUOISE) +
-                        "; -fx-font-weight: bold; -fx-font-size: 8px; -fx-padding: 3 7; -fx-background-radius: 20;"
-        );
+        typeBadge.setStyle("-fx-background-color: rgba(255,255,255,0.9); -fx-text-fill: " +
+                (promo.isPack() ? ORANGE : TURQUOISE) +
+                "; -fx-font-weight: bold; -fx-font-size: 8px; -fx-padding: 3 7; -fx-background-radius: 20;");
         StackPane.setAlignment(typeBadge, Pos.TOP_RIGHT);
         StackPane.setMargin(typeBadge, new Insets(8));
         header.getChildren().add(typeBadge);
 
-        // ⭐ Badge TRENDING
         if (trending) {
             Label tb = new Label("🔥 TENDANCE");
-            tb.setStyle(
-                    "-fx-background-color: " + ROUGE + "; -fx-text-fill: white;" +
-                            "-fx-font-weight: 900; -fx-font-size: 8px; -fx-padding: 3 8; -fx-background-radius: 20;"
-            );
+            tb.setStyle("-fx-background-color: " + ROUGE + "; -fx-text-fill: white;" +
+                    "-fx-font-weight: 900; -fx-font-size: 8px; -fx-padding: 3 8; -fx-background-radius: 20;");
             StackPane.setAlignment(tb, Pos.TOP_LEFT);
             StackPane.setMargin(tb, new Insets(8));
             header.getChildren().add(tb);
@@ -248,7 +245,6 @@ public class PromotionBackOfficeController implements Initializable {
             header.getChildren().add(lb);
         }
 
-        // Status badge
         boolean active = promo.isActive();
         Label statusBadge = new Label(active ? "✅" : "⛔");
         statusBadge.setStyle("-fx-background-color: " + (active ? TURQUOISE : "#94A3B8") +
@@ -257,7 +253,7 @@ public class PromotionBackOfficeController implements Initializable {
         StackPane.setMargin(statusBadge, new Insets(8));
         header.getChildren().add(statusBadge);
 
-        // ── Content ──
+        // Content
         VBox content = new VBox(5);
         content.setPadding(new Insets(10, 12, 8, 12));
         content.setStyle("-fx-background-color: white; -fx-background-radius: 0 0 14 14;");
@@ -266,7 +262,6 @@ public class PromotionBackOfficeController implements Initializable {
         nameLabel.setStyle("-fx-font-size: 12px; -fx-font-weight: 800; -fx-text-fill: " + BLEU_NUIT + ";");
         nameLabel.setWrapText(true);
 
-        // Réduction
         HBox priceRow = new HBox(5); priceRow.setAlignment(Pos.CENTER_LEFT);
         if (promo.getDiscountPercentage() != null) {
             Label d = new Label("-" + String.format("%.0f", promo.getDiscountPercentage()) + "%");
@@ -278,45 +273,38 @@ public class PromotionBackOfficeController implements Initializable {
             d.setStyle("-fx-font-size: 12px; -fx-font-weight: 700; -fx-text-fill: #E67E22;");
             priceRow.getChildren().add(d);
         }
-        // Smart discount badge
         Label smartBadge = new Label("🧠 Smart");
         smartBadge.setStyle("-fx-background-color: " + BG_LIGHT + "; -fx-text-fill: " + BLEU_NUIT +
                 "; -fx-font-size: 7px; -fx-font-weight: 700; -fx-padding: 2 5; -fx-background-radius: 8;");
         priceRow.getChildren().add(smartBadge);
 
-        // Barre de popularité (compacte)
         double score = trendingService.getTrendingScore(promo);
         String scoreColor = trendingService.getScoreColor(promo);
         Label scoreLbl = new Label(trendingService.getScoreLabel(promo) + " · " + String.format("%.1f", score));
         scoreLbl.setStyle("-fx-font-size: 8px; -fx-text-fill: " + scoreColor + "; -fx-font-weight: 700;");
 
-        // Stats row
         HBox statsRow = new HBox(8); statsRow.setAlignment(Pos.CENTER_LEFT);
         statsRow.setStyle("-fx-background-color: " + BG_LIGHT + "; -fx-padding: 4 8; -fx-background-radius: 6;");
         Label vuesLbl = new Label("👁 0"); vuesLbl.setStyle("-fx-font-size: 9px; -fx-font-weight: 700; -fx-text-fill: " + BLEU_NUIT + ";");
         Label resaLbl = new Label("📋 0"); resaLbl.setStyle("-fx-font-size: 9px; -fx-font-weight: 700; -fx-text-fill: " + TURQUOISE + ";");
         statsRow.getChildren().addAll(vuesLbl, resaLbl);
 
-        // CountUp différé
         PauseTransition pt = new PauseTransition(Duration.millis(400));
         pt.setOnFinished(e -> {
-            AnimationHelper.countUp(vuesLbl, 0, promo.getNbVues(), 700, " vues");
             vuesLbl.setText("👁 " + promo.getNbVues() + " vues");
-            AnimationHelper.countUp(resaLbl, 0, promo.getNbReservations(), 900, " réserv.");
             resaLbl.setText("📋 " + promo.getNbReservations() + " réserv.");
         });
         pt.play();
 
         Separator sep = new Separator(); sep.setStyle("-fx-border-color: #F1F5F9;");
 
-        // 3 boutons
         HBox btnRow = new HBox(6); btnRow.setAlignment(Pos.CENTER);
         Button btnQR      = buildSquareBtn("🔒", "QR",     BLEU_NUIT, "#3D5166");
         Button btnDetails = buildSquareBtn("📋", "Détails", ORANGE,    "#E67E22");
         Button btnDelete  = buildSquareBtn("🗑️","Suppr.",  ROUGE,     "#C53030");
-        btnQR.setOnAction(e     -> { e.consume(); handleQRCode(promo); });
-        btnDetails.setOnAction(e-> { e.consume(); handleDetails(promo); });
-        btnDelete.setOnAction(e -> { e.consume(); handleDeleteFromCard(promo); });
+        btnQR.setOnAction(e      -> { e.consume(); handleQRCode(promo); });
+        btnDetails.setOnAction(e -> { e.consume(); handleDetails(promo); });
+        btnDelete.setOnAction(e  -> { e.consume(); handleDeleteFromCard(promo); });
         btnRow.getChildren().addAll(btnQR, btnDetails, btnDelete);
 
         content.getChildren().addAll(nameLabel, priceRow, scoreLbl, statsRow, sep, btnRow);
@@ -324,24 +312,19 @@ public class PromotionBackOfficeController implements Initializable {
         return card;
     }
 
-    // ── Styles card ──
     private void setCardStyle(VBox card, boolean selected, boolean trending) {
         String borderColor = selected ? ORANGE : (trending ? "#FEB2B2" : "#E2E8F0");
         String shadow      = selected ? "rgba(243,156,18,0.3)" : (trending ? "rgba(229,62,62,0.15)" : "rgba(0,0,0,0.07)");
         int    bw          = (selected || trending) ? 2 : 1;
-        card.setStyle(
-                "-fx-background-color: white; -fx-background-radius: 14;" +
-                        "-fx-effect: dropshadow(gaussian," + shadow + ", 12, 0, 0, 3);" +
-                        "-fx-border-color: " + borderColor + "; -fx-border-radius: 14; -fx-border-width: " + bw + ";"
-        );
+        card.setStyle("-fx-background-color: white; -fx-background-radius: 14;" +
+                "-fx-effect: dropshadow(gaussian," + shadow + ", 12, 0, 0, 3);" +
+                "-fx-border-color: " + borderColor + "; -fx-border-radius: 14; -fx-border-width: " + bw + ";");
     }
 
     private void setCardHoverStyle(VBox card) {
-        card.setStyle(
-                "-fx-background-color: white; -fx-background-radius: 14;" +
-                        "-fx-effect: dropshadow(gaussian, rgba(243,156,18,0.25), 18, 0, 0, 5);" +
-                        "-fx-border-color: " + ORANGE + "; -fx-border-radius: 14; -fx-border-width: 2; -fx-translate-y: -2;"
-        );
+        card.setStyle("-fx-background-color: white; -fx-background-radius: 14;" +
+                "-fx-effect: dropshadow(gaussian, rgba(243,156,18,0.25), 18, 0, 0, 5);" +
+                "-fx-border-color: " + ORANGE + "; -fx-border-radius: 14; -fx-border-width: 2; -fx-translate-y: -2;");
     }
 
     private void selectCard(Promotion promo, VBox card, boolean trending) {
@@ -369,14 +352,14 @@ public class PromotionBackOfficeController implements Initializable {
     }
 
     private String buildGradient(Promotion p, boolean trending) {
-        if (trending) return "-fx-background-color: linear-gradient(to bottom right, #E53E3E, #F39C12);";
-        if (p.isPack())   return "-fx-background-color: linear-gradient(to bottom right, #F39C12, #F7DC6F);";
-        if (p.isLocked()) return "-fx-background-color: linear-gradient(to bottom right, #2C3E50, #4A6278);";
+        if (trending)    return "-fx-background-color: linear-gradient(to bottom right, #E53E3E, #F39C12);";
+        if (p.isPack())  return "-fx-background-color: linear-gradient(to bottom right, #F39C12, #F7DC6F);";
+        if (p.isLocked())return "-fx-background-color: linear-gradient(to bottom right, #2C3E50, #4A6278);";
         return "-fx-background-color: linear-gradient(to bottom right, #1ABC9C, #2C3E50);";
     }
 
     private String getPromoIcon(Promotion p) {
-        if (p.isPack())   return "📦";
+        if (p.isPack())  return "📦";
         if (p.isLocked()) return "🔒";
         return "🎁";
     }
@@ -384,6 +367,7 @@ public class PromotionBackOfficeController implements Initializable {
     // ════════════════════════════════════════════════════
     // QR CODE
     // ════════════════════════════════════════════════════
+
     private void handleQRCode(Promotion promo) {
         if (!promo.isLocked()) {
             Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
@@ -429,11 +413,13 @@ public class PromotionBackOfficeController implements Initializable {
     }
 
     // ════════════════════════════════════════════════════
-    // DÉTAILS — avec section Trending + SmartDiscount
+    // DÉTAILS
     // ════════════════════════════════════════════════════
+
     private void handleDetails(Promotion promo) {
-        promotionService.incrementVues(promo.getId());
-        promo.setNbVues(promo.getNbVues() + 1);
+        // ✅ FIXED: Do NOT increment nb_vues here.
+        // nb_vues must only be incremented from FrontOffice (real user interactions).
+        // Admin clicking Details in BackOffice must NOT affect trending score.
 
         boolean trending = trendingService.isTrending(promo);
         double  score    = trendingService.getTrendingScore(promo);
@@ -442,7 +428,6 @@ public class PromotionBackOfficeController implements Initializable {
         Stage d = new Stage(); d.initModality(Modality.APPLICATION_MODAL);
         d.setTitle("Détails — " + promo.getName());
 
-        // Header
         HBox header = new HBox(14); header.setAlignment(Pos.CENTER_LEFT);
         header.setStyle("-fx-background-color: " + BLEU_NUIT + "; -fx-padding: 18 22;");
         Label hIcon = new Label(trending ? "🔥" : getPromoIcon(promo)); hIcon.setStyle("-fx-font-size: 30px;");
@@ -458,78 +443,52 @@ public class PromotionBackOfficeController implements Initializable {
         VBox content = new VBox(14);
         content.setStyle("-fx-background-color: " + BG_LIGHT + "; -fx-padding: 18;");
 
-        // Infos de base
         GridPane grid = new GridPane(); grid.setHgap(10); grid.setVgap(8);
         grid.setStyle("-fx-background-color: white; -fx-padding: 14; -fx-background-radius: 10;");
-        addDetailRow(grid, 0, "📝 Nom",         promo.getName());
-        addDetailRow(grid, 1, "📋 Description", promo.getDescription());
+        addDetailRow(grid, 0, "📝 Nom",          promo.getName());
+        addDetailRow(grid, 1, "📋 Description",  promo.getDescription());
         addDetailRow(grid, 2, "💰 Réduction",
                 (promo.getDiscountPercentage() != null ? promo.getDiscountPercentage() + "%" : "—") + "  /  " +
                         (promo.getDiscountFixed() != null ? promo.getDiscountFixed() + " TND" : "—"));
-        addDetailRow(grid, 3, "📅 Période",     promo.getStartDate() + "  →  " + promo.getEndDate());
-        addDetailRow(grid, 4, "🏷️ Type",        promo.isPack() ? "Pack Combiné" : "Individuelle");
-        addDetailRow(grid, 5, "🔒 Verrouillée", promo.isLocked() ? "Oui" : "Non");
-        addDetailRow(grid, 6, "📊 Statut",      promo.isActive() ? "✅ Active" : "⛔ Expirée");
+        addDetailRow(grid, 3, "📅 Période",      promo.getStartDate() + "  →  " + promo.getEndDate());
+        addDetailRow(grid, 4, "🏷️ Type",         promo.isPack() ? "Pack Combiné" : "Individuelle");
+        addDetailRow(grid, 5, "🔒 Verrouillée",  promo.isLocked() ? "Oui" : "Non");
+        addDetailRow(grid, 6, "📊 Statut",       promo.isActive() ? "✅ Active" : "⛔ Expirée");
 
-        // ⭐ Section TRENDING
-        VBox trendBox = new VBox(10);
-        trendBox.setStyle("-fx-background-color: white; -fx-padding: 14; -fx-background-radius: 10;" +
-                "-fx-border-color: " + (trending ? ROUGE : "#E2E8F0") + "; -fx-border-width: 2; -fx-border-radius: 10;");
+        // Show linked offer targets with dynamic prices
+        List<PromotionTarget> targets = targetService.getByPromotionId(promo.getId());
+        if (!targets.isEmpty()) {
+            VBox targetsBox = new VBox(8);
+            targetsBox.setStyle("-fx-background-color: white; -fx-padding: 14; -fx-background-radius: 10;");
+            Label targetsTitle = new Label("🎯 Offres liées");
+            targetsTitle.setStyle("-fx-font-size: 12px; -fx-font-weight: 800; -fx-text-fill: " + BLEU_NUIT + ";");
+            targetsBox.getChildren().add(targetsTitle);
+            Pricecalculatorservice priceCalc = Pricecalculatorservice.getInstance();
+            for (PromotionTarget t : targets) {
+                String offerName = offresService.getOfferName(t.getTargetType(), t.getTargetId());
+                String unitPrice = priceCalc.getPriceUnitLabel(t.getTargetType(), t.getTargetId());
+                String typeIcon = switch (t.getTargetType()) {
+                    case HEBERGEMENT -> "🏨";
+                    case ACTIVITE    -> "🎯";
+                    case VOITURE     -> "🚗";
+                };
+                HBox row = new HBox(8); row.setAlignment(Pos.CENTER_LEFT);
+                Label lbl = new Label(typeIcon + " " + offerName + " — " + unitPrice);
+                lbl.setStyle("-fx-font-size: 11px; -fx-text-fill: " + BLEU_NUIT + ";");
+                row.getChildren().add(lbl);
+                targetsBox.getChildren().add(row);
+            }
+            grid.add(targetsBox, 0, 7); GridPane.setColumnSpan(targetsBox, 2);
+        }
 
-        HBox trendHeader = new HBox(8); trendHeader.setAlignment(Pos.CENTER_LEFT);
-        Label trendIcon  = new Label(trending ? "🔥" : "📊");
-        trendIcon.setStyle("-fx-font-size: 16px;");
-        Label trendTitle = new Label("Popularité & Tendance");
-        trendTitle.setStyle("-fx-font-size: 13px; -fx-font-weight: 800; -fx-text-fill: " + BLEU_NUIT + ";");
-        trendHeader.getChildren().addAll(trendIcon, trendTitle);
-
-        // Badge tendance
-        Label trendStatus = new Label(trending ? "✔ Tendance" : "✖ Non tendance");
-        trendStatus.setStyle(
-                "-fx-background-color: " + (trending ? "#F0FFF4" : "#FFF5F5") + ";" +
-                        "-fx-text-fill: " + (trending ? "#276749" : ROUGE) + ";" +
-                        "-fx-font-weight: 800; -fx-font-size: 13px; -fx-padding: 8 16; -fx-background-radius: 8;" +
-                        "-fx-border-color: " + (trending ? "#9AE6B4" : "#FEB2B2") + ";" +
-                        "-fx-border-width: 1; -fx-border-radius: 8;"
-        );
-
-        // Barre de score
-        VBox scoreSection = new VBox(6);
-        HBox scoreLabelRow = new HBox();
-        Label scoreLabel = new Label("Score de popularité : " + trendingService.getScoreLabel(promo));
-        scoreLabel.setStyle("-fx-font-size: 11px; -fx-font-weight: 700; -fx-text-fill: " + trendingService.getScoreColor(promo) + ";");
-        Label scoreVal = new Label(String.format("%.1f", score));
-        scoreVal.setStyle("-fx-font-size: 11px; -fx-text-fill: " + GRAY + ";");
-        Region sp2 = new Region(); HBox.setHgrow(sp2, Priority.ALWAYS);
-        scoreLabelRow.getChildren().addAll(scoreLabel, sp2, scoreVal);
-
-        StackPane barBg = new StackPane(); barBg.setPrefHeight(8);
-        barBg.setStyle("-fx-background-color: #E2E8F0; -fx-background-radius: 4;");
-        HBox barFill = new HBox(); barFill.setPrefHeight(8);
-        barFill.setStyle("-fx-background-color: " + trendingService.getScoreColor(promo) + "; -fx-background-radius: 4;");
-        barBg.widthProperty().addListener((obs, o, w) -> barFill.setPrefWidth(w.doubleValue() * norm));
-        StackPane.setAlignment(barFill, Pos.CENTER_LEFT);
-        barBg.getChildren().add(barFill);
-
-        // Conditions seuils
-        HBox condRow = new HBox(12);
-        Label condVues = new Label((promo.getNbVues() > 30 ? "✅" : "❌") + " " + promo.getNbVues() + " vues (seuil: 30)");
-        condVues.setStyle("-fx-font-size: 10px; -fx-text-fill: " + GRAY + ";");
-        Label condResa = new Label((promo.getNbReservations() > 10 ? "✅" : "❌") + " " + promo.getNbReservations() + " réserv. (seuil: 10)");
-        condResa.setStyle("-fx-font-size: 10px; -fx-text-fill: " + GRAY + ";");
-        condRow.getChildren().addAll(condVues, condResa);
-
-        scoreSection.getChildren().addAll(scoreLabelRow, barBg, condRow);
-        trendBox.getChildren().addAll(trendHeader, trendStatus, scoreSection);
-
-        // ⭐ Section SMART DISCOUNT
+        // Trending section
+        VBox trendBox = buildTrendingSection(promo, trending, score, norm);
         VBox smartBox = buildSmartDiscountSection(promo);
 
-        // Stat cards animées
         HBox statsBox = new HBox(10);
         statsBox.getChildren().addAll(
-                buildStatCardAnimated("👁",  0, promo.getNbVues(),         "Vues",          JAUNE),
-                buildStatCardAnimated("📋",  0, promo.getNbReservations(), "Réservations",  TURQUOISE)
+                buildStatCardAnimated("👁",  0, promo.getNbVues(),         "Vues",         JAUNE),
+                buildStatCardAnimated("📋",  0, promo.getNbReservations(), "Réservations", TURQUOISE)
         );
 
         content.getChildren().addAll(grid, trendBox, smartBox, statsBox);
@@ -543,17 +502,55 @@ public class PromotionBackOfficeController implements Initializable {
         root.getChildren().addAll(header, content, btnClose);
         VBox.setMargin(btnClose, new Insets(0, 18, 14, 18));
 
-        // ✅ ScrollPane pour pouvoir défiler dans le dialog sans le maximiser
         ScrollPane scroll = new ScrollPane(root);
         scroll.setFitToWidth(true);
         scroll.setStyle("-fx-background-color: transparent; -fx-background: transparent; -fx-border-color: transparent;");
         d.setScene(new Scene(scroll, 520, 680)); d.show();
         new SlideInDown(header).play();
         new FadeInUp(content).play();
-        if (trending) new Tada(trendStatus).play();
+        if (trending) new Tada(trendBox).play();
     }
 
-    // ── Section SmartDiscount dans le dialog détails ──
+    private VBox buildTrendingSection(Promotion promo, boolean trending, double score, double norm) {
+        VBox trendBox = new VBox(10);
+        trendBox.setStyle("-fx-background-color: white; -fx-padding: 14; -fx-background-radius: 10;" +
+                "-fx-border-color: " + (trending ? ROUGE : "#E2E8F0") + "; -fx-border-width: 2; -fx-border-radius: 10;");
+        HBox trendHeader = new HBox(8); trendHeader.setAlignment(Pos.CENTER_LEFT);
+        Label trendIcon  = new Label(trending ? "🔥" : "📊"); trendIcon.setStyle("-fx-font-size: 16px;");
+        Label trendTitle = new Label("Popularité & Tendance");
+        trendTitle.setStyle("-fx-font-size: 13px; -fx-font-weight: 800; -fx-text-fill: " + BLEU_NUIT + ";");
+        trendHeader.getChildren().addAll(trendIcon, trendTitle);
+        Label trendStatus = new Label(trending ? "✔ Tendance" : "✖ Non tendance");
+        trendStatus.setStyle("-fx-background-color: " + (trending ? "#F0FFF4" : "#FFF5F5") + ";" +
+                "-fx-text-fill: " + (trending ? "#276749" : ROUGE) + ";" +
+                "-fx-font-weight: 800; -fx-font-size: 13px; -fx-padding: 8 16; -fx-background-radius: 8;" +
+                "-fx-border-color: " + (trending ? "#9AE6B4" : "#FEB2B2") + "; -fx-border-width: 1; -fx-border-radius: 8;");
+        VBox scoreSection = new VBox(6);
+        HBox scoreLabelRow = new HBox();
+        Label scoreLabel = new Label("Score : " + trendingService.getScoreLabel(promo));
+        scoreLabel.setStyle("-fx-font-size: 11px; -fx-font-weight: 700; -fx-text-fill: " + trendingService.getScoreColor(promo) + ";");
+        Label scoreVal = new Label(String.format("%.1f", score));
+        scoreVal.setStyle("-fx-font-size: 11px; -fx-text-fill: " + GRAY + ";");
+        Region sp2 = new Region(); HBox.setHgrow(sp2, Priority.ALWAYS);
+        scoreLabelRow.getChildren().addAll(scoreLabel, sp2, scoreVal);
+        StackPane barBg = new StackPane(); barBg.setPrefHeight(8);
+        barBg.setStyle("-fx-background-color: #E2E8F0; -fx-background-radius: 4;");
+        HBox barFill = new HBox(); barFill.setPrefHeight(8);
+        barFill.setStyle("-fx-background-color: " + trendingService.getScoreColor(promo) + "; -fx-background-radius: 4;");
+        barBg.widthProperty().addListener((obs, o, w) -> barFill.setPrefWidth(w.doubleValue() * norm));
+        StackPane.setAlignment(barFill, Pos.CENTER_LEFT);
+        barBg.getChildren().add(barFill);
+        HBox condRow = new HBox(12);
+        Label condVues = new Label((promo.getNbVues() > 30 ? "✅" : "❌") + " " + promo.getNbVues() + " vues (seuil: 30)");
+        condVues.setStyle("-fx-font-size: 10px; -fx-text-fill: " + GRAY + ";");
+        Label condResa = new Label((promo.getNbReservations() > 10 ? "✅" : "❌") + " " + promo.getNbReservations() + " réserv. (seuil: 10)");
+        condResa.setStyle("-fx-font-size: 10px; -fx-text-fill: " + GRAY + ";");
+        condRow.getChildren().addAll(condVues, condResa);
+        scoreSection.getChildren().addAll(scoreLabelRow, barBg, condRow);
+        trendBox.getChildren().addAll(trendHeader, trendStatus, scoreSection);
+        return trendBox;
+    }
+
     private VBox buildSmartDiscountSection(Promotion promo) {
         List<Promotion> all = new ArrayList<>(allPromos);
         double avg = all.stream().filter(Promotion::isActive)
@@ -565,27 +562,21 @@ public class PromotionBackOfficeController implements Initializable {
         VBox box = new VBox(10);
         box.setStyle("-fx-background-color: white; -fx-padding: 14; -fx-background-radius: 10;" +
                 "-fx-border-color: #E2E8F0; -fx-border-width: 1; -fx-border-radius: 10;");
-
         Label title = new Label("🧠  Smart Discount Engine");
         title.setStyle("-fx-font-size: 13px; -fx-font-weight: 800; -fx-text-fill: " + BLEU_NUIT + ";");
-
         HBox row = new HBox(12); row.setAlignment(Pos.CENTER_LEFT);
         Label current = new Label("Actuel : " + String.format("%.0f", promo.getDiscountPercentage() != null ? promo.getDiscountPercentage() : 0f) + "%");
         current.setStyle("-fx-font-size: 13px; -fx-font-weight: 700; -fx-text-fill: " + GRAY + ";");
-        Label arrow = new Label("→");
-        arrow.setStyle("-fx-font-size: 14px; -fx-text-fill: " + GRAY + ";");
+        Label arrow = new Label("→"); arrow.setStyle("-fx-font-size: 14px; -fx-text-fill: " + GRAY + ";");
         Label next = new Label("Smart : " + String.format("%.0f", preview) + "%");
         next.setStyle("-fx-font-size: 14px; -fx-font-weight: 900; -fx-text-fill: " +
                 (preview > (promo.getDiscountPercentage() != null ? promo.getDiscountPercentage() : 0f) ? ROUGE : TURQUOISE) + ";");
         row.getChildren().addAll(current, arrow, next);
-
         Label reasonLbl = new Label(reason);
         reasonLbl.setStyle("-fx-font-size: 10px; -fx-text-fill: " + GRAY + "; -fx-wrap-text: true;");
         reasonLbl.setMaxWidth(400);
-
-        Label avgLbl = new Label("Moyenne réserv. (toutes promos actives) : " + String.format("%.1f", avg));
+        Label avgLbl = new Label("Moyenne réserv. actives : " + String.format("%.1f", avg));
         avgLbl.setStyle("-fx-font-size: 9px; -fx-text-fill: #94A3B8;");
-
         box.getChildren().addAll(title, row, reasonLbl, avgLbl);
         return box;
     }
@@ -595,7 +586,7 @@ public class PromotionBackOfficeController implements Initializable {
         card.setStyle("-fx-background-color: white; -fx-padding: 14 24; -fx-background-radius: 10;" +
                 "-fx-border-color: " + color + "; -fx-border-radius: 10; -fx-border-width: 2;");
         Label ic = new Label(icon); ic.setStyle("-fx-font-size: 18px;");
-        Label va = new Label("0");  va.setStyle("-fx-font-size: 22px; -fx-font-weight: 900; -fx-text-fill: " + BLEU_NUIT + ";");
+        Label va = new Label("0"); va.setStyle("-fx-font-size: 22px; -fx-font-weight: 900; -fx-text-fill: " + BLEU_NUIT + ";");
         Label la = new Label(label); la.setStyle("-fx-font-size: 10px; -fx-text-fill: " + GRAY + ";");
         card.getChildren().addAll(ic, va, la);
         Platform.runLater(() -> { AnimationHelper.countUp(va, from, to, 900); new ZoomIn(card).play(); });
@@ -612,6 +603,7 @@ public class PromotionBackOfficeController implements Initializable {
     // ════════════════════════════════════════════════════
     // DELETE
     // ════════════════════════════════════════════════════
+
     private void handleDeleteFromCard(Promotion promo) {
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
         confirm.setTitle("Supprimer"); confirm.setHeaderText("Supprimer \"" + promo.getName() + "\" ?");
@@ -633,6 +625,7 @@ public class PromotionBackOfficeController implements Initializable {
     // ════════════════════════════════════════════════════
     // PDF
     // ════════════════════════════════════════════════════
+
     @FXML private void handleExportPDF() {
         if (selectedPromotion == null) {
             notifService.warning("Aucune sélection", "Cliquez d'abord sur une card."); return;
@@ -656,16 +649,10 @@ public class PromotionBackOfficeController implements Initializable {
                 pdfService.generatePdf(fp, fCode, fLang, file.getAbsolutePath());
                 Platform.runLater(() -> {
                     notifService.success("PDF Généré !", "📄 " + file.getName());
-                    // ✅ Auto-ouvrir le PDF après enregistrement (Windows)
-                    try {
-                        java.awt.Desktop.getDesktop().open(file);
-                    } catch (Exception ex) {
-                        // Fallback : ouvrir via le navigateur par défaut
-                        try {
-                            new ProcessBuilder("cmd", "/c", "start", "", file.getAbsolutePath()).start();
-                        } catch (Exception ex2) {
-                            System.err.println("[PDF] Impossible d'ouvrir automatiquement : " + ex2.getMessage());
-                        }
+                    try { java.awt.Desktop.getDesktop().open(file); }
+                    catch (Exception ex) {
+                        try { new ProcessBuilder("cmd", "/c", "start", "", file.getAbsolutePath()).start(); }
+                        catch (Exception ex2) { System.err.println("[PDF] Cannot open: " + ex2.getMessage()); }
                     }
                 });
             } catch (Exception e) {
@@ -678,11 +665,12 @@ public class PromotionBackOfficeController implements Initializable {
     // ════════════════════════════════════════════════════
     // FORM CRUD
     // ════════════════════════════════════════════════════
+
     private void fillForm(Promotion promo) {
-        txtNom.setText(promo.getName()); txtDescription.setText(promo.getDescription());
+        txtNom.setText(promo.getName());
+        txtDescription.setText(promo.getDescription());
         txtPourcentage.setText(promo.getDiscountPercentage() != null ? promo.getDiscountPercentage().toString() : "");
         txtFixe.setText(promo.getDiscountFixed() != null ? promo.getDiscountFixed().toString() : "");
-        txtPrixParJour.setText(promo.getPrixParJour() != null ? promo.getPrixParJour().toString() : "50");
         dateDebut.setValue(promo.getStartDate().toLocalDate());
         dateFin.setValue(promo.getEndDate().toLocalDate());
         chkPack.setSelected(promo.isPack());
@@ -703,15 +691,14 @@ public class PromotionBackOfficeController implements Initializable {
             if (!txtPourcentage.getText().trim().isEmpty()) pct = Float.parseFloat(txtPourcentage.getText().trim());
             if (!txtFixe.getText().trim().isEmpty())        fix = Float.parseFloat(txtFixe.getText().trim());
             if (pct == null && fix == null) { notifService.warning("Réduction", "Spécifiez une réduction."); return; }
-            if (txtPrixParJour.getText().trim().isEmpty()) { notifService.warning("Prix", "Prix/jour obligatoire."); return; }
-            Float ppj = Float.parseFloat(txtPrixParJour.getText().trim());
             LocalDate debut = dateDebut.getValue(), fin = dateFin.getValue();
             if (debut == null || fin == null) { notifService.warning("Dates", "Les deux dates sont requises."); return; }
             if (!fin.isAfter(debut)) { AnimationHelper.shake(dateFin); notifService.warning("Dates invalides", "Fin doit être après début."); return; }
             boolean isPack = chkPack.isSelected(), locked = chkLocked != null && chkLocked.isSelected();
 
             if (selectedPromotion == null) {
-                Promotion newP = new Promotion(nom, desc, pct, fix, Date.valueOf(debut), Date.valueOf(fin), isPack, ppj);
+                // ✅ FIXED: no more prixParJour in constructor
+                Promotion newP = new Promotion(nom, desc, pct, fix, Date.valueOf(debut), Date.valueOf(fin), isPack);
                 newP.setLocked(locked);
                 Promotion saved = promotionService.add(newP);
                 if (saved != null) {
@@ -723,7 +710,7 @@ public class PromotionBackOfficeController implements Initializable {
                 selectedPromotion.setName(nom); selectedPromotion.setDescription(desc);
                 selectedPromotion.setDiscountPercentage(pct); selectedPromotion.setDiscountFixed(fix);
                 selectedPromotion.setStartDate(Date.valueOf(debut)); selectedPromotion.setEndDate(Date.valueOf(fin));
-                selectedPromotion.setPack(isPack); selectedPromotion.setPrixParJour(ppj); selectedPromotion.setLocked(locked);
+                selectedPromotion.setPack(isPack); selectedPromotion.setLocked(locked);
                 if (promotionService.update(selectedPromotion)) {
                     schedulerService.unschedulePromo(selectedPromotion.getId());
                     schedulerService.schedulePromo(selectedPromotion);
@@ -740,11 +727,15 @@ public class PromotionBackOfficeController implements Initializable {
     }
 
     @FXML private void handleCancel() {
-        txtNom.clear(); txtDescription.clear(); txtPourcentage.clear(); txtFixe.clear(); txtPrixParJour.clear();
+        txtNom.clear(); txtDescription.clear(); txtPourcentage.clear(); txtFixe.clear();
         dateDebut.setValue(null); dateFin.setValue(null);
         chkPack.setSelected(false); if (chkLocked != null) chkLocked.setSelected(false);
         selectedPromotion = null; btnAjouter.setText("💾  Enregistrer");
     }
+
+    // ════════════════════════════════════════════════════
+    // OFFRES — ✅ FIXED: uses OffresService (real DB)
+    // ════════════════════════════════════════════════════
 
     @FXML private void ajouterOffreAPromotion() {
         if (selectedPromotion == null) { notifService.warning("", "Sélectionnez une promotion."); return; }
@@ -752,8 +743,8 @@ public class PromotionBackOfficeController implements Initializable {
         if (sel == null) { notifService.warning("", "Sélectionnez une offre."); return; }
         TargetType tt = null; int tid = 0;
         if (sel instanceof Hebergement h) { tt = TargetType.HEBERGEMENT; tid = h.getId(); }
-        else if (sel instanceof Activite a) { tt = TargetType.ACTIVITE; tid = a.getId(); }
-        else if (sel instanceof Transport t) { tt = TargetType.TRANSPORT; tid = t.getId(); }
+        else if (sel instanceof Activite a) { tt = TargetType.ACTIVITE;   tid = a.getId(); }
+        else if (sel instanceof Voiture v)  { tt = TargetType.VOITURE;    tid = v.getId(); } // ✅ FIXED
         if (tt != null) {
             targetService.add(new PromotionTarget(selectedPromotion.getId(), tt, tid));
             notifService.success("Offre ajoutée !", "Liée à la promotion.");
@@ -761,8 +752,9 @@ public class PromotionBackOfficeController implements Initializable {
     }
 
     // ════════════════════════════════════════════════════
-    // STATS KPI avec Trending %
+    // STATS KPI
     // ════════════════════════════════════════════════════
+
     private void updateStats() {
         int total   = allPromos.size();
         long packs  = allPromos.stream().filter(Promotion::isPack).count();
@@ -771,16 +763,13 @@ public class PromotionBackOfficeController implements Initializable {
                 !today.isBefore(p.getStartDate().toLocalDate()) && !today.isAfter(p.getEndDate().toLocalDate())
         ).count();
 
-        // ⭐ CountUp KPI
         if (statTotalPromo   != null) AnimationHelper.countUp(statTotalPromo,   0, total,         900);
         if (statPacksPromo   != null) AnimationHelper.countUp(statPacksPromo,   0, (int) packs,   1050);
         if (statActivesPromo != null) AnimationHelper.countUp(statActivesPromo, 0, (int) actives, 1200);
 
-        // ⭐ BounceIn cards KPI
         if (statsHBox != null)
             Platform.runLater(() -> AnimationHelper.staggeredBounceIn(statsHBox.getChildren().stream().toList(), 150));
 
-        // Log trending %
         double trendPct = trendingService.percentTrending(new ArrayList<>(allPromos));
         System.out.printf("[Trending] %.1f%% des promos sont en tendance (%d/%d)%n",
                 trendPct, trendingService.countTrending(new ArrayList<>(allPromos)), total);
@@ -796,29 +785,34 @@ public class PromotionBackOfficeController implements Initializable {
     }
 
     // ── Setup ──
+
     private void setupOffresTable() {
         if (colOffreId == null) return;
         colOffreId.setCellValueFactory(new PropertyValueFactory<>("id"));
-        colOffreNom.setCellValueFactory(new PropertyValueFactory<>("nom"));
+        colOffreNom.setCellValueFactory(new PropertyValueFactory<>("nom")); // getNom() on all 3 models
         colOffreDetails.setCellValueFactory(c -> {
             Object item = c.getValue();
-            if (item instanceof Hebergement h) return new javafx.beans.property.SimpleStringProperty(h.getVille());
-            if (item instanceof Activite a)    return new javafx.beans.property.SimpleStringProperty(a.getLieu());
-            if (item instanceof Transport t)   return new javafx.beans.property.SimpleStringProperty(t.getTrajet());
+            if (item instanceof Hebergement h) return new javafx.beans.property.SimpleStringProperty(h.getTypeHebergement() + " — " + String.format("%.0f TND/nuit", h.getPrixParNuit()));
+            if (item instanceof Activite a)    return new javafx.beans.property.SimpleStringProperty(a.getLieu() + " — " + String.format("%.0f TND/pers.", a.getPrixParPersonne()));
+            if (item instanceof Voiture v)     return new javafx.beans.property.SimpleStringProperty(String.format("%.2f TND/km · %d places", v.getPrixKm(), v.getNbPlaces()));
             return new javafx.beans.property.SimpleStringProperty("");
         });
     }
 
+    /**
+     * ✅ FIXED: ComboBox now shows "Hébergement / Activité / Voiture"
+     * and loads from real DB via OffresService
+     */
     private void setupComboBox() {
         if (comboTypeOffre == null) return;
-        comboTypeOffre.setItems(FXCollections.observableArrayList("Hébergement", "Activité", "Transport"));
+        comboTypeOffre.setItems(FXCollections.observableArrayList("Hébergement", "Activité", "Voiture"));
         comboTypeOffre.setOnAction(e -> {
             String type = comboTypeOffre.getValue(); if (type == null) return;
             ObservableList<Object> offres = FXCollections.observableArrayList();
             switch (type) {
-                case "Hébergement" -> offres.addAll(offresData.getAllHebergements());
-                case "Activité"    -> offres.addAll(offresData.getAllActivites());
-                case "Transport"   -> offres.addAll(offresData.getAllTransports());
+                case "Hébergement" -> offres.addAll(offresService.getAllHebergements());
+                case "Activité"    -> offres.addAll(offresService.getAllActivites());
+                case "Voiture"     -> offres.addAll(offresService.getAllVoitures());
             }
             tableOffres.setItems(offres);
         });

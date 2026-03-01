@@ -14,7 +14,7 @@
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="org.example.controllers.backoffice.StatistiquesReservationsController"
       spacing="0"
-      stylesheets="@../../css/StyleHB.css"
+      stylesheets="@../../css/re7la-styles.css"
       style="-fx-background-color: #eef2f6;">
 
     <!-- ═══ HEADER ═══ -->
@@ -69,6 +69,18 @@
                 <Label fx:id="kpiReservationsLabel" text="—"
                        style="-fx-font-size: 20px; -fx-font-weight: 800; -fx-text-fill: #2C3E50;"/>
                 <Label text="Réservations"
+                       style="-fx-font-size: 11px; -fx-text-fill: #64748B; -fx-font-weight: 600;"/>
+            </VBox>
+            <VBox alignment="CENTER" spacing="2"
+                  style="-fx-background-color: #EEF2FF;
+                         -fx-padding: 10 20;
+                         -fx-background-radius: 14;
+                         -fx-border-color: #6366F1;
+                         -fx-border-radius: 14;
+                         -fx-border-width: 1;">
+                <Label fx:id="kpiUsersLabel" text="—"
+                       style="-fx-font-size: 20px; -fx-font-weight: 800; -fx-text-fill: #2C3E50;"/>
+                <Label text="Utilisateurs"
                        style="-fx-font-size: 11px; -fx-text-fill: #64748B; -fx-font-weight: 600;"/>
             </VBox>
         </HBox>

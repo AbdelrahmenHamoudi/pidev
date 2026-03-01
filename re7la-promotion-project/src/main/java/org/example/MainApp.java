@@ -28,11 +28,11 @@ public class MainApp extends Application {
         // ══════════════════════════════════════════════
         // 2. INTERFACE JAVAFX
         // ══════════════════════════════════════════════
-        Parent root = FXMLLoader.load(
+       /* Parent root = FXMLLoader.load(
                 getClass().getResource("/views/backoffice/PromotionBackOffice.fxml")
-        );
+        );*/
          //Décommenter pour FrontOffice :
-         //Parent root = FXMLLoader.load(getClass().getResource("/views/frontoffice/PromotionFrontOffice.fxml"));
+         Parent root = FXMLLoader.load(getClass().getResource("/views/frontoffice/PromotionFrontOffice.fxml"));
 
         Scene scene = new Scene(root, 1200, 760);
         primaryStage.setTitle("RE7LA — Gestion des Promotions");

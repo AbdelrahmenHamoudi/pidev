@@ -8,178 +8,64 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * ✅ FIXED: Aligned with re7la_3a9 `users` table.
+ *
+ * Column mapping changes:
+ *   - Table: `user` → `users`
+ *   - `email` → `e_mail`
+ *   - `password` → `mot_de_pass`
+ *   - No `created_at` in re7la_3a9 users table → removed from extract
+ *   - Added `role` and `status` fields
+ */
 public class UserService {
 
-    /**
-     * Récupérer tous les users
-     */
     public List<User> getAll() {
         List<User> users = new ArrayList<>();
-        String sql = "SELECT * FROM user ORDER BY id";
-
+        String sql = "SELECT id, nom, prenom, e_mail, mot_de_pass, role, status FROM users ORDER BY id";
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
-
-            while (rs.next()) {
-                users.add(extractUserFromResultSet(rs));
-            }
-
+            while (rs.next()) users.add(extractUser(rs));
         } catch (SQLException e) {
-            System.err.println("Erreur lors de la récupération des users");
-            e.printStackTrace();
+            System.err.println("❌ [UserService] getAll : " + e.getMessage());
         }
-
         return users;
     }
 
-    /**
-     * Récupérer un user par ID
-     */
     public Optional<User> getById(int id) {
-        String sql = "SELECT * FROM user WHERE id = ?";
-
+        String sql = "SELECT id, nom, prenom, e_mail, mot_de_pass, role, status FROM users WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setInt(1, id);
-            ResultSet rs = pstmt.executeQuery();
-
-            if (rs.next()) {
-                return Optional.of(extractUserFromResultSet(rs));
-            }
-
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return Optional.of(extractUser(rs));
         } catch (SQLException e) {
-            System.err.println("Erreur lors de la récupération du user #" + id);
-            e.printStackTrace();
+            System.err.println("❌ [UserService] getById #" + id + " : " + e.getMessage());
         }
-
         return Optional.empty();
     }
 
-    /**
-     * Récupérer un user par email
-     */
     public Optional<User> getByEmail(String email) {
-        String sql = "SELECT * FROM user WHERE email = ?";
-
+        String sql = "SELECT id, nom, prenom, e_mail, mot_de_pass, role, status FROM users WHERE e_mail = ?";
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setString(1, email);
-            ResultSet rs = pstmt.executeQuery();
-
-            if (rs.next()) {
-                return Optional.of(extractUserFromResultSet(rs));
-            }
-
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, email);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return Optional.of(extractUser(rs));
         } catch (SQLException e) {
-            System.err.println("Erreur lors de la récupération du user par email");
-            e.printStackTrace();
+            System.err.println("❌ [UserService] getByEmail : " + e.getMessage());
         }
-
         return Optional.empty();
     }
 
-    /**
-     * Ajouter un nouveau user
-     */
-    public User add(User user) {
-        String sql = "INSERT INTO user (nom, prenom, email, password) VALUES (?, ?, ?, ?)";
-
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-
-            pstmt.setString(1, user.getNom());
-            pstmt.setString(2, user.getPrenom());
-            pstmt.setString(3, user.getEmail());
-            pstmt.setString(4, user.getPassword());
-
-            int affectedRows = pstmt.executeUpdate();
-
-            if (affectedRows > 0) {
-                ResultSet generatedKeys = pstmt.getGeneratedKeys();
-                if (generatedKeys.next()) {
-                    user.setId(generatedKeys.getInt(1));
-                }
-            }
-
-            System.out.println("✅ User ajouté: " + user.getFullName());
-            return user;
-
-        } catch (SQLException e) {
-            System.err.println("Erreur lors de l'ajout du user");
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    /**
-     * Mettre à jour un user
-     */
-    public boolean update(User user) {
-        String sql = "UPDATE user SET nom = ?, prenom = ?, email = ?, password = ? WHERE id = ?";
-
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setString(1, user.getNom());
-            pstmt.setString(2, user.getPrenom());
-            pstmt.setString(3, user.getEmail());
-            pstmt.setString(4, user.getPassword());
-            pstmt.setInt(5, user.getId());
-
-            int affectedRows = pstmt.executeUpdate();
-
-            if (affectedRows > 0) {
-                System.out.println("✅ User modifié: " + user.getFullName());
-                return true;
-            }
-
-        } catch (SQLException e) {
-            System.err.println("Erreur lors de la modification du user");
-            e.printStackTrace();
-        }
-
-        return false;
-    }
-
-    /**
-     * Supprimer un user
-     */
-    public boolean delete(int id) {
-        String sql = "DELETE FROM user WHERE id = ?";
-
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setInt(1, id);
-            int affectedRows = pstmt.executeUpdate();
-
-            if (affectedRows > 0) {
-                System.out.println("✅ User supprimé (ID: " + id + ")");
-                return true;
-            }
-
-        } catch (SQLException e) {
-            System.err.println("Erreur lors de la suppression du user");
-            e.printStackTrace();
-        }
-
-        return false;
-    }
-
-    /**
-     * Extraire un User depuis un ResultSet
-     */
-    private User extractUserFromResultSet(ResultSet rs) throws SQLException {
-        int id = rs.getInt("id");
-        String nom = rs.getString("nom");
-        String prenom = rs.getString("prenom");
-        String email = rs.getString("email");
-        String password = rs.getString("password");
-        Timestamp createdAt = rs.getTimestamp("created_at");
-
-        return new User(id, nom, prenom, email, password, createdAt);
+    private User extractUser(ResultSet rs) throws SQLException {
+        User u = new User();
+        u.setId(rs.getInt("id"));
+        u.setNom(rs.getString("nom"));
+        u.setPrenom(rs.getString("prenom"));
+        u.setEmail(rs.getString("e_mail"));
+        u.setPassword(rs.getString("mot_de_pass"));
+        return u;
     }
 }
