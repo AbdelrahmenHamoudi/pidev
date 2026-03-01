@@ -1,0 +1,419 @@
+/* ========================================================
+   StyleRSV.css — Charte Graphique RE7LA
+   Couleurs :
+     Orange vif   : #F39C12
+     Jaune pastel : #F7DC6F
+     Bleu nuit    : #2C3E50
+     Turquoise    : #1ABC9C
+     Bleu météo   : #2C7BB2
+   ======================================================== */
+
+/* ===== GLOBAL ===== */
+.root {
+    -fx-font-family: 'Segoe UI', 'Inter', sans-serif;
+    -fx-font-smoothing-type: gray;
+    -fx-background-color: #F9FAFB;
+}
+
+/* ===== CONTAINER PRINCIPAL ===== */
+.front-container {
+    -fx-background-color: #F9FAFB;
+}
+
+/* ===== HEADER ===== */
+.front-header {
+    -fx-background-color: white;
+    -fx-padding: 25 40;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 10, 0, 0, 2);
+}
+
+.front-title {
+    -fx-font-size: 32px;
+    -fx-font-weight: 800;
+    -fx-fill: #F39C12;
+    -fx-letter-spacing: 2px;
+}
+
+.front-subtitle {
+    -fx-font-size: 14px;
+    -fx-fill: #64748B;
+}
+
+/* ===== SEARCH BOX ===== */
+.search-box {
+    -fx-background-color: white;
+    -fx-border-color: #E2E8F0;
+    -fx-border-radius: 25;
+    -fx-background-radius: 25;
+    -fx-padding: 12 20;
+    -fx-font-size: 14px;
+    -fx-prompt-text-fill: #94A3B8;
+}
+
+.search-box:focused {
+    -fx-border-color: #F39C12;
+    -fx-effect: dropshadow(gaussian, rgba(243,156,18,0.25), 8, 0, 0, 0);
+}
+
+/* ===== BOUTONS PRINCIPAUX ===== */
+.btn-primary {
+    -fx-background-color: #F39C12;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 12 30;
+    -fx-background-radius: 20;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(243,156,18,0.4), 8, 0, 0, 2);
+}
+
+.btn-primary:hover {
+    -fx-background-color: #E67E22;
+}
+
+.btn-secondary {
+    -fx-background-color: #E2E8F0;
+    -fx-text-fill: #2C3E50;
+    -fx-font-weight: bold;
+    -fx-padding: 12 20;
+    -fx-background-radius: 15;
+    -fx-cursor: hand;
+}
+
+.btn-secondary:hover {
+    -fx-background-color: #CBD5E1;
+}
+
+.btn-nav {
+    -fx-background-color: transparent;
+    -fx-text-fill: #2C3E50;
+    -fx-font-size: 13px;
+    -fx-font-weight: 500;
+    -fx-padding: 8 16;
+    -fx-background-radius: 15;
+    -fx-border-color: #E2E8F0;
+    -fx-border-radius: 15;
+    -fx-cursor: hand;
+}
+
+.btn-nav:hover {
+    -fx-background-color: rgba(243,156,18,0.1);
+    -fx-border-color: #F39C12;
+    -fx-text-fill: #F39C12;
+}
+
+.btn-lang {
+    -fx-background-color: transparent;
+    -fx-border-color: #E2E8F0;
+    -fx-border-radius: 20;
+    -fx-background-radius: 20;
+    -fx-text-fill: #2C3E50;
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+    -fx-padding: 6 14;
+}
+
+.btn-lang:hover {
+    -fx-background-color: #F9FAFB;
+    -fx-border-color: #F39C12;
+    -fx-text-fill: #F39C12;
+}
+
+/* ===== BOUTON RÉSERVER ===== */
+.btn-reserve {
+    -fx-background-color: #1ABC9C;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 12 20;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+    -fx-font-size: 14px;
+}
+
+.btn-reserve:hover {
+    -fx-background-color: #17A589;
+    -fx-effect: dropshadow(gaussian, rgba(26,188,156,0.4), 10, 0, 0, 3);
+}
+
+.btn-reserve:disabled {
+    -fx-background-color: #95A5A6;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 12 20;
+    -fx-background-radius: 8;
+}
+
+/* ===== BOUTON LIEUX PROCHES ===== */
+.btn-nearby {
+    -fx-background-color: #EBF5FB;
+    -fx-text-fill: #2980B9;
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+    -fx-padding: 9 10;
+    -fx-background-radius: 10;
+    -fx-cursor: hand;
+    -fx-border-color: #AED6F1;
+    -fx-border-radius: 10;
+    -fx-border-width: 1;
+}
+
+.btn-nearby:hover {
+    -fx-background-color: #2980B9;
+    -fx-text-fill: white;
+    -fx-border-color: #2980B9;
+    -fx-effect: dropshadow(gaussian, rgba(41,128,185,0.35), 8, 0, 0, 2);
+}
+
+.btn-nearby:disabled {
+    -fx-background-color: #F8F9FA;
+    -fx-text-fill: #BDC3C7;
+    -fx-border-color: #DEE2E6;
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+
+/* ===== ✅ BOUTON MÉTÉO (NOUVEAU) ===== */
+.btn-weather {
+    -fx-background-color: #EBF8FF;
+    -fx-text-fill: #2C7BB2;
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+    -fx-padding: 9 10;
+    -fx-background-radius: 10;
+    -fx-cursor: hand;
+    -fx-border-color: #90CDF4;
+    -fx-border-radius: 10;
+    -fx-border-width: 1;
+}
+
+.btn-weather:hover {
+    -fx-background-color: #2C7BB2;
+    -fx-text-fill: white;
+    -fx-border-color: #2C7BB2;
+    -fx-effect: dropshadow(gaussian, rgba(44,123,178,0.35), 8, 0, 0, 2);
+}
+
+.btn-weather:disabled {
+    -fx-background-color: #F8F9FA;
+    -fx-text-fill: #BDC3C7;
+    -fx-border-color: #DEE2E6;
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+
+/* ===== SIDEBAR / FILTER BOX ===== */
+.filter-box {
+    -fx-background-color: white;
+    -fx-background-radius: 20;
+    -fx-padding: 25;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 2);
+}
+
+.filter-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-fill: #2C3E50;
+}
+
+.filter-label {
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #64748B;
+}
+
+/* ===== FORM ELEMENTS ===== */
+.form-label {
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #2C3E50;
+}
+
+.text-field, .date-picker, .combo-box {
+    -fx-background-color: #F9FAFB;
+    -fx-border-color: #E2E8F0;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+    -fx-padding: 10 15;
+    -fx-font-size: 13px;
+    -fx-prompt-text-fill: #A0AEC0;
+}
+
+.text-field:focused, .date-picker:focused, .combo-box:focused {
+    -fx-border-color: #F39C12;
+    -fx-background-color: white;
+    -fx-effect: dropshadow(gaussian, #F39C12, 8, 0.3, 0, 0);
+}
+
+.text-field:readonly {
+    -fx-background-color: #F0F4F8;
+    -fx-text-fill: #64748B;
+}
+
+/* ===== HÉBERGEMENT CARD ===== */
+.hebergement-card {
+    -fx-background-color: white;
+    -fx-background-radius: 15;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 12, 0, 0, 4);
+    -fx-cursor: hand;
+}
+
+.hebergement-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(243,156,18,0.3), 15, 0, 0, 6);
+    -fx-translate-y: -3;
+}
+
+.tile-title {
+    -fx-text-fill: #2C3E50;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.tile-address {
+    -fx-text-fill: #7F8C8D;
+    -fx-font-size: 13px;
+}
+
+.tile-price {
+    -fx-text-fill: #27AE60;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
+
+/* ===== SELECTED HEBERGEMENT ===== */
+.selected-title {
+    -fx-text-fill: #2C3E50;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.price-large {
+    -fx-text-fill: #F39C12;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+/* ===== USER INFO ===== */
+.info-label {
+    -fx-text-fill: #7F8C8D;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.info-value {
+    -fx-text-fill: #2C3E50;
+    -fx-font-size: 12px;
+}
+
+/* ===== ERROR LABELS ===== */
+.error-label {
+    -fx-text-fill: #E74C3C;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+/* ===== SECTION SUBTITLE ===== */
+.section-subtitle {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2C3E50;
+}
+
+/* ===== SCROLLBAR ===== */
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane .scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-pref-width: 12;
+}
+
+.scroll-pane .scroll-bar:vertical .thumb {
+    -fx-background-color: #CBD5E1;
+    -fx-background-radius: 10;
+}
+
+.scroll-pane .scroll-bar:vertical .thumb:hover {
+    -fx-background-color: #F39C12;
+}
+
+.scroll-pane .scroll-bar:vertical .track {
+    -fx-background-color: #F1F5F9;
+    -fx-background-radius: 10;
+}
+
+.scroll-pane .scroll-bar .increment-button,
+.scroll-pane .scroll-bar .decrement-button {
+    -fx-padding: 0;
+    -fx-background-color: transparent;
+}
+
+/* ===== WEATHER CARD (mini dans liste) ===== */
+.weather-card {
+    -fx-background-color: #F9FAFB;
+    -fx-background-radius: 10;
+    -fx-border-color: #E2E8F0;
+    -fx-border-radius: 10;
+    -fx-border-width: 1;
+}
+
+.weather-card:hover {
+    -fx-background-color: #FFF9F0;
+    -fx-border-color: #F39C12;
+}
+
+/* ===== CHECKBOX ===== */
+.check-box {
+    -fx-text-fill: #2C3E50;
+    -fx-font-size: 13px;
+}
+
+.check-box .box {
+    -fx-background-color: white;
+    -fx-border-color: #CBD5E1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+}
+
+.check-box:selected .box {
+    -fx-background-color: #1ABC9C;
+    -fx-border-color: #1ABC9C;
+}
+
+.check-box:selected .mark {
+    -fx-background-color: white;
+}
+
+/* ===== SEPARATOR ===== */
+.separator .line {
+    -fx-border-color: #E2E8F0;
+}
+
+/* ===== EMPTY STATE ===== */
+.empty-state-message {
+    -fx-font-size: 18px;
+    -fx-text-fill: #7F8C8D;
+    -fx-font-weight: bold;
+}
+
+/* ===== CARTE RÉSERVATION ===== */
+.reservation-card {
+    -fx-background-color: white;
+    -fx-background-radius: 15;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.07), 12, 0, 0, 3);
+    -fx-border-color: #F1F5F9;
+    -fx-border-radius: 15;
+    -fx-border-width: 1;
+}
+
+.reservation-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(243,156,18,0.2), 15, 0, 0, 5);
+    -fx-border-color: #F39C12;
+    -fx-translate-y: -2;
+}

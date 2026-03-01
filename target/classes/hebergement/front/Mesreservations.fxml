@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.Controllers.hebergement.front.MesReservationsController"
+            styleClass="page-root"
+            stylesheets="@StyleMesRes.css">
+
+    <!-- ═══════════════════ HEADER ═══════════════════ -->
+    <top>
+        <VBox styleClass="header" spacing="0">
+            <HBox alignment="CENTER_LEFT" spacing="20" styleClass="header-inner">
+                <padding><Insets top="18" right="30" bottom="18" left="30"/></padding>
+
+                <!-- Logo + Titre -->
+                <HBox spacing="12" alignment="CENTER_LEFT">
+                    <ImageView fitWidth="48" preserveRatio="true">
+                        <image><Image url="@image/logo.png"/></image>
+                    </ImageView>
+                    <VBox spacing="2">
+                        <Text text="RE7LA" styleClass="logo-text"/>
+                        <Text text="Mes Réservations" styleClass="logo-sub"/>
+                    </VBox>
+                </HBox>
+
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <!-- Recherche -->
+                <TextField fx:id="searchField"
+                           promptText="🔍 Rechercher une réservation..."
+                           styleClass="search-input"
+                           prefWidth="280"/>
+
+                <!-- Filtres rapides -->
+                <HBox spacing="8" alignment="CENTER">
+                    <Button fx:id="btnFiltrerTout"  text="Tout" onAction="#filtrerTout"
+                            styleClass="filter-chip filter-chip-active"/>
+                    <Button fx:id="btnFiltrerActif" text="✅ Actives" onAction="#filtrerActif"
+                            styleClass="filter-chip"/>
+                    <Button fx:id="btnFiltrerPasse" text="🏁 Passées" onAction="#filtrerPasse"
+                            styleClass="filter-chip"/>
+                    <ComboBox fx:id="filterStatut" prefWidth="155" styleClass="filter-combo"/>
+                </HBox>
+
+                <!-- Profil -->
+                <HBox spacing="10" alignment="CENTER" styleClass="user-pill">
+                    <Text text="👤" style="-fx-font-size: 16px;"/>
+                    <VBox spacing="1">
+                        <Label fx:id="userNameLabel"  text="Utilisateur" styleClass="user-name"/>
+                        <Label fx:id="userEmailLabel" text="email@example.com" styleClass="user-email"/>
+                    </VBox>
+                </HBox>
+
+                <!-- Boutons nav -->
+                <Button fx:id="btnRetour"  text="◀ Réserver" onAction="#goToRetour"  styleClass="btn-nav"/>
+                <Button fx:id="btnAccueil" text="🏠 Accueil"  onAction="#goToAccueil" styleClass="btn-nav-home"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- ═══════════════════ CENTER ═══════════════════ -->
+    <center>
+        <VBox spacing="0" style="-fx-background-color: #F1F4F9;">
+
+            <!-- ── Stats bar ── -->
+            <HBox styleClass="stats-bar" spacing="0">
+                <padding><Insets top="20" right="40" bottom="20" left="40"/></padding>
+
+                <HBox styleClass="stat-card" spacing="14" alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                    <Label text="📋" style="-fx-font-size: 28px;"/>
+                    <VBox spacing="2">
+                        <Label fx:id="lblTotalRes" text="0" styleClass="stat-value"/>
+                        <Label text="Total"        styleClass="stat-label"/>
+                    </VBox>
+                </HBox>
+
+                <Region minWidth="20"/>
+
+                <HBox styleClass="stat-card stat-green" spacing="14" alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                    <Label text="✅" style="-fx-font-size: 28px;"/>
+                    <VBox spacing="2">
+                        <Label fx:id="lblResActives" text="0" styleClass="stat-value"/>
+                        <Label text="Actives"        styleClass="stat-label"/>
+                    </VBox>
+                </HBox>
+
+                <Region minWidth="20"/>
+
+                <HBox styleClass="stat-card stat-blue" spacing="14" alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                    <Label text="🏁" style="-fx-font-size: 28px;"/>
+                    <VBox spacing="2">
+                        <Label fx:id="lblResPasses" text="0" styleClass="stat-value"/>
+                        <Label text="Passées"       styleClass="stat-label"/>
+                    </VBox>
+                </HBox>
+
+                <Region minWidth="20"/>
+
+                <HBox styleClass="stat-card stat-orange" spacing="14" alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                    <Label text="💰" style="-fx-font-size: 28px;"/>
+                    <VBox spacing="2">
+                        <Label fx:id="lblMontantTotal" text="0 TND" styleClass="stat-value"/>
+                        <Label text="Montant total"     styleClass="stat-label"/>
+                    </VBox>
+                </HBox>
+            </HBox>
+
+            <!-- ── Liste des réservations ── -->
+            <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
+                        style="-fx-background-color: transparent; -fx-border-color: transparent;">
+                <VBox fx:id="reservationListContainer" spacing="14" styleClass="list-container">
+                    <padding><Insets top="25" right="40" bottom="30" left="40"/></padding>
+
+                    <!-- Message vide -->
+                    <VBox fx:id="lblAucuneReservation"
+                          alignment="CENTER" spacing="14"
+                          visible="false" managed="false"
+                          style="-fx-padding: 60 0;">
+                        <Label text="🏨" style="-fx-font-size: 56px;"/>
+                        <Label text="Aucune réservation trouvée"
+                               style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #2C3E50;"/>
+                        <Label text="Vous n'avez pas encore effectué de réservation."
+                               style="-fx-font-size: 14px; -fx-text-fill: #7F8C8D;"/>
+                    </VBox>
+
+                </VBox>
+            </ScrollPane>
+        </VBox>
+    </center>
+
+</BorderPane>

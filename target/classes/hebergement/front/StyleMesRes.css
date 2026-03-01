@@ -1,0 +1,190 @@
+/* ══════════════════════════════════════════════
+   StyleMesRes.css  —  Mes Réservations
+   ══════════════════════════════════════════════ */
+
+.page-root {
+    -fx-background-color: #F1F4F9;
+    -fx-font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+}
+
+/* ─── Header ─── */
+.header {
+    -fx-background-color: linear-gradient(to right, #0F2027, #203A43, #2C5364);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 12, 0, 0, 4);
+}
+
+.header-inner {
+    /* padding set inline */
+}
+
+.logo-text {
+    -fx-fill: white;
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-font-family: "Georgia", serif;
+    -fx-effect: dropshadow(gaussian, rgba(26,188,156,0.6), 8, 0, 0, 0);
+}
+
+.logo-sub {
+    -fx-fill: #1ABC9C;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.search-input {
+    -fx-background-color: rgba(255,255,255,0.12);
+    -fx-text-fill: white;
+    -fx-prompt-text-fill: rgba(255,255,255,0.55);
+    -fx-border-color: rgba(255,255,255,0.2);
+    -fx-border-radius: 20;
+    -fx-background-radius: 20;
+    -fx-padding: 9 16;
+    -fx-font-size: 13px;
+}
+
+.search-input:focused {
+    -fx-background-color: rgba(255,255,255,0.18);
+    -fx-border-color: #1ABC9C;
+}
+
+/* Filtres rapides */
+.filter-chip {
+    -fx-background-color: rgba(255,255,255,0.10);
+    -fx-text-fill: rgba(255,255,255,0.8);
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-padding: 7 16;
+    -fx-background-radius: 20;
+    -fx-border-color: rgba(255,255,255,0.2);
+    -fx-border-radius: 20;
+    -fx-cursor: hand;
+}
+
+.filter-chip:hover {
+    -fx-background-color: rgba(255,255,255,0.22);
+    -fx-text-fill: white;
+}
+
+.filter-chip-active {
+    -fx-background-color: #1ABC9C;
+    -fx-text-fill: white;
+    -fx-border-color: #1ABC9C;
+}
+
+.filter-combo {
+    -fx-background-color: rgba(255,255,255,0.12);
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-border-color: rgba(255,255,255,0.2);
+}
+
+/* Pill utilisateur */
+.user-pill {
+    -fx-background-color: rgba(255,255,255,0.10);
+    -fx-padding: 8 14;
+    -fx-background-radius: 20;
+    -fx-border-color: rgba(255,255,255,0.15);
+    -fx-border-radius: 20;
+}
+
+.user-name {
+    -fx-font-size: 13px;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.user-email {
+    -fx-font-size: 11px;
+    -fx-text-fill: rgba(255,255,255,0.60);
+}
+
+/* Boutons nav */
+.btn-nav {
+    -fx-background-color: rgba(255,255,255,0.12);
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-padding: 9 18;
+    -fx-background-radius: 20;
+    -fx-border-color: rgba(255,255,255,0.2);
+    -fx-border-radius: 20;
+    -fx-cursor: hand;
+}
+
+.btn-nav:hover {
+    -fx-background-color: rgba(255,255,255,0.22);
+}
+
+.btn-nav-home {
+    -fx-background-color: #1ABC9C;
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-padding: 9 18;
+    -fx-background-radius: 20;
+    -fx-cursor: hand;
+}
+
+.btn-nav-home:hover {
+    -fx-background-color: #17A589;
+}
+
+/* ─── Stats Bar ─── */
+.stats-bar {
+    -fx-background-color: white;
+    -fx-border-color: #E2E8F0;
+    -fx-border-width: 0 0 1 0;
+}
+
+.stat-card {
+    -fx-background-color: #FAFBFC;
+    -fx-padding: 14 22;
+    -fx-background-radius: 14;
+    -fx-border-color: #E8EDF2;
+    -fx-border-radius: 14;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.04), 6, 0, 0, 2);
+}
+
+.stat-card.stat-green { -fx-border-color: #D1F2EB; }
+.stat-card.stat-blue  { -fx-border-color: #D6EAF8; }
+.stat-card.stat-orange{ -fx-border-color: #FDEBD0; }
+
+.stat-value {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2C3E50;
+}
+
+.stat-card.stat-green  .stat-value { -fx-text-fill: #1ABC9C; }
+.stat-card.stat-blue   .stat-value { -fx-text-fill: #3498DB; }
+.stat-card.stat-orange .stat-value { -fx-text-fill: #F39C12; }
+
+.stat-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #95A5A6;
+}
+
+/* ─── Liste ─── */
+.list-container {
+    /* padding set inline */
+}
+
+/* ─── Carte réservation ─── */
+.reservation-card {
+    -fx-background-color: white;
+    -fx-background-radius: 14;
+    -fx-border-color: #E8EDF2;
+    -fx-border-radius: 14;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 10, 0, 0, 3);
+    -fx-cursor: hand;
+}
+
+.reservation-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(26,188,156,0.18), 16, 0, 0, 5);
+    -fx-border-color: #A8E6CE;
+    -fx-translate-y: -1;
+}
