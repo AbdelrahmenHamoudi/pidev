@@ -34,7 +34,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
-
 /**
  * ✅ FIXED:
  *  - OffresStaticData → OffresService (real DB)
@@ -58,6 +57,14 @@ public class PromotionBackOfficeController implements Initializable {
     @FXML private StackPane mainContentStack;
     @FXML private ScrollPane viewPromotion;
     @FXML private VBox viewEmpty;
+    @FXML private ScrollPane viewAiPacks;   // ✅ AI Pack Generator view
+
+    // ── AI Pack Generator fields ──
+    @FXML private GridPane aiPacksGrid;
+    @FXML private Label    aiStatusLabel;
+    @FXML private Label    statAiTotal;
+    @FXML private Label    statAiActive;
+    @FXML private Button   btnAnalyse;
 
     // ── Formulaire ──
     @FXML private TextField  txtNom, txtPourcentage, txtFixe;
@@ -71,6 +78,10 @@ public class PromotionBackOfficeController implements Initializable {
     @FXML private TableView<Object>      tableOffres;
     @FXML private TableColumn<Object, Integer> colOffreId;
     @FXML private TableColumn<Object, String>  colOffreNom, colOffreDetails;
+    @FXML private VBox                   stagedOffresBox;  // shows staged offers before save
+
+    // ── Staged offers (for NEW promotion pack creation before save) ──
+    private final List<PromotionTarget> stagedOffers = new ArrayList<>();
 
     // ── Cards ──
     @FXML private GridPane promoCardsGrid;
@@ -81,13 +92,14 @@ public class PromotionBackOfficeController implements Initializable {
     // ── Services ──
     private PromotionService       promotionService;
     private PromotionTargetService targetService;
-    private Offresservice offresService;   // ✅ FIXED: was OffresStaticData
+    private Offresservice offresService;
     private PromoCodeService       promoCodeService;
     private PromotionPdfService    pdfService;
     private NotificationService    notifService;
     private SchedulerService       schedulerService;
     private TrendingService        trendingService;
     private SmartDiscountEngine    discountEngine;
+    private PackSuggestionService  suggestionService;  // ✅ AI service
 
     private ObservableList<Promotion> allPromos = FXCollections.observableArrayList();
     private Promotion selectedPromotion = null;
@@ -117,6 +129,7 @@ public class PromotionBackOfficeController implements Initializable {
         schedulerService = SchedulerService.getInstance();
         trendingService  = TrendingService.getInstance();
         discountEngine   = SmartDiscountEngine.getInstance();
+        suggestionService = PackSuggestionService.getInstance();
 
         setupGrid();
         setupOffresTable();
@@ -677,6 +690,40 @@ public class PromotionBackOfficeController implements Initializable {
         if (chkLocked != null) chkLocked.setSelected(promo.isLocked());
         btnAjouter.setText("💾  Modifier");
         AnimationHelper.slideInLeft(btnAjouter);
+
+        // Populate staged box with existing linked offers
+        stagedOffers.clear();
+        if (stagedOffresBox != null) stagedOffresBox.getChildren().clear();
+        if (promo.isPack()) {
+            List<PromotionTarget> targets = targetService.getByPromotionId(promo.getId());
+            for (PromotionTarget t : targets) {
+                stagedOffers.add(t);
+                String name   = offresService.getOfferName(t.getTargetType(), t.getTargetId());
+                String detail = getOfferDetail(t.getTargetType(), t.getTargetId());
+                addStagedRow(name != null ? name : "Offre #" + t.getTargetId(),
+                        detail, t.getTargetType(), t.getTargetId(), true);
+            }
+        }
+        // Reset combo/table
+        if (comboTypeOffre != null) comboTypeOffre.setValue(null);
+        if (tableOffres    != null) tableOffres.getItems().clear();
+    }
+
+    private String getOfferDetail(TargetType type, int id) {
+        return switch (type) {
+            case HEBERGEMENT -> {
+                Hebergement h = offresService.getHebergementById(id);
+                yield h != null ? h.getTypeHebergement() + " · " + String.format("%.0f TND/nuit", h.getPrixParNuit()) : "";
+            }
+            case ACTIVITE -> {
+                Activite a = offresService.getActiviteById(id);
+                yield a != null ? a.getLieu() + " · " + String.format("%.0f TND/pers.", a.getPrixParPersonne()) : "";
+            }
+            case VOITURE -> {
+                Voiture v = offresService.getVoitureById(id);
+                yield v != null ? String.format("%.2f TND/km · %d places", v.getPrixKm(), v.getNbPlaces()) : "";
+            }
+        };
     }
 
     @FXML private void addOrUpdate() {
@@ -702,8 +749,12 @@ public class PromotionBackOfficeController implements Initializable {
                 newP.setLocked(locked);
                 Promotion saved = promotionService.add(newP);
                 if (saved != null) {
+                    // ✅ Save all staged offers now that we have the promo ID
+                    for (PromotionTarget staged : stagedOffers)
+                        targetService.add(new PromotionTarget(saved.getId(), staged.getTargetType(), staged.getTargetId()));
                     boolean jobs = schedulerService.schedulePromo(saved);
-                    notifService.success("Créée !", "✅ \"" + nom + "\"" + (jobs ? " · Jobs planifiés" : ""));
+                    String packInfo = stagedOffers.isEmpty() ? "" : " · " + stagedOffers.size() + " offre(s) liée(s)";
+                    notifService.success("Créée !", "✅ \"" + nom + "\"" + packInfo + (jobs ? " · Jobs planifiés" : ""));
                     if (locked) { selectedPromotion = saved; handleQRCode(saved); }
                 } else { notifService.danger("Erreur", "Impossible de créer."); return; }
             } else {
@@ -731,6 +782,11 @@ public class PromotionBackOfficeController implements Initializable {
         dateDebut.setValue(null); dateFin.setValue(null);
         chkPack.setSelected(false); if (chkLocked != null) chkLocked.setSelected(false);
         selectedPromotion = null; btnAjouter.setText("💾  Enregistrer");
+        // Clear staged offers
+        stagedOffers.clear();
+        if (stagedOffresBox != null) stagedOffresBox.getChildren().clear();
+        if (comboTypeOffre != null) comboTypeOffre.setValue(null);
+        if (tableOffres    != null) tableOffres.getItems().clear();
     }
 
     // ════════════════════════════════════════════════════
@@ -738,17 +794,126 @@ public class PromotionBackOfficeController implements Initializable {
     // ════════════════════════════════════════════════════
 
     @FXML private void ajouterOffreAPromotion() {
-        if (selectedPromotion == null) { notifService.warning("", "Sélectionnez une promotion."); return; }
         Object sel = tableOffres.getSelectionModel().getSelectedItem();
-        if (sel == null) { notifService.warning("", "Sélectionnez une offre."); return; }
-        TargetType tt = null; int tid = 0;
-        if (sel instanceof Hebergement h) { tt = TargetType.HEBERGEMENT; tid = h.getId(); }
-        else if (sel instanceof Activite a) { tt = TargetType.ACTIVITE;   tid = a.getId(); }
-        else if (sel instanceof Voiture v)  { tt = TargetType.VOITURE;    tid = v.getId(); } // ✅ FIXED
-        if (tt != null) {
+        if (sel == null) {
+            notifService.warning("", "Sélectionnez d'abord une offre dans la liste.");
+            AnimationHelper.shake(tableOffres);
+            return;
+        }
+
+        TargetType tt = null; int tid = 0; String offerName = ""; String detail = "";
+        if (sel instanceof Hebergement h) {
+            tt = TargetType.HEBERGEMENT; tid = h.getId();
+            offerName = h.getNom();
+            detail    = h.getTypeHebergement() + " · " + String.format("%.0f TND/nuit", h.getPrixParNuit());
+        } else if (sel instanceof Activite a) {
+            tt = TargetType.ACTIVITE; tid = a.getId();
+            offerName = a.getNom();
+            detail    = a.getLieu() + " · " + String.format("%.0f TND/pers.", a.getPrixParPersonne());
+        } else if (sel instanceof Voiture v) {
+            tt = TargetType.VOITURE; tid = v.getId();
+            offerName = v.getNom();
+            detail    = String.format("%.2f TND/km · %d places", v.getPrixKm(), v.getNbPlaces());
+        }
+        if (tt == null) return;
+
+        // Check duplicate in staged list
+        final TargetType finalTt = tt; final int finalTid = tid;
+        boolean duplicate = stagedOffers.stream().anyMatch(
+                t -> t.getTargetType() == finalTt && t.getTargetId() == finalTid);
+        if (duplicate) {
+            notifService.warning("Déjà ajoutée", "Cette offre est déjà dans le pack.");
+            return;
+        }
+
+        // If editing an existing promotion, save directly
+        if (selectedPromotion != null) {
             targetService.add(new PromotionTarget(selectedPromotion.getId(), tt, tid));
             notifService.success("Offre ajoutée !", "Liée à la promotion.");
+            // Also add to staged for visual display
+            stagedOffers.add(new PromotionTarget(0, tt, tid));
+            addStagedRow(offerName, detail, tt, tid, true);
+        } else {
+            // New promotion: stage for later
+            stagedOffers.add(new PromotionTarget(0, tt, tid));
+            addStagedRow(offerName, detail, tt, tid, false);
+            // Show staged header if first item
+            if (stagedOffers.size() == 1) {
+                notifService.success("Offre mise en attente ✓",
+                        "Elle sera liée après l'enregistrement du pack.");
+            }
         }
+
+        // Reset combo and table so user can pick another type immediately
+        comboTypeOffre.setValue(null);
+        tableOffres.getItems().clear();
+        tableOffres.getSelectionModel().clearSelection();
+    }
+
+    private void addStagedRow(String name, String detail, TargetType type, int tid, boolean saved) {
+        if (stagedOffresBox == null) return;
+
+        // Add "Offres en attente" header label if this is the first item and not editing
+        if (stagedOffresBox.getChildren().isEmpty() && !saved) {
+            Label header = new Label("📋 Offres en attente d'enregistrement :");
+            header.setStyle("-fx-font-size: 9px; -fx-font-weight: 700; -fx-text-fill: #6366F1; -fx-padding: 4 0 2 0;");
+            stagedOffresBox.getChildren().add(header);
+        }
+
+        String icon = switch (type) {
+            case HEBERGEMENT -> "🏨";
+            case ACTIVITE    -> "🎯";
+            case VOITURE     -> "🚗";
+        };
+        String statusColor = saved ? "#1ABC9C" : "#6366F1";
+        String statusBg    = saved ? "#F0FFF4" : "#EEF2FF";
+        String statusBorder = saved ? "#A7F3D0" : "#C7D2FE";
+
+        HBox row = new HBox(8); row.setAlignment(Pos.CENTER_LEFT);
+        row.setStyle("-fx-background-color: " + statusBg + "; -fx-padding: 7 10;" +
+                "-fx-background-radius: 8; -fx-border-color: " + statusBorder + ";" +
+                "-fx-border-radius: 8; -fx-border-width: 1;");
+
+        Label iconLbl = new Label(icon); iconLbl.setStyle("-fx-font-size: 13px;");
+
+        VBox textBox = new VBox(1); HBox.setHgrow(textBox, Priority.ALWAYS);
+        Label nameLbl = new Label(name);
+        nameLbl.setStyle("-fx-font-size: 11px; -fx-font-weight: 700; -fx-text-fill: #2C3E50;");
+        Label detailLbl = new Label(detail);
+        detailLbl.setStyle("-fx-font-size: 9px; -fx-text-fill: #64748B;");
+        textBox.getChildren().addAll(nameLbl, detailLbl);
+
+        Label statusDot = new Label(saved ? "✅" : "⏳");
+        statusDot.setStyle("-fx-font-size: 11px;");
+
+        // Remove button
+        Button btnRemove = new Button("✕");
+        btnRemove.setStyle("-fx-background-color: transparent; -fx-text-fill: #94A3B8;" +
+                "-fx-font-size: 10px; -fx-padding: 2 4; -fx-cursor: hand;");
+        btnRemove.setOnMouseEntered(e -> btnRemove.setStyle(
+                "-fx-background-color: #FEE2E2; -fx-text-fill: #E53E3E;" +
+                        "-fx-font-size: 10px; -fx-padding: 2 4; -fx-cursor: hand; -fx-background-radius: 4;"));
+        btnRemove.setOnMouseExited(e -> btnRemove.setStyle(
+                "-fx-background-color: transparent; -fx-text-fill: #94A3B8;" +
+                        "-fx-font-size: 10px; -fx-padding: 2 4; -fx-cursor: hand;"));
+
+        final TargetType fType = type; final int fTid = tid;
+        btnRemove.setOnAction(e -> {
+            stagedOffers.removeIf(t -> t.getTargetType() == fType && t.getTargetId() == fTid);
+            stagedOffresBox.getChildren().remove(row);
+            // If saved to DB and editing, remove from DB too
+            if (saved && selectedPromotion != null) {
+                targetService.getByPromotionId(selectedPromotion.getId()).stream()
+                        .filter(t -> t.getTargetType() == fType && t.getTargetId() == fTid)
+                        .findFirst().ifPresent(t -> targetService.delete(t.getId()));
+            }
+            // Remove header if no more offers
+            if (stagedOffresBox.getChildren().size() == 1) stagedOffresBox.getChildren().clear();
+        });
+
+        row.getChildren().addAll(iconLbl, textBox, statusDot, btnRemove);
+        stagedOffresBox.getChildren().add(row);
+        new animatefx.animation.FadeInUp(row).play();
     }
 
     // ════════════════════════════════════════════════════
@@ -819,7 +984,10 @@ public class PromotionBackOfficeController implements Initializable {
     }
 
     private void showView(javafx.scene.Node v) {
-        viewPromotion.setVisible(false); viewEmpty.setVisible(false); v.setVisible(true);
+        viewPromotion.setVisible(false);
+        viewEmpty.setVisible(false);
+        if (viewAiPacks != null) viewAiPacks.setVisible(false);
+        v.setVisible(true);
     }
 
     @FXML private void handleShowUsers()        { showView(viewEmpty); }
@@ -828,5 +996,368 @@ public class PromotionBackOfficeController implements Initializable {
     @FXML private void handleShowCredits()      { showView(viewEmpty); }
     @FXML private void handleShowCashback()     { showView(viewPromotion); }
     @FXML private void handleShowSettings()     { showView(viewEmpty); }
-    @FXML private void handleLogout()           { notifService.info("Déconnexion", "À implémenter."); }
+    @FXML private void handleShowAiPacks()      {
+        if (viewAiPacks != null) {
+            showView(viewAiPacks);
+            updateAiStats();
+        }
+    }
+    @FXML private void handleLogout() { notifService.info("Déconnexion", "À implémenter."); }
+
+    // ════════════════════════════════════════════════════
+    // AI PACK GENERATOR — all logic inline (single controller)
+    // ════════════════════════════════════════════════════
+
+    @FXML
+    public void handleAnalyse() {
+        if (btnAnalyse != null) {
+            btnAnalyse.setDisable(true);
+            btnAnalyse.setText("⏳ Analyse en cours…");
+        }
+        if (aiStatusLabel != null) {
+            aiStatusLabel.setText("🤖 Analyse des co-réservations en cours…");
+            aiStatusLabel.setStyle("-fx-text-fill: #7C3AED; -fx-font-weight: 700;");
+        }
+        new Thread(() -> {
+            if (suggestionService == null) suggestionService = PackSuggestionService.getInstance();
+            List<PackSuggestionDTO> suggestions = suggestionService.generateSuggestions();
+            Platform.runLater(() -> {
+                displayAiSuggestions(suggestions);
+                if (btnAnalyse != null) {
+                    btnAnalyse.setDisable(false);
+                    btnAnalyse.setText("🔄 Relancer l'analyse");
+                }
+            });
+        }).start();
+    }
+
+    private void displayAiSuggestions(List<PackSuggestionDTO> list) {
+        if (aiPacksGrid == null) return;
+        aiPacksGrid.getChildren().clear();
+        aiPacksGrid.getRowConstraints().clear();
+
+        if (list.isEmpty()) {
+            Label icon = new Label("🤖"); icon.setStyle("-fx-font-size: 46px;");
+            Label msg  = new Label("Aucune co-réservation détectée.");
+            msg.setStyle("-fx-font-size: 15px; -fx-font-weight: 700; -fx-text-fill: #64748B;");
+            Label hint = new Label("Le système a besoin d'historique de réservations pour générer des suggestions.");
+            hint.setStyle("-fx-font-size: 11px; -fx-text-fill: #94A3B8;");
+            VBox empty = new VBox(10, icon, msg, hint);
+            empty.setAlignment(Pos.CENTER); empty.setPrefHeight(220);
+            GridPane.setColumnSpan(empty, 3); aiPacksGrid.add(empty, 0, 0);
+            if (aiStatusLabel != null) {
+                aiStatusLabel.setText("Aucune suggestion disponible pour le moment.");
+                aiStatusLabel.setStyle("-fx-text-fill: #64748B; -fx-font-weight: 600;");
+            }
+            return;
+        }
+
+        if (aiStatusLabel != null) {
+            aiStatusLabel.setText("✅ " + list.size() + " pack(s) suggéré(s) — cliquez « Créer » pour valider.");
+            aiStatusLabel.setStyle("-fx-text-fill: #1ABC9C; -fx-font-weight: 700;");
+        }
+
+        // Setup 3-column grid for AI cards
+        if (aiPacksGrid.getColumnConstraints().isEmpty()) {
+            for (int i = 0; i < 3; i++) {
+                ColumnConstraints cc = new ColumnConstraints();
+                cc.setPercentWidth(33.33); cc.setHgrow(Priority.ALWAYS);
+                aiPacksGrid.getColumnConstraints().add(cc);
+            }
+        }
+
+        List<VBox> cards = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            VBox card = buildAiCard(list.get(i));
+            card.setMaxWidth(Double.MAX_VALUE);
+            aiPacksGrid.add(card, i % 3, i / 3);
+            cards.add(card);
+        }
+        AnimationHelper.staggeredFadeIn(cards, 80);
+    }
+
+    private VBox buildAiCard(PackSuggestionDTO dto) {
+        VBox card = new VBox(0);
+        card.setMaxWidth(Double.MAX_VALUE);
+        String borderNormal = "-fx-background-color: white; -fx-background-radius: 14;" +
+                "-fx-border-color: #E9D8FD; -fx-border-radius: 14; -fx-border-width: 1;" +
+                "-fx-effect: dropshadow(gaussian, rgba(124,58,237,0.10), 12, 0, 0, 4);";
+        String borderHover  = "-fx-background-color: white; -fx-background-radius: 14;" +
+                "-fx-border-color: #7C3AED; -fx-border-radius: 14; -fx-border-width: 2;" +
+                "-fx-effect: dropshadow(gaussian, rgba(124,58,237,0.22), 18, 0, 0, 6); -fx-translate-y: -2;";
+        card.setStyle(borderNormal);
+        card.setOnMouseEntered(e -> card.setStyle(borderHover));
+        card.setOnMouseExited(e  -> card.setStyle(borderNormal));
+
+        // Header gradient
+        StackPane header = new StackPane();
+        header.setPrefHeight(100);
+        header.setStyle("-fx-background-color: linear-gradient(to bottom right, #7C3AED, #4F46E5);" +
+                "-fx-background-radius: 14 14 0 0;");
+        Label bigIcon = new Label("🤖"); bigIcon.setStyle("-fx-font-size: 34px;");
+        header.getChildren().add(bigIcon);
+
+        // AI badge top-left
+        Label aiBadge = new Label("✨ IA");
+        aiBadge.setStyle("-fx-background-color: rgba(255,255,255,0.18); -fx-text-fill: white;" +
+                "-fx-font-weight: 900; -fx-font-size: 8px; -fx-padding: 3 8; -fx-background-radius: 20;");
+        StackPane.setAlignment(aiBadge, Pos.TOP_LEFT);
+        StackPane.setMargin(aiBadge, new Insets(8));
+        header.getChildren().add(aiBadge);
+
+        // Confidence badge top-right
+        String confColor = dto.getConfidenceScore() >= 70 ? "#10B981"
+                : dto.getConfidenceScore() >= 40 ? ORANGE : ROUGE;
+        Label confBadge = new Label(String.format("%.0f%%", dto.getConfidenceScore()));
+        confBadge.setStyle("-fx-background-color: rgba(255,255,255,0.92); -fx-text-fill: " + confColor + ";" +
+                "-fx-font-weight: 900; -fx-font-size: 10px; -fx-padding: 3 9; -fx-background-radius: 20;");
+        StackPane.setAlignment(confBadge, Pos.TOP_RIGHT);
+        StackPane.setMargin(confBadge, new Insets(8));
+        header.getChildren().add(confBadge);
+
+        // Content
+        VBox content = new VBox(9);
+        content.setPadding(new Insets(13, 15, 13, 15));
+        content.setStyle("-fx-background-color: white; -fx-background-radius: 0 0 14 14;");
+
+        // Pack name
+        Label nameLabel = new Label(dto.getSuggestedName());
+        nameLabel.setStyle("-fx-font-size: 13px; -fx-font-weight: 800; -fx-text-fill: " + BLEU_NUIT + ";");
+        nameLabel.setWrapText(true);
+
+        // City chip
+        String city = (dto.getDetectedCity() != null && !dto.getDetectedCity().isBlank())
+                ? dto.getDetectedCity() : "Tunisie";
+        Label cityChip = new Label("📍 " + city);
+        cityChip.setStyle("-fx-background-color: #F5F3FF; -fx-text-fill: #7C3AED;" +
+                "-fx-font-size: 10px; -fx-font-weight: 700; -fx-padding: 3 10; -fx-background-radius: 20;");
+
+        // Offers box
+        VBox offersBox = new VBox(5);
+        offersBox.setStyle("-fx-background-color: #F8FAFC; -fx-padding: 9 11; -fx-background-radius: 8;");
+        Label ofTitle = new Label("📦 Offres incluses");
+        ofTitle.setStyle("-fx-font-size: 9px; -fx-font-weight: 700; -fx-text-fill: " + GRAY + ";");
+        Label o1 = new Label(typeIcon(dto.getOffer1Type()) + "  " + dto.getOffer1Name());
+        o1.setStyle("-fx-font-size: 11px; -fx-text-fill: " + BLEU_NUIT + ";"); o1.setWrapText(true);
+        Label o2 = new Label(typeIcon(dto.getOffer2Type()) + "  " + dto.getOffer2Name());
+        o2.setStyle("-fx-font-size: 11px; -fx-text-fill: " + BLEU_NUIT + ";"); o2.setWrapText(true);
+        offersBox.getChildren().addAll(ofTitle, o1, o2);
+
+        // Stats row
+        HBox statsRow = new HBox(8); statsRow.setAlignment(Pos.CENTER_LEFT);
+        statsRow.setStyle("-fx-background-color: #F9FAFB; -fx-padding: 7 10; -fx-background-radius: 8;");
+        Label freqLbl = new Label("🔁 " + dto.getFrequency() + " co-rés.");
+        freqLbl.setStyle("-fx-font-size: 10px; -fx-font-weight: 700; -fx-text-fill: " + BLEU_NUIT + ";");
+        Region spacer = new Region(); HBox.setHgrow(spacer, Priority.ALWAYS);
+        Label priceLbl = new Label("💰 " + String.format("%.0f TND", dto.getEstimatedTotalPrice()));
+        priceLbl.setStyle("-fx-font-size: 10px; -fx-font-weight: 700; -fx-text-fill: " + TURQUOISE + ";");
+        statsRow.getChildren().addAll(freqLbl, spacer, priceLbl);
+
+        Separator sep = new Separator();
+
+        // AI Reasoning label (only if present)
+        String reasoning = dto.getAiReasoning();
+        VBox reasoningBox = new VBox();
+        if (reasoning != null && !reasoning.isBlank() && !reasoning.startsWith("⚠️")) {
+            Label rLabel = new Label("💡 " + reasoning);
+            rLabel.setStyle("-fx-font-size: 9px; -fx-text-fill: #7C3AED; -fx-font-style: italic;");
+            rLabel.setWrapText(true);
+            reasoningBox.setStyle("-fx-background-color: #F5F3FF; -fx-padding: 6 10; -fx-background-radius: 7;");
+            reasoningBox.getChildren().add(rLabel);
+        } else if (reasoning != null && reasoning.startsWith("⚠️")) {
+            Label rLabel = new Label(reasoning);
+            rLabel.setStyle("-fx-font-size: 9px; -fx-text-fill: #92400E;");
+            rLabel.setWrapText(true);
+            reasoningBox.setStyle("-fx-background-color: #FEF3C7; -fx-padding: 5 10; -fx-background-radius: 7;");
+            reasoningBox.getChildren().add(rLabel);
+        }
+
+        // Bottom row: discount + create button
+        HBox bottomRow = new HBox(8); bottomRow.setAlignment(Pos.CENTER_LEFT);
+        Label discLabel = new Label("-" + String.format("%.0f%%", dto.getSuggestedDiscount()));
+        discLabel.setStyle("-fx-font-size: 20px; -fx-font-weight: 900; -fx-text-fill: " + ORANGE + ";");
+        Region spacer2 = new Region(); HBox.setHgrow(spacer2, Priority.ALWAYS);
+
+        Button btnCreate = new Button("✨ Créer ce Pack");
+        String btnStyle   = "-fx-background-color: #7C3AED; -fx-text-fill: white; -fx-font-weight: 700;" +
+                "-fx-font-size: 11px; -fx-padding: 8 16; -fx-background-radius: 9; -fx-cursor: hand;";
+        String btnHover   = "-fx-background-color: #6D28D9; -fx-text-fill: white; -fx-font-weight: 700;" +
+                "-fx-font-size: 11px; -fx-padding: 8 16; -fx-background-radius: 9; -fx-cursor: hand; -fx-translate-y: -1;";
+        btnCreate.setStyle(btnStyle);
+        btnCreate.setOnMouseEntered(e -> { btnCreate.setStyle(btnHover); new Pulse(btnCreate).play(); });
+        btnCreate.setOnMouseExited(e  -> btnCreate.setStyle(btnStyle));
+        btnCreate.setOnAction(e -> showAiConfirmDialog(dto, card, btnCreate));
+
+        bottomRow.getChildren().addAll(discLabel, spacer2, btnCreate);
+        content.getChildren().addAll(nameLabel, cityChip, offersBox, statsRow, sep, reasoningBox, bottomRow);
+        card.getChildren().addAll(header, content);
+        return card;
+    }
+
+    private String typeIcon(TargetType t) {
+        if (t == null) return "🎯";
+        return switch (t) {
+            case HEBERGEMENT -> "🏨";
+            case ACTIVITE    -> "🎯";
+            case VOITURE     -> "🚗";
+        };
+    }
+
+    private void showAiConfirmDialog(PackSuggestionDTO dto, VBox sourceCard, Button sourceBtn) {
+        Stage dialog = new Stage();
+        dialog.initModality(Modality.APPLICATION_MODAL);
+        dialog.setTitle("Confirmation — Création Pack IA");
+        dialog.setResizable(false);
+
+        // Header
+        HBox hdr = new HBox(12); hdr.setAlignment(Pos.CENTER_LEFT);
+        hdr.setStyle("-fx-background-color: linear-gradient(to right, #7C3AED, #4F46E5); -fx-padding: 18 24;");
+        Label hIcon = new Label("🤖"); hIcon.setStyle("-fx-font-size: 26px;");
+        VBox hText = new VBox(2);
+        Label hTitle = new Label("Création de Pack IA");
+        hTitle.setStyle("-fx-font-size: 15px; -fx-font-weight: 800; -fx-text-fill: white;");
+        Label hSub = new Label("Vérification avant création automatique");
+        hSub.setStyle("-fx-font-size: 10px; -fx-text-fill: rgba(255,255,255,0.75);");
+        hText.getChildren().addAll(hTitle, hSub);
+        hdr.getChildren().addAll(hIcon, hText);
+
+        // Body
+        VBox body = new VBox(12);
+        body.setStyle("-fx-padding: 20 24; -fx-background-color: white;");
+
+        String city = (dto.getDetectedCity() != null && !dto.getDetectedCity().isBlank())
+                ? dto.getDetectedCity() : "Tunisie";
+
+        VBox info = new VBox(8);
+        info.setStyle("-fx-background-color: #F5F3FF; -fx-padding: 15; -fx-background-radius: 11;" +
+                "-fx-border-color: #DDD6FE; -fx-border-radius: 11; -fx-border-width: 1;");
+        Label iTitle = new Label("📋 Récapitulatif du pack à créer");
+        iTitle.setStyle("-fx-font-size: 11px; -fx-font-weight: 800; -fx-text-fill: #7C3AED;");
+        Label iName = new Label("📦 " + dto.getSuggestedName());
+        iName.setStyle("-fx-font-size: 13px; -fx-font-weight: 700; -fx-text-fill: " + BLEU_NUIT + ";");
+        iName.setWrapText(true);
+        Label iCity = new Label("📍 Ville : " + city);
+        iCity.setStyle("-fx-font-size: 11px; -fx-text-fill: " + GRAY + ";");
+        Label iO1 = new Label(typeIcon(dto.getOffer1Type()) + " " + dto.getOffer1Name());
+        iO1.setStyle("-fx-font-size: 11px; -fx-text-fill: " + BLEU_NUIT + ";"); iO1.setWrapText(true);
+        Label iO2 = new Label(typeIcon(dto.getOffer2Type()) + " " + dto.getOffer2Name());
+        iO2.setStyle("-fx-font-size: 11px; -fx-text-fill: " + BLEU_NUIT + ";"); iO2.setWrapText(true);
+        Separator is = new Separator();
+        Label iPrice = new Label("💰 Prix estimé : " + String.format("%.2f TND", dto.getEstimatedTotalPrice())
+                + "   🏷️ Réduction : -" + String.format("%.0f%%", dto.getSuggestedDiscount()));
+        iPrice.setStyle("-fx-font-size: 11px; -fx-text-fill: " + TURQUOISE + "; -fx-font-weight: 700;");
+        Label iFreq = new Label("🔁 Co-réservations détectées : " + dto.getFrequency()
+                + "   🎯 Confiance : " + String.format("%.0f%%", dto.getConfidenceScore()));
+        iFreq.setStyle("-fx-font-size: 10px; -fx-text-fill: " + GRAY + ";");
+
+        // AI reasoning
+        String reasoning = dto.getAiReasoning();
+        Label iReason = new Label();
+        if (reasoning != null && !reasoning.isBlank()) {
+            iReason.setText("💡 " + reasoning);
+            iReason.setStyle("-fx-font-size: 10px; -fx-text-fill: #7C3AED; -fx-font-style: italic;");
+            iReason.setWrapText(true);
+        }
+        info.getChildren().addAll(iTitle, iName, iCity, iO1, iO2, is, iPrice, iFreq, iReason);
+
+        Label warning = new Label(
+                "⚠️ Cette action créera automatiquement une promotion de type pack basée " +
+                        "sur les patterns de réservation des utilisateurs. L'action est réversible depuis le panneau des promotions.");
+        warning.setStyle("-fx-font-size: 10px; -fx-text-fill: #92400E; -fx-background-color: #FEF3C7;" +
+                "-fx-padding: 10 12; -fx-background-radius: 8;");
+        warning.setWrapText(true); warning.setMaxWidth(400);
+
+        body.getChildren().addAll(info, warning);
+
+        // Buttons
+        HBox btnRow = new HBox(10); btnRow.setAlignment(Pos.CENTER_RIGHT);
+        btnRow.setStyle("-fx-padding: 14 24 18 24; -fx-background-color: #F9FAFB;" +
+                "-fx-border-color: #E2E8F0; -fx-border-width: 1 0 0 0;");
+        Button btnCancel = new Button("Annuler");
+        btnCancel.setStyle("-fx-background-color: white; -fx-text-fill: " + GRAY + "; -fx-font-weight: 700;" +
+                "-fx-padding: 9 22; -fx-background-radius: 9; -fx-cursor: hand;" +
+                "-fx-border-color: #E2E8F0; -fx-border-radius: 9; -fx-border-width: 1;");
+        btnCancel.setOnAction(e -> dialog.close());
+
+        Button btnOk = new Button("✨ Confirmer la création");
+        btnOk.setStyle("-fx-background-color: #7C3AED; -fx-text-fill: white; -fx-font-weight: 700;" +
+                "-fx-padding: 9 22; -fx-background-radius: 9; -fx-cursor: hand;");
+        btnOk.setOnAction(e -> { dialog.close(); createAiPack(dto, sourceCard, sourceBtn); });
+        btnRow.getChildren().addAll(btnCancel, btnOk);
+
+        VBox root = new VBox(0, hdr, body, btnRow);
+        root.setStyle("-fx-background-color: white;");
+        dialog.setScene(new Scene(root, 450, 490));
+        dialog.show();
+        new SlideInDown(hdr).play();
+    }
+
+    private void createAiPack(PackSuggestionDTO dto, VBox sourceCard, Button sourceBtn) {
+        // Safety: check for duplicate by name or targets
+        List<Promotion> existing = promotionService.getAll();
+        for (Promotion ex : existing) {
+            if (!ex.isPack()) continue;
+            if (ex.getName().equalsIgnoreCase(dto.getSuggestedName())) {
+                showDuplicateAlert(ex.getName()); return;
+            }
+            List<PromotionTarget> exTargets = targetService.getByPromotionId(ex.getId());
+            boolean has1 = exTargets.stream().anyMatch(t ->
+                    t.getTargetType() == dto.getOffer1Type() && t.getTargetId() == dto.getOffer1Id());
+            boolean has2 = exTargets.stream().anyMatch(t ->
+                    t.getTargetType() == dto.getOffer2Type() && t.getTargetId() == dto.getOffer2Id());
+            if (has1 && has2) { showDuplicateAlert(ex.getName()); return; }
+        }
+
+        // Create via PromotionService.createFromAiSuggestion (never direct DB)
+        Promotion saved = promotionService.createFromAiSuggestion(dto);
+        if (saved == null || saved.getId() <= 0) {
+            notifService.danger("Erreur IA", "Impossible de créer le pack. Vérifiez la connexion DB.");
+            return;
+        }
+
+        // Insert targets
+        targetService.add(new PromotionTarget(saved.getId(), dto.getOffer1Type(), dto.getOffer1Id()));
+        targetService.add(new PromotionTarget(saved.getId(), dto.getOffer2Type(), dto.getOffer2Id()));
+
+        notifService.success("Pack IA créé ✨",
+                "\"" + saved.getName() + "\" · -" + String.format("%.0f", dto.getSuggestedDiscount()) + "%");
+
+        System.out.printf("[AI] Pack créé id=%d name='%s' targets=[%s#%d, %s#%d]%n",
+                saved.getId(), saved.getName(),
+                dto.getOffer1Type(), dto.getOffer1Id(),
+                dto.getOffer2Type(), dto.getOffer2Id());
+
+        // Visual feedback on card
+        if (sourceBtn != null) {
+            sourceBtn.setDisable(true);
+            sourceBtn.setText("✅ Créé");
+            sourceBtn.setStyle("-fx-background-color: #1ABC9C; -fx-text-fill: white; -fx-font-weight: 700;" +
+                    "-fx-font-size: 11px; -fx-padding: 8 16; -fx-background-radius: 9;");
+        }
+        if (sourceCard != null) {
+            sourceCard.setStyle("-fx-background-color: #F0FFF4; -fx-background-radius: 14;" +
+                    "-fx-border-color: #1ABC9C; -fx-border-radius: 14; -fx-border-width: 2;" +
+                    "-fx-effect: dropshadow(gaussian, rgba(26,188,156,0.25), 14, 0, 0, 4);");
+            new Flash(sourceCard).play();
+        }
+        updateAiStats();
+        loadAndDisplayPromos(); // refresh main promo view as well
+    }
+
+    private void showDuplicateAlert(String name) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Pack déjà existant");
+        alert.setHeaderText("Ce pack existe déjà.");
+        alert.setContentText("Un pack similaire nommé « " + name + " » existe déjà.\nAucune création effectuée.");
+        alert.showAndWait();
+    }
+
+    private void updateAiStats() {
+        if (statAiTotal == null) return;
+        List<Promotion> all = promotionService.getAll();
+        long total  = all.stream().filter(Promotion::isPack).count();
+        long active = all.stream().filter(p -> p.isPack() && p.isActive()).count();
+        AnimationHelper.countUp(statAiTotal,  0, (int) total,  800);
+        AnimationHelper.countUp(statAiActive, 0, (int) active, 1000);
+    }
 }

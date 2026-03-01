@@ -25,6 +25,7 @@ public class Promotion {
     private boolean isLocked;
     private int    nbVues;
     private int    nbReservations;
+    private boolean generatedByAi;  // AI Smart Pack Generator flag
 
     public Promotion() {}
 
@@ -91,6 +92,9 @@ public class Promotion {
 
     public int     getNbReservations()      { return nbReservations; }
     public void    setNbReservations(int v) { this.nbReservations = v; }
+
+    public boolean isGeneratedByAi()        { return generatedByAi; }
+    public void    setGeneratedByAi(boolean v) { this.generatedByAi = v; }
 
     /** Returns true if today is within [startDate, endDate] */
     public boolean isActive() {

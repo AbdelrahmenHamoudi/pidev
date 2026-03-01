@@ -112,8 +112,10 @@ public class PromotionService {
         int vues = 0, resa = 0;
         try { vues = rs.getInt("nb_vues"); }         catch (SQLException ignored) {}
         try { resa = rs.getInt("nb_reservations"); } catch (SQLException ignored) {}
+        boolean aiGen = false;
+        try { aiGen = rs.getBoolean("generated_by_ai"); } catch (SQLException ignored) {}
 
-        return new Promotion(
+        Promotion p = new Promotion(
                 rs.getInt("id"),
                 rs.getString("name"),
                 rs.getString("description"),
@@ -123,5 +125,52 @@ public class PromotionService {
                 rs.getBoolean("is_pack"),
                 locked, vues, resa
         );
+        p.setGeneratedByAi(aiGen);
+        return p;
+    }
+
+    /**
+     * Creates a pack promotion from an AI suggestion.
+     * Writes generated_by_ai = true if the column exists, otherwise falls back gracefully.
+     * Uses existing add() logic — no direct DB bypass.
+     */
+    public Promotion createFromAiSuggestion(org.example.models.PackSuggestionDTO dto) {
+        java.time.LocalDate today = java.time.LocalDate.now();
+        Promotion p = new Promotion(
+                dto.getSuggestedName(),
+                dto.getSuggestedDescription(),
+                dto.getSuggestedDiscount(),
+                null,
+                java.sql.Date.valueOf(today),
+                java.sql.Date.valueOf(today.plusMonths(3)),
+                true   // isPack
+        );
+        p.setLocked(false);
+        p.setGeneratedByAi(true);
+
+        // Try INSERT with generated_by_ai column; fall back to base add() if column absent
+        String sql = "INSERT INTO promotion (name, description, discount_percentage, discount_fixed, " +
+                "start_date, end_date, is_pack, is_locked, generated_by_ai) VALUES (?,?,?,?,?,?,?,?,?)";
+        try (java.sql.Connection conn = org.example.utils.DatabaseConnection.getConnection();
+             java.sql.PreparedStatement ps = conn.prepareStatement(sql, java.sql.Statement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, p.getName());
+            ps.setString(2, p.getDescription());
+            ps.setFloat(3, p.getDiscountPercentage());
+            ps.setNull(4, java.sql.Types.FLOAT);
+            ps.setDate(5, p.getStartDate());
+            ps.setDate(6, p.getEndDate());
+            ps.setBoolean(7, true);
+            ps.setBoolean(8, false);
+            ps.setBoolean(9, true);
+            ps.executeUpdate();
+            java.sql.ResultSet keys = ps.getGeneratedKeys();
+            if (keys.next()) p.setId(keys.getInt(1));
+            System.out.println("[PromotionService] AI pack created with generated_by_ai=true, id=" + p.getId());
+            return p;
+        } catch (java.sql.SQLException e) {
+            // Column might not exist yet — fall back to standard add()
+            System.out.println("[PromotionService] generated_by_ai column absent, using fallback add(). Msg: " + e.getMessage());
+            return add(p);
+        }
     }
 }

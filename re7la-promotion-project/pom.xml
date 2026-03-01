@@ -1,54 +1,43 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <groupId>org.example</groupId>
     <artifactId>re7la-promotion</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
-
     <name>RE7LA Promotion Management</name>
     <description>Application JavaFX pour la gestion des promotions RE7LA</description>
-
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <javafx.version>21.0.1</javafx.version>
     </properties>
-
     <dependencies>
-        <!-- JavaFX Controls -->
+        <!--  JavaFX Controls  -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
             <version>${javafx.version}</version>
         </dependency>
-
-        <!-- JavaFX FXML -->
+        <!--  JavaFX FXML  -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
             <version>${javafx.version}</version>
         </dependency>
-
-        <!-- ⭐ JavaFX Swing - OBLIGATOIRE pour SwingNode + JFreeChart -->
+        <!--  ⭐ JavaFX Swing - OBLIGATOIRE pour SwingNode + JFreeChart  -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-swing</artifactId>
             <version>${javafx.version}</version>
         </dependency>
-
-        <!-- MySQL Connector -->
+        <!--  MySQL Connector  -->
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
             <version>8.2.0</version>
         </dependency>
-
-        <!-- ⭐ JFreeChart - API Graphiques -->
+        <!--  ⭐ JFreeChart - API Graphiques  -->
         <dependency>
             <groupId>org.jfree</groupId>
             <artifactId>jfreechart</artifactId>
@@ -59,13 +48,13 @@
             <artifactId>core</artifactId>
             <version>3.5.2</version>
         </dependency>
-        <!-- ZXing JavaSE -->
+        <!--  ZXing JavaSE  -->
         <dependency>
             <groupId>com.google.zxing</groupId>
             <artifactId>javase</artifactId>
             <version>3.5.2</version>
         </dependency>
-        <!--  iText7 PDF  -->
+        <!--   iText7 PDF   -->
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>kernel</artifactId>
@@ -81,28 +70,31 @@
             <artifactId>io</artifactId>
             <version>7.2.5</version>
         </dependency>
-        <!-- ══ AnimateFX — Animations JavaFX ══ -->
+        <!--  ══ AnimateFX — Animations JavaFX ══  -->
         <dependency>
             <groupId>io.github.typhon0</groupId>
             <artifactId>AnimateFX</artifactId>
             <version>1.2.3</version>
         </dependency>
-
-        <!-- ══ Quartz Scheduler — Jobs automatiques ══ -->
+        <!--  ══ Quartz Scheduler — Jobs automatiques ══  -->
         <dependency>
             <groupId>org.quartz-scheduler</groupId>
             <artifactId>quartz</artifactId>
             <version>2.3.2</version>
         </dependency>
-
-        <!-- SLF4J requis par Quartz (logging) -->
+        <!--  SLF4J requis par Quartz (logging)  -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
             <version>1.7.36</version>
         </dependency>
+        <!--  Gson — JSON parsing for Claude API responses  -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.10.1</version>
+        </dependency>
     </dependencies>
-
     <build>
         <plugins>
             <plugin>
@@ -114,7 +106,6 @@
                     <target>17</target>
                 </configuration>
             </plugin>
-
             <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
