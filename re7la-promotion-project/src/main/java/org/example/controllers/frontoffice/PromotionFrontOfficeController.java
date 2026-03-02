@@ -42,7 +42,20 @@ public class PromotionFrontOfficeController implements Initializable {
     @FXML private Text             resultsCountText;
     @FXML private ComboBox<String> sortCombo;
     @FXML private GridPane         promotionsGrid;
+
+    // ── Header navigation buttons ──
     @FXML private Button           btnMesReservations;
+    @FXML private Button           btnAccueil;
+    @FXML private Button           btnProfil;
+
+    // ── Header user info labels (filled dynamically from SessionManager) ──
+    @FXML private Label            labelUserName;
+    @FXML private Label            labelUserEmail;
+
+    // ── Language selector ──
+    @FXML private ComboBox<String> languageSelector;
+
+    // ── Legacy Text field — kept for backward compat if still in FXML ──
     @FXML private Text             userNameText;
 
     // ── Sidebar panels ──
@@ -79,9 +92,32 @@ public class PromotionFrontOfficeController implements Initializable {
         trendingService  = TrendingService.getInstance();
         notifService     = NotificationService.getInstance();
 
-        // ✅ FIXED: Set dynamic user name from SessionManager
+        // ── Inject current session user into header (fixes stale-user bug) ──
+        if (labelUserName != null) {
+            labelUserName.setText(SessionManager.getCurrentUserName());
+        }
+        if (labelUserEmail != null) {
+            labelUserEmail.setText(SessionManager.getCurrentUserEmail());
+        }
+        // Legacy Text node - kept for backward compat
         if (userNameText != null) {
             userNameText.setText(SessionManager.getCurrentUserName());
+        }
+
+        // ── Language selector setup ──
+        //if (languageSelector != null) {
+            //languageSelector.getItems().addAll("FR", "EN");
+            //languageSelector.setValue("FR");
+            // Wire language switch here when i18n is ready:
+            //languageSelector.setOnAction(e -> switchLanguage(languageSelector.getValue()));
+       // }
+
+        // ── Header navigation button handlers ──
+        if (btnAccueil != null) {
+            btnAccueil.setOnAction(e -> handleAccueil());
+        }
+        if (btnProfil != null) {
+            btnProfil.setOnAction(e -> handleProfil());
         }
 
         setupGrid();
@@ -630,5 +666,24 @@ public class PromotionFrontOfficeController implements Initializable {
             Stage s = new Stage(); s.setTitle("Mes Réservations"); s.setScene(new Scene(root, 1000, 700)); s.show();
             new FadeIn(root).play();
         } catch (IOException e) { notifService.danger("Erreur", "Impossible d'ouvrir Mes Réservations."); }
+    }
+
+    // ── Header button handlers ──
+
+    @FXML
+    private void handleAccueil() {
+        // Integration point: navigate to Accueil / home view
+        // Example: MainApp.showAccueil();
+    }
+
+    @FXML
+    private void handleProfil() {
+        // Integration point: open profile page
+        // Example: MainApp.showProfil(SessionManager.getCurrentUserId());
+    }
+
+    @FXML
+    private void applyFiltersAction() {
+        applyFilters();
     }
 }

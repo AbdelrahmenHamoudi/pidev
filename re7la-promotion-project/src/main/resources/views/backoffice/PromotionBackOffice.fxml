@@ -60,9 +60,12 @@
         <Button alignment="BASELINE_LEFT" maxWidth="Infinity" mnemonicParsing="false"
                 onAction="#handleShowCredits" styleClass="sidebar-button" text="🚗   Voitures"/>
         <Button alignment="BASELINE_LEFT" maxWidth="Infinity" mnemonicParsing="false"
-                onAction="#handleShowCashback" styleClass="sidebar-button" text="🎁   Promotions"/>
-        <Button alignment="BASELINE_LEFT" maxWidth="Infinity" mnemonicParsing="false"
-                onAction="#handleShowAiPacks" styleClass="sidebar-button" text="🤖   AI Pack Generator"/>
+                onAction="#handleShowCashback" styleClass="sidebar-button" text="&#127873;   Promotions"/>
+        <!-- AI Pack Generator: visible ONLY when Promotions module is active -->
+        <!-- managed=false means it takes up NO space when hidden -->
+        <Button fx:id="btnAiPacks" alignment="BASELINE_LEFT" maxWidth="Infinity" mnemonicParsing="false"
+                onAction="#handleShowAiPacks" styleClass="sidebar-button" text="&#129302;   AI Pack Generator"
+                visible="false" managed="false"/>
 
         <Region VBox.vgrow="ALWAYS"/>
 

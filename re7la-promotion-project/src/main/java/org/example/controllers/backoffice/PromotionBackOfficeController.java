@@ -57,7 +57,10 @@ public class PromotionBackOfficeController implements Initializable {
     @FXML private StackPane mainContentStack;
     @FXML private ScrollPane viewPromotion;
     @FXML private VBox viewEmpty;
-    @FXML private ScrollPane viewAiPacks;   // ✅ AI Pack Generator view
+    @FXML private ScrollPane viewAiPacks;   // AI Pack Generator view
+
+    // ── Sidebar AI button (hidden unless Promotions module is active) ──
+    @FXML private Button btnAiPacks;
 
     // ── AI Pack Generator fields ──
     @FXML private GridPane aiPacksGrid;
@@ -983,6 +986,21 @@ public class PromotionBackOfficeController implements Initializable {
         });
     }
 
+    /**
+     * Shows or hides the AI Pack Generator sidebar button.
+     * Pass true ONLY when the Promotions module is active.
+     * setManaged(false) ensures no empty gap is left when hidden.
+     *
+     * Called automatically by module navigation handlers.
+     * Can also be called externally by a parent navigation controller.
+     */
+    public void setAiSidebarVisible(boolean visible) {
+        if (btnAiPacks != null) {
+            btnAiPacks.setVisible(visible);
+            btnAiPacks.setManaged(visible);  // false = no space reserved when hidden
+        }
+    }
+
     private void showView(javafx.scene.Node v) {
         viewPromotion.setVisible(false);
         viewEmpty.setVisible(false);
@@ -990,12 +1008,12 @@ public class PromotionBackOfficeController implements Initializable {
         v.setVisible(true);
     }
 
-    @FXML private void handleShowUsers()        { showView(viewEmpty); }
-    @FXML private void handleShowAccounts()     { showView(viewEmpty); }
-    @FXML private void handleShowTransactions() { showView(viewEmpty); }
-    @FXML private void handleShowCredits()      { showView(viewEmpty); }
-    @FXML private void handleShowCashback()     { showView(viewPromotion); }
-    @FXML private void handleShowSettings()     { showView(viewEmpty); }
+    @FXML private void handleShowUsers()        { showView(viewEmpty);   setAiSidebarVisible(false); }
+    @FXML private void handleShowAccounts()     { showView(viewEmpty);   setAiSidebarVisible(false); }
+    @FXML private void handleShowTransactions() { showView(viewEmpty);   setAiSidebarVisible(false); }
+    @FXML private void handleShowCredits()      { showView(viewEmpty);   setAiSidebarVisible(false); }
+    @FXML private void handleShowCashback()     { showView(viewPromotion); setAiSidebarVisible(true); }
+    @FXML private void handleShowSettings()     { showView(viewEmpty);   setAiSidebarVisible(false); }
     @FXML private void handleShowAiPacks()      {
         if (viewAiPacks != null) {
             showView(viewAiPacks);
