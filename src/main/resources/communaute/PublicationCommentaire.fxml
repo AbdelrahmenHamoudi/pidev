@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+
+<AnchorPane prefHeight="700.0" prefWidth="1100.0" stylesheets="@StyleHB.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.Controllers.communaute.PublicationCommentaireController">
+
+    <!-- ═══════════════ SIDEBAR ═══════════════ -->
+    <VBox fx:id="sidebar" prefWidth="260.0" spacing="10.0" styleClass="sidebar" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <VBox alignment="CENTER" spacing="15.0">
+            <VBox.margin><Insets top="25.0" /></VBox.margin>
+            <ImageView fitHeight="150.0" fitWidth="150.0" preserveRatio="true">
+                <Image url="@/communaute/img/Re7la.jpeg" />
+            </ImageView>
+        </VBox>
+        <Label styleClass="sidebar-title" text="Tableau de bord">
+            <VBox.margin><Insets bottom="30.0" left="25.0" /></VBox.margin>
+        </Label>
+        <Button fx:id="btnGestionUtilisateurs" alignment="BASELINE_LEFT" maxWidth="Infinity"
+                mnemonicParsing="false" onAction="#handleShowUsers"
+                styleClass="sidebar-button" text="👥   Gestion Utilisateurs" />
+
+        <Button fx:id="btnComptesBancaires" alignment="BASELINE_LEFT" maxWidth="Infinity"
+                mnemonicParsing="false" onAction="#handleShowAccounts"
+                styleClass="sidebar-button" text="💳   Gestion des Hébergements" />
+
+        <Button fx:id="btnTransactions" alignment="BASELINE_LEFT" maxWidth="Infinity"
+                mnemonicParsing="false" onAction="#handleShowTransactions"
+                styleClass="sidebar-button" text="💸   Gestion des Activités" />
+
+        <Button fx:id="btnCredits" alignment="BASELINE_LEFT" maxWidth="Infinity"
+                mnemonicParsing="false" onAction="#handleShowCredits"
+                styleClass="sidebar-button" text="💰   Gestion des Trajets" />
+
+        <Button fx:id="btnCommunaute" alignment="BASELINE_LEFT" maxWidth="Infinity"
+                mnemonicParsing="false" onAction="#handleShowCommunaute" styleClass="sidebar-button"
+                text="💬   Gestion Communauté" />
+
+        <Button fx:id="btnCashback" alignment="BASELINE_LEFT" maxWidth="Infinity"
+                mnemonicParsing="false" onAction="#handleShowCashback"
+                styleClass="sidebar-button" text="🎁   Gestion des Promotions" />
+
+        <Region VBox.vgrow="ALWAYS" />
+        <VBox spacing="5.0">
+            <VBox.margin><Insets bottom="20.0" /></VBox.margin>
+            <Label style="-fx-text-fill:#64748b;-fx-font-size:11px;-fx-padding:0 0 0 20;" text="SYSTÈME" />
+            <Button alignment="BASELINE_LEFT" maxWidth="Infinity" style="-fx-font-size:13px; -fx-font-weight:600; -fx-text-fill:#334155;" text="⚙️   Paramètres" />
+            <Button alignment="BASELINE_LEFT" maxWidth="Infinity" onAction="#handlelogout" style="-fx-font-size:13px; -fx-font-weight:600; -fx-text-fill:#EF4444;" text="🚪   Déconnexion" />
+        </VBox>
+    </VBox>
+
+    <!-- ═══════════════ MAIN CONTENT ═══════════════ -->
+    <StackPane fx:id="mainContentStack" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="260.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+
+        <!-- ─────── VIEW COMMUNAUTE ─────── -->
+        <ScrollPane fx:id="viewCommunaute" fitToWidth="true" styleClass="main-scroll-pane" visible="false">
+            <VBox spacing="20.0" styleClass="content-area">
+
+                <!-- PAGE HEADER -->
+                <HBox alignment="CENTER_LEFT" spacing="20.0">
+                    <VBox>
+                        <Label styleClass="header-label" text="Gestion des Communautés" />
+                        <Label styleClass="header-subtitle" text="Aperçu et gestion des publications et commentaires" />
+                    </VBox>
+                    <Region HBox.hgrow="ALWAYS" />
+                    <Button fx:id="btnExportPDF" onAction="#handleExportPDF" style="-fx-background-color:linear-gradient(to right,#EF4444,#DC2626);                                    -fx-text-fill:white; -fx-font-weight:800; -fx-font-size:13px;                                    -fx-background-radius:12; -fx-padding:10 20; -fx-cursor:hand;                                    -fx-effect:dropshadow(gaussian,rgba(239,68,68,0.45),10,0,0,3);" text="📄 Exporter PDF" />
+                    <HBox alignment="CENTER" spacing="10.0" style="-fx-background-color:white;-fx-background-radius:30;                                  -fx-padding:5 15 5 5;                                  -fx-effect:dropshadow(three-pass-box,rgba(0,0,0,0.05),5,0,0,1);">
+                        <Circle fill="#e2e8f0" radius="16.0" stroke="WHITE" strokeType="INSIDE" />
+                        <Label style="-fx-font-weight:bold;-fx-text-fill:#334155;-fx-font-size:13px;" text="Admin" />
+                    </HBox>
+                </HBox>
+
+                <!-- STATS ROW -->
+                <HBox spacing="15.0">
+                    <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="stat-card-hebergement" HBox.hgrow="ALWAYS">
+                        <VBox alignment="CENTER" style="-fx-background-color:rgba(243,156,18,0.15);-fx-background-radius:12;-fx-padding:10;">
+                            <Label style="-fx-font-size:26px;" text="❤️" />
+                        </VBox>
+                        <VBox spacing="2">
+                            <Label styleClass="stat-title" text="Réactions" />
+                            <Label fx:id="lblTotalReactions" styleClass="stat-value" text="—" />
+                        </VBox>
+                    </HBox>
+                    <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="stat-card-reservations" HBox.hgrow="ALWAYS">
+                        <VBox alignment="CENTER" style="-fx-background-color:rgba(44,62,80,0.1);-fx-background-radius:12;-fx-padding:10;">
+                            <Label style="-fx-font-size:26px;" text="📝" />
+                        </VBox>
+                        <VBox spacing="2">
+                            <Label styleClass="stat-title" text="Total Publications" />
+                            <Label fx:id="lblTotalPublications" styleClass="stat-value" text="—" />
+                        </VBox>
+                    </HBox>
+                    <VBox spacing="8" style="-fx-min-width:280;" styleClass="stat-card-disponibles" HBox.hgrow="ALWAYS">
+                        <HBox alignment="CENTER_LEFT" spacing="8">
+                            <Label style="-fx-font-size:16px;" text="📊" />
+                            <Label style="-fx-font-weight:800;-fx-font-size:13px;-fx-text-fill:#1E293B;" text="Statistiques" />
+                        </HBox>
+                        <StackPane fx:id="chartContainer" minWidth="240" prefHeight="80" style="-fx-background-color:transparent;" />
+                    </VBox>
+                </HBox>
+
+                <!-- ══════════════════════════════════════════
+                     FORM  +  TABLE  PUBLICATIONS
+                     ══════════════════════════════════════════ -->
+                <HBox spacing="25.0" VBox.vgrow="ALWAYS">
+
+                    <!-- ─── FORM ─── -->
+                    <VBox minWidth="300.0" prefWidth="340.0" spacing="12.0" styleClass="card">
+                        <Label styleClass="card-title" text="📌 Nouvelle Publication" />
+
+                        <!-- Type Cible -->
+                        <VBox spacing="4">
+                            <Label style="-fx-font-weight:bold;-fx-font-size:12px;" text="Type Cible" />
+                            <ComboBox fx:id="cbTypeCible" prefWidth="Infinity" />
+                        </VBox>
+
+                        <!-- Statut -->
+                        <VBox spacing="4">
+                            <Label style="-fx-font-weight:bold;-fx-font-size:12px;" text="Statut" />
+                            <ComboBox fx:id="cbStatut" prefWidth="Infinity" />
+                        </VBox>
+
+                        <!-- Vérifié -->
+                        <CheckBox fx:id="cbVerifie" text="Publication Vérifiée" />
+
+                        <!-- Description -->
+                        <VBox spacing="4">
+                            <Label style="-fx-font-weight:bold;-fx-font-size:12px;" text="Description" />
+                            <TextArea fx:id="tfDescription" prefHeight="90" wrapText="true" />
+                        </VBox>
+
+                        <!-- ── IMAGE PICKER ── -->
+                        <VBox spacing="6">
+                            <Label style="-fx-font-weight:bold;-fx-font-size:12px;" text="Image" />
+
+                            <!-- hidden field that holds the filename for DB -->
+                            <TextField fx:id="tfImgURL" managed="false" visible="false" />
+
+                            <!-- Picker button row -->
+                            <HBox alignment="CENTER_LEFT" spacing="10">
+                                <Button onAction="#handleChooseImage" style="-fx-background-color:linear-gradient(to right,#6366F1,#8B5CF6);                                                -fx-text-fill:white;-fx-font-weight:bold;                                                -fx-background-radius:10;-fx-padding:8 16;                                                -fx-cursor:hand;                                                -fx-effect:dropshadow(gaussian,rgba(99,102,241,0.4),8,0,0,2);">
+                                    <graphic>
+                                        <HBox alignment="CENTER" spacing="6">
+                                            <Label style="-fx-font-size:14px;-fx-text-fill:white;" text="📎" />
+                                            <Label style="-fx-text-fill:white;-fx-font-weight:bold;" text="Choisir une image" />
+                                        </HBox>
+                                    </graphic>
+                                </Button>
+                            </HBox>
+
+                            <!-- Selected filename label -->
+                            <Label fx:id="lblSelectedImage" style="-fx-text-fill:#64748b;-fx-font-size:11px;                                           -fx-font-style:italic;" text="Aucune image sélectionnée" />
+
+                            <!-- Image preview thumbnail -->
+                            <StackPane alignment="CENTER" prefHeight="70" prefWidth="Infinity" style="-fx-background-color:#F1F5F9;                                               -fx-background-radius:8;                                               -fx-border-color:#E2E8F0;                                               -fx-border-radius:8;">
+                                <ImageView fx:id="imgPreview" fitHeight="60" fitWidth="80" preserveRatio="true" smooth="true" style="-fx-effect:dropshadow(gaussian,rgba(0,0,0,0.15),6,0,0,1);" visible="false" />
+                                <Label fx:id="lblImagePlaceholder" style="-fx-text-fill:#94A3B8;-fx-font-size:11px;" text="🖼  Aperçu de l'image" />
+                            </StackPane>
+                        </VBox>
+
+                        <!-- Action buttons -->
+                        <HBox spacing="8">
+                            <Button onAction="#handleAjouter" style="-fx-background-color:#22C55E;-fx-text-fill:white;                                            -fx-background-radius:8;-fx-font-weight:bold;-fx-padding:7 14;" text="✚ Ajouter" />
+                            <Button onAction="#handleModifier" style="-fx-background-color:#3B82F6;-fx-text-fill:white;                                            -fx-background-radius:8;-fx-font-weight:bold;-fx-padding:7 14;" text="✎ Modifier" />
+                            <Button onAction="#handleDelete" style="-fx-background-color:#EF4444;-fx-text-fill:white;                                            -fx-background-radius:8;-fx-font-weight:bold;-fx-padding:7 14;" text="✕ Supprimer" />
+                        </HBox>
+                    </VBox>
+
+                    <!-- ─── TABLE PUBLICATIONS ─── -->
+                    <VBox spacing="10.0" styleClass="card" HBox.hgrow="ALWAYS">
+
+                        <!-- ── Colourful toolbar ── -->
+                        <HBox alignment="CENTER_LEFT" spacing="10.0" style="-fx-background-color:linear-gradient(to right,#EEF2FF,#F0FDF4);                                      -fx-background-radius:10;-fx-padding:10 14;">
+
+                            <Label style="-fx-font-weight:bold;-fx-font-size:14px;-fx-text-fill:#1E293B;" text="📋 Publications" />
+                            <Region HBox.hgrow="ALWAYS" />
+
+                            <!-- Search -->
+                            <HBox alignment="CENTER_LEFT" spacing="6" style="-fx-background-color:white;                                          -fx-background-radius:20;                                          -fx-border-color:#C7D2FE;                                          -fx-border-radius:20;                                          -fx-padding:5 14;                                          -fx-effect:dropshadow(gaussian,rgba(99,102,241,0.12),6,0,0,1);">
+                                <Label style="-fx-font-size:13px;" text="🔍" />
+                                <TextField fx:id="tfSearchPublication" prefWidth="200" promptText="Rechercher..." style="-fx-background-color:transparent;                                                   -fx-border-color:transparent;                                                   -fx-font-size:13px;" />
+                            </HBox>
+
+                            <!-- Sort -->
+                            <ComboBox fx:id="cbSortPublication" onAction="#applySortPublications" prefWidth="155" promptText="⇅  Trier" style="-fx-background-color:white;                                              -fx-background-radius:20;                                              -fx-border-color:#A5B4FC;                                              -fx-border-radius:20;                                              -fx-font-size:12px;                                              -fx-effect:dropshadow(gaussian,rgba(99,102,241,0.12),6,0,0,1);" />
+                        </HBox>
+
+                        <TableView fx:id="tableCommunaute" prefHeight="460.0" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="colId" prefWidth="45" text="ID" />
+                                <!-- Image column — thumbnails rendered in controller -->
+                                <TableColumn fx:id="colImg" prefWidth="80" text="Image" />
+                                <TableColumn fx:id="colTypeCible" prefWidth="95" text="Type" />
+                                <TableColumn fx:id="colStatut" prefWidth="90" text="Statut" />
+                                <TableColumn fx:id="colVerifie" prefWidth="70" text="Vérifié" />
+                                <TableColumn fx:id="colDesc" prefWidth="180" text="Description" />
+                                <TableColumn fx:id="colDateC" prefWidth="110" text="Créé le" />
+                                <TableColumn fx:id="colDateM" prefWidth="110" text="Modifié le" />
+                                <TableColumn fx:id="colUser" prefWidth="90" text="Auteur" />
+                                <TableColumn fx:id="colCommentaire" prefWidth="90" text="Commentaires" />
+                            </columns>
+                            <columnResizePolicy>
+                                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                            </columnResizePolicy>
+                        </TableView>
+                    </VBox>
+                </HBox>
+
+                <!-- ══════════════════════════════════════════
+                     COMMENTAIRES
+                     ══════════════════════════════════════════ -->
+                <VBox spacing="10.0" styleClass="card" VBox.vgrow="ALWAYS">
+
+                    <!-- ── Colourful toolbar ── -->
+                    <HBox alignment="CENTER_LEFT" spacing="10.0" style="-fx-background-color:linear-gradient(to right,#FFF7ED,#FDF4FF);                                  -fx-background-radius:10;-fx-padding:10 14;">
+
+                        <Label style="-fx-font-weight:bold;-fx-font-size:14px;-fx-text-fill:#1E293B;" text="💬 Commentaires" />
+                        <Region HBox.hgrow="ALWAYS" />
+
+                        <!-- Search -->
+                        <HBox alignment="CENTER_LEFT" spacing="6" style="-fx-background-color:white;                                      -fx-background-radius:20;                                      -fx-border-color:#FED7AA;                                      -fx-border-radius:20;                                      -fx-padding:5 14;                                      -fx-effect:dropshadow(gaussian,rgba(249,115,22,0.12),6,0,0,1);">
+                            <Label style="-fx-font-size:13px;" text="🔍" />
+                            <TextField fx:id="tfSearchCommentaire" prefWidth="200" promptText="Rechercher..." style="-fx-background-color:transparent;                                               -fx-border-color:transparent;                                               -fx-font-size:13px;" />
+                        </HBox>
+
+                        <!-- Sort -->
+                        <ComboBox fx:id="cbSortCommentaire" onAction="#applySortCommentaires" prefWidth="155" promptText="⇅  Trier" style="-fx-background-color:white;                                          -fx-background-radius:20;                                          -fx-border-color:#FDBA74;                                          -fx-border-radius:20;                                          -fx-font-size:12px;                                          -fx-effect:dropshadow(gaussian,rgba(249,115,22,0.12),6,0,0,1);" />
+                    </HBox>
+
+                    <TableView fx:id="tableCommentaires" prefHeight="260.0" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="colIdCommentaire" text="ID" />
+                            <TableColumn fx:id="colContenu" text="Contenu" />
+                            <TableColumn fx:id="colDateCreationC" text="Date Création" />
+                            <TableColumn fx:id="colStatutC" text="Statut" />
+                            <TableColumn fx:id="colUserC" text="Utilisateur" />
+                        </columns>
+                        <columnResizePolicy>
+                            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                        </columnResizePolicy>
+                    </TableView>
+
+                    <!-- Comment form -->
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <TextField fx:id="tfContenuCommentaire" promptText="Écrire un commentaire..." style="-fx-background-radius:10;-fx-border-radius:10;                                           -fx-border-color:#E2E8F0;-fx-padding:8 12;" HBox.hgrow="ALWAYS" />
+                        <Button onAction="#handleAjouterCommentaire" style="-fx-background-color:#22C55E;-fx-text-fill:white;                                        -fx-background-radius:8;-fx-font-weight:bold;-fx-padding:8 14;" text="✚ Ajouter" />
+                        <Button onAction="#handleModifierCommentaire" style="-fx-background-color:#3B82F6;-fx-text-fill:white;                                        -fx-background-radius:8;-fx-font-weight:bold;-fx-padding:8 14;" text="✎ Modifier" />
+                        <Button onAction="#handleSupprimerCommentaire" style="-fx-background-color:#EF4444;-fx-text-fill:white;                                        -fx-background-radius:8;-fx-font-weight:bold;-fx-padding:8 14;" text="✕ Supprimer" />
+                    </HBox>
+                </VBox>
+
+            </VBox>
+        </ScrollPane>
+
+        <!-- VIEW EMPTY -->
+        <VBox fx:id="viewEmpty" alignment="CENTER" style="-fx-background-color:#F9FAFB;" visible="false">
+            <Label style="-fx-font-size:50px;" text="🚧" />
+            <Label style="-fx-font-size:20px;-fx-text-fill:#94a3b8;-fx-font-weight:bold;" text="Interface en cours de développement" />
+            <Label style="-fx-font-size:14px;-fx-text-fill:#cbd5e1;" text="Cette fonctionnalité sera bientôt disponible." />
+        </VBox>
+
+    </StackPane>
+</AnchorPane>

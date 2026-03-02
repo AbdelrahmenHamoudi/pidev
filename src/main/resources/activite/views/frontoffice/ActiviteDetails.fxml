@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.Controllers.activite.ActiviteDetailsController"
+            styleClass="front-container"
+            stylesheets="/activite/css/re7la-styles.css"
+            prefWidth="960" prefHeight="740">
+
+    <!-- ═══════════════════════════════════════
+         HEADER
+    ═══════════════════════════════════════ -->
+    <top>
+        <VBox styleClass="front-header" spacing="0">
+            <HBox alignment="CENTER_LEFT" spacing="18" style="-fx-padding: 0;">
+                <Button text="← Retour" styleClass="btn-secondary"
+                        style="-fx-background-color: rgba(255,255,255,0.12);
+                               -fx-border-color: rgba(255,255,255,0.30);
+                               -fx-border-radius: 20;
+                               -fx-background-radius: 20;
+                               -fx-text-fill: rgba(255,255,255,0.9);
+                               -fx-font-weight: bold;
+                               -fx-padding: 9 20;
+                               -fx-cursor: hand;"
+                        onAction="#goBack"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Text text="RE7LA" styleClass="front-title" style="-fx-font-size: 26px;"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- ═══════════════════════════════════════
+         CONTENU PRINCIPAL
+    ═══════════════════════════════════════ -->
+    <center>
+        <ScrollPane fitToWidth="true" fitToHeight="false"
+                    style="-fx-background-color: #F7F4EF; -fx-border-color: transparent;">
+
+            <VBox spacing="24" fx:id="mainDetailsContainer">
+                <padding>
+                    <Insets top="32" right="32" bottom="32" left="32"/>
+                </padding>
+
+                <!-- ─────────────────────────────────────────
+                     HERO : Icône + Infos principales
+                ───────────────────────────────────────── -->
+                <HBox spacing="28" styleClass="card">
+
+                    <!-- Panneau icône -->
+                    <StackPane fx:id="heroImagePane"
+                               prefWidth="320" prefHeight="240"
+                               style="-fx-background-color: linear-gradient(to bottom right, #1A1A2E, #0F3460);
+                                      -fx-background-radius: 14;
+                                      -fx-effect: dropshadow(gaussian, rgba(26,26,46,0.35), 14, 0, 0, 4);">
+                        <Text fx:id="activityIcon" text="🎯"
+                              style="-fx-font-size: 96px;
+                                     -fx-effect: dropshadow(gaussian, rgba(232,201,126,0.5), 20, 0, 0, 0);"/>
+                    </StackPane>
+
+                    <!-- Informations -->
+                    <VBox spacing="14" HBox.hgrow="ALWAYS">
+
+                        <!-- Badges type + statut -->
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <Label fx:id="typeBadge" text="Type" styleClass="activity-type-badge"/>
+                            <Label fx:id="statusBadge" text="Disponible" styleClass="activity-status-available"/>
+                        </HBox>
+
+                        <!-- Titre -->
+                        <Text fx:id="activityTitle" text="Nom de l'activité"
+                              style="-fx-font-size: 30px;
+                                     -fx-font-weight: bold;
+                                     -fx-fill: #1A1A2E;
+                                     -fx-font-family: 'Segoe UI Semibold', 'Segoe UI', sans-serif;"/>
+
+                        <!-- Lieu -->
+                        <HBox spacing="7" alignment="CENTER_LEFT">
+                            <Text text="📍" style="-fx-font-size: 16px;"/>
+                            <Text fx:id="activityLocation" text="Lieu"
+                                  style="-fx-font-size: 15px; -fx-fill: #8A8FAB;
+                                         -fx-font-family: 'Segoe UI', sans-serif;"/>
+                        </HBox>
+
+                        <!-- Description -->
+                        <Text fx:id="activityDescription" text="Description de l'activité..."
+                              style="-fx-font-size: 14px; -fx-fill: #5D6D7E;
+                                     -fx-wrap-text: true; -fx-line-spacing: 4;"/>
+
+                        <Separator/>
+
+                        <!-- Prix + Capacité -->
+                        <HBox spacing="40">
+                            <VBox spacing="6" alignment="CENTER">
+                                <Text text="💰" style="-fx-font-size: 26px;"/>
+                                <Text text="Prix par personne"
+                                      style="-fx-font-size: 11px; -fx-fill: #8A8FAB; -fx-font-weight: bold;"/>
+                                <Text fx:id="activityPrice" text="0 DT"
+                                      style="-fx-font-size: 26px; -fx-font-weight: bold;
+                                             -fx-fill: #D4A843;
+                                             -fx-font-family: 'Segoe UI Semibold', 'Segoe UI', sans-serif;"/>
+                            </VBox>
+
+                            <Separator orientation="VERTICAL"/>
+
+                            <VBox spacing="6" alignment="CENTER">
+                                <Text text="👥" style="-fx-font-size: 26px;"/>
+                                <Text text="Capacité maximale"
+                                      style="-fx-font-size: 11px; -fx-fill: #8A8FAB; -fx-font-weight: bold;"/>
+                                <Text fx:id="activityCapacity" text="0 personnes"
+                                      style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-fill: #1A1A2E;"/>
+                            </VBox>
+                        </HBox>
+                    </VBox>
+                </HBox>
+
+                <!-- ─────────────────────────────────────────
+                     WIDGET MÉTÉO + CARTE
+                ───────────────────────────────────────── -->
+                <fx:include fx:id="weatherMapWidget"
+                            source="/activite/views/frontoffice/WeatherMapWidget.fxml"/>
+
+                <!-- ─────────────────────────────────────────
+                     PLANNINGS
+                ───────────────────────────────────────── -->
+                <VBox styleClass="card" spacing="20">
+
+                    <!-- En-tête plannings -->
+                    <HBox alignment="CENTER_LEFT" spacing="14">
+                        <VBox spacing="3">
+                            <Text text="📅  Plannings Disponibles"
+                                  style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-fill: #1A1A2E;
+                                         -fx-font-family: 'Segoe UI Semibold', 'Segoe UI', sans-serif;"/>
+                            <Text text="Sélectionnez un créneau pour réserver"
+                                  style="-fx-font-size: 12px; -fx-fill: #8A8FAB;"/>
+                        </VBox>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <ComboBox fx:id="dateFilterCombo"
+                                  promptText="📅  Filtrer par date"
+                                  prefWidth="195"
+                                  styleClass="combo-box"/>
+                    </HBox>
+
+                    <Separator/>
+
+                    <!-- Liste des plannings -->
+                    <ScrollPane fitToWidth="true" fitToHeight="false"
+                                VBox.vgrow="ALWAYS"
+                                style="-fx-background-color: transparent; -fx-border-color: transparent;">
+                        <VBox fx:id="planningsContainer" spacing="14" minHeight="-1"/>
+                    </ScrollPane>
+
+                    <!-- État vide -->
+                    <VBox fx:id="emptyPlanningsState"
+                          alignment="CENTER" spacing="14"
+                          visible="false" managed="false"
+                          style="-fx-padding: 40 0;">
+                        <Text text="📅" style="-fx-font-size: 52px;"/>
+                        <Text text="Aucun planning disponible pour le moment"
+                              style="-fx-font-size: 16px; -fx-fill: #8A8FAB; -fx-font-weight: bold;"/>
+                        <Text text="Revenez plus tard ou contactez-nous"
+                              style="-fx-font-size: 13px; -fx-fill: #A0AABE;"/>
+                    </VBox>
+                </VBox>
+
+                <!-- ─────────────────────────────────────────
+                     BOUTONS D'ACTION
+                ───────────────────────────────────────── -->
+                <HBox spacing="14" alignment="CENTER_LEFT">
+                    <Button text="❤️  Favoris"
+                            styleClass="btn-secondary"
+                            prefWidth="150"/>
+                    <Button text="🎫 Mes Réservations"
+                            styleClass="btn-secondary"
+                            prefWidth="160"
+                            onAction="#openMesReservations"
+                            style="-fx-background-color: linear-gradient(to right, #667eea, #764ba2);
+               -fx-text-fill: white;
+               -fx-font-weight: bold;
+               -fx-cursor: hand;"/>
+                    <Button text="🌐  Visite Virtuelle"
+                            onAction="#showVirtualTour"
+                            prefWidth="185"
+                            style="-fx-background-color: linear-gradient(to right, #7B2FBE, #5A189A);
+                                   -fx-text-fill: white;
+                                   -fx-font-weight: bold;
+                                   -fx-font-size: 13px;
+                                   -fx-padding: 11 20;
+                                   -fx-background-radius: 25;
+                                   -fx-cursor: hand;
+                                   -fx-effect: dropshadow(gaussian, rgba(90,24,154,0.45), 14, 0, 0, 4);"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="📞  Nous contacter"
+                            styleClass="btn-primary"
+                            prefWidth="190"/>
+                </HBox>
+            </VBox>
+        </ScrollPane>
+    </center>
+
+</BorderPane>

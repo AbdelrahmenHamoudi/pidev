@@ -101,4 +101,6 @@ public class HebergementCRUD implements CRUD<Hebergement> {
 
         return list;
     }
+
+
 }

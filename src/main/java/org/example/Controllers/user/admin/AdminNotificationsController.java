@@ -254,7 +254,7 @@ public class AdminNotificationsController implements Initializable {
 
     @FXML
     private void handleBack(ActionEvent event) {
-        if (!checkAdminAuth()) return;
+       /* if (!checkAdminAuth()) return;
 
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/user/back/users.fxml"));
@@ -265,7 +265,7 @@ public class AdminNotificationsController implements Initializable {
             stage.centerOnScreen();
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     private void showAlert(String title, String message, Alert.AlertType type) {

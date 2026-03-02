@@ -12,6 +12,12 @@ public class ConnexionLog {
     private boolean success;
     private String failureReason;
 
+    // Nouveaux champs pour la localisation
+    private String country;
+    private String city;
+    private double latitude;
+    private double longitude;
+
     public ConnexionLog() {}
 
     public ConnexionLog(int userId, String ipAddress, String deviceInfo, boolean success) {
@@ -22,7 +28,7 @@ public class ConnexionLog {
         this.success = success;
     }
 
-
+    // Getters et Setters existants
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
@@ -46,4 +52,17 @@ public class ConnexionLog {
 
     public String getFailureReason() { return failureReason; }
     public void setFailureReason(String failureReason) { this.failureReason = failureReason; }
+
+    // Nouveaux Getters et Setters
+    public String getCountry() { return country; }
+    public void setCountry(String country) { this.country = country; }
+
+    public String getCity() { return city; }
+    public void setCity(String city) { this.city = city; }
+
+    public double getLatitude() { return latitude; }
+    public void setLatitude(double latitude) { this.latitude = latitude; }
+
+    public double getLongitude() { return longitude; }
+    public void setLongitude(double longitude) { this.longitude = longitude; }
 }

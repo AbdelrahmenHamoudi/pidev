@@ -58,6 +58,85 @@ public class homeClientController implements Initializable {
         return true;
     }
 
+    // ==================== MÉTHODES POUR LES TRAJETS ====================
+
+    @FXML
+    void showTrajet(ActionEvent event) {
+        redirectToFrontGestionVoiture(event);
+    }
+
+    @FXML
+    void showtrajet(ActionEvent event) {
+        redirectToFrontGestionVoiture(event);
+    }
+
+    private void redirectToFrontGestionVoiture(ActionEvent event) {
+        try {
+            System.out.println("🔄 Redirection vers la page de gestion des voitures...");
+
+            // ✅ Vérification de l'authentification
+            if (!checkUserAuth()) {
+                System.out.println("⚠️ Utilisateur non connecté, redirection vers login");
+                redirectToLogin(event);
+                return;
+            }
+
+            if (currentUser == null) {
+                currentUser = UserSession.getInstance().getCurrentUser();
+            }
+
+            // ✅ Chargement du FXML
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Trajet/frontgestionvoiture.fxml"));
+
+            if (loader.getLocation() == null) {
+                throw new Exception("Fichier frontgestionvoiture.fxml introuvable dans /Trajet/");
+            }
+
+            Parent root = loader.load();
+
+            // ✅ Passage de l'utilisateur au contrôleur (si la méthode existe)
+            try {
+                Object controller = loader.getController();
+                java.lang.reflect.Method method = controller.getClass().getMethod("initUserData", User.class);
+                method.invoke(controller, currentUser);
+                System.out.println("✅ Utilisateur passé au contrôleur de gestion des voitures");
+            } catch (NoSuchMethodException e) {
+                System.out.println("⚠️ Méthode initUserData non trouvée dans le contrôleur");
+            } catch (Exception e) {
+                System.out.println("⚠️ Erreur lors du passage de l'utilisateur: " + e.getMessage());
+            }
+
+            // ✅ Changement de scène
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            Scene scene = new Scene(root);
+
+            // ✅ Chargement du CSS (optionnel)
+            try {
+                String css = getClass().getResource("/Trajet/re7la-styles.css").toExternalForm();
+                scene.getStylesheets().add(css);
+            } catch (Exception e) {
+                System.out.println("⚠️ CSS non chargé");
+            }
+
+            stage.setScene(scene);
+            stage.setTitle("RE7LA - Gestion des Voitures");
+            stage.centerOnScreen();
+            stage.show();
+
+            System.out.println("✅ Redirection réussie vers frontgestionvoiture.fxml");
+
+        } catch (Exception e) {
+            System.err.println("❌ Erreur: " + e.getMessage());
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR,
+                    "❌ Erreur de navigation",
+                    "Redirection impossible",
+                    "Impossible d'ouvrir la page de gestion des voitures:\n" + e.getMessage());
+        }
+    }
+
+    // ==================== MÉTHODES EXISTANTES ====================
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         if (checkUserAuth()) {
@@ -251,6 +330,216 @@ public class homeClientController implements Initializable {
                     "Impossible d'ouvrir la page des hébergements:\n" + e.getMessage());
         }
     }
+    private void redirectToCommunaute(ActionEvent event) {
+        try {
+            System.out.println("🔄 Redirection vers la page de la communauté...");
+
+            if (!checkUserAuth()) {
+                System.out.println("⚠️ Utilisateur non connecté, redirection vers login");
+                redirectToLogin(event);
+                return;
+            }
+
+            if (currentUser == null) {
+                currentUser = UserSession.getInstance().getCurrentUser();
+            }
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/communaute/Communaute.fxml"));
+
+            if (loader.getLocation() == null) {
+                throw new Exception("Fichier Communaute.fxml introuvable dans /communaute/");
+            }
+
+            Parent root = loader.load();
+
+            try {
+                Object controller = loader.getController();
+                java.lang.reflect.Method method = controller.getClass().getMethod("initUserData", User.class);
+                method.invoke(controller, currentUser);
+                System.out.println("✅ Utilisateur passé au contrôleur de la communauté");
+            } catch (NoSuchMethodException e) {
+                System.out.println("⚠️ Méthode initUserData non trouvée dans CommunauteController");
+            } catch (Exception e) {
+                System.out.println("⚠️ Erreur lors du passage de l'utilisateur: " + e.getMessage());
+            }
+
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            Scene scene = new Scene(root);
+
+            try {
+                String css = getClass().getResource("/communaute/Communaute.css").toExternalForm();
+                scene.getStylesheets().add(css);
+            } catch (Exception e) {
+                System.out.println("⚠️ CSS communauté non chargé");
+            }
+
+            stage.setScene(scene);
+            stage.setTitle("RE7LA - Communauté");
+            stage.centerOnScreen();
+            stage.show();
+
+            System.out.println("✅ Redirection réussie vers Communaute.fxml");
+
+        } catch (Exception e) {
+            System.err.println("❌ Erreur: " + e.getMessage());
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR,
+                    "❌ Erreur de navigation",
+                    "Redirection impossible",
+                    "Impossible d'ouvrir la page de la communauté:\n" + e.getMessage());
+        }
+    }
+
+    @FXML
+    void handleShowCommunaute(ActionEvent event) {
+        redirectToCommunaute(event);
+    }
+
+    @FXML
+    void handleshowCommunaute(ActionEvent event) {
+        redirectToCommunaute(event);
+    }
+
+    private void redirectToPromotionsFront(ActionEvent event) {
+        try {
+            System.out.println("🔄 Redirection vers le catalogue de promotions...");
+
+            if (!checkUserAuth()) {
+                System.out.println("⚠️ Utilisateur non connecté, redirection vers login");
+                redirectToLogin(event);
+                return;
+            }
+
+            if (currentUser == null) {
+                currentUser = UserSession.getInstance().getCurrentUser();
+            }
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/promotion/views/frontoffice/PromotionFrontOffice.fxml"));
+
+            if (loader.getLocation() == null) {
+                throw new Exception("Fichier PromotionFrontOffice.fxml introuvable dans /promotion/views/frontoffice/");
+            }
+
+            Parent root = loader.load();
+
+            try {
+                Object controller = loader.getController();
+                java.lang.reflect.Method method = controller.getClass().getMethod("initUserData", User.class);
+                method.invoke(controller, currentUser);
+                System.out.println("✅ Utilisateur passé au contrôleur des promotions");
+            } catch (NoSuchMethodException e) {
+                System.out.println("⚠️ Méthode initUserData non trouvée dans PromotionFrontOfficeController");
+            } catch (Exception e) {
+                System.out.println("⚠️ Erreur lors du passage de l'utilisateur: " + e.getMessage());
+            }
+
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            Scene scene = new Scene(root);
+
+            try {
+                String css = getClass().getResource("/promotion/css/re7la-styles.css").toExternalForm();
+                scene.getStylesheets().add(css);
+            } catch (Exception e) {
+                System.out.println("⚠️ CSS promotions non chargé");
+            }
+
+            stage.setScene(scene);
+            stage.setTitle("RE7LA - Catalogue de Promotions");
+            stage.centerOnScreen();
+            stage.show();
+
+            System.out.println("✅ Redirection réussie vers PromotionFrontOffice.fxml");
+
+        } catch (Exception e) {
+            System.err.println("❌ Erreur: " + e.getMessage());
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR,
+                    "❌ Erreur de navigation",
+                    "Redirection impossible",
+                    "Impossible d'ouvrir le catalogue de promotions:\n" + e.getMessage());
+        }
+    }
+
+    @FXML
+    void handelpromotion(ActionEvent event) {
+        redirectToPromotionsFront(event);
+    }
+
+    @FXML
+    void handlPromotion(ActionEvent event) {
+        redirectToPromotionsFront(event);
+    }
+    private void redirectToActivitesFront(ActionEvent event) {
+        try {
+            System.out.println("🔄 Redirection vers le catalogue d'activités...");
+
+            if (!checkUserAuth()) {
+                System.out.println("⚠️ Utilisateur non connecté, redirection vers login");
+                redirectToLogin(event);
+                return;
+            }
+
+            if (currentUser == null) {
+                currentUser = UserSession.getInstance().getCurrentUser();
+            }
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/activite/views/frontoffice/ActiviteFrontOffice.fxml"));
+
+            if (loader.getLocation() == null) {
+                throw new Exception("Fichier ActiviteFrontOffice.fxml introuvable dans /activite/views/frontoffice/");
+            }
+
+            Parent root = loader.load();
+
+            try {
+                Object controller = loader.getController();
+                java.lang.reflect.Method method = controller.getClass().getMethod("initUserData", User.class);
+                method.invoke(controller, currentUser);
+                System.out.println("✅ Utilisateur passé au contrôleur des activités");
+            } catch (NoSuchMethodException e) {
+                System.out.println("⚠️ Méthode initUserData non trouvée dans ActiviteFrontOfficeController");
+            } catch (Exception e) {
+                System.out.println("⚠️ Erreur lors du passage de l'utilisateur: " + e.getMessage());
+            }
+
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            Scene scene = new Scene(root);
+
+            try {
+                String css = getClass().getResource("/activite/css/re7la-styles.css").toExternalForm();
+                scene.getStylesheets().add(css);
+            } catch (Exception e) {
+                System.out.println("⚠️ CSS activités non chargé");
+            }
+
+            stage.setScene(scene);
+            stage.setTitle("RE7LA - Catalogue d'Activités");
+            stage.centerOnScreen();
+            stage.show();
+
+            System.out.println("✅ Redirection réussie vers ActiviteFrontOffice.fxml");
+
+        } catch (Exception e) {
+            System.err.println("❌ Erreur: " + e.getMessage());
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR,
+                    "❌ Erreur de navigation",
+                    "Redirection impossible",
+                    "Impossible d'ouvrir le catalogue d'activités:\n" + e.getMessage());
+        }
+    }
+
+    @FXML
+    void handelactivite(ActionEvent event) {
+        redirectToActivitesFront(event);
+    }
+
+    @FXML
+    void handlActivite(ActionEvent event) {
+        redirectToActivitesFront(event);
+    }
+
+
 
     @FXML
     private void handleSearch(ActionEvent event) {

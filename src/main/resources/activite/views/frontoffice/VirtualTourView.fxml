@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.Controllers.activite.VirtualTourController"
+            prefWidth="1200" prefHeight="800"
+            style="-fx-background-color: #0F172A;">
+
+    <!-- TOP BAR -->
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="20"
+              style="-fx-background-color: linear-gradient(to right, #1E293B, #334155); -fx-padding: 15 30;">
+            <Button fx:id="btnBack" text="⬅ Retour" onAction="#handleBack"
+                    style="-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 14px;
+                           -fx-cursor: hand; -fx-padding: 8 15; -fx-background-radius: 8;
+                           -fx-border-color: rgba(255,255,255,0.3); -fx-border-radius: 8;"/>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <VBox alignment="CENTER">
+                <Label fx:id="lblTitle" text="🎨 Découvrez Sidi Bou Said"
+                       style="-fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold;"/>
+                <Label fx:id="lblSubtitle" text="Visite virtuelle générée par IA"
+                       style="-fx-text-fill: rgba(255,255,255,0.7); -fx-font-size: 13px;"/>
+            </VBox>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <HBox spacing="10">
+                <Button fx:id="btnDownload" text="💾" onAction="#handleDownload"
+                        style="-fx-background-color: #10B981; -fx-text-fill: white; -fx-font-size: 18px;
+                               -fx-cursor: hand; -fx-padding: 8 15; -fx-background-radius: 8;"/>
+                <Button fx:id="btnShare" text="📤" onAction="#handleShare"
+                        style="-fx-background-color: #3B82F6; -fx-text-fill: white; -fx-font-size: 18px;
+                               -fx-cursor: hand; -fx-padding: 8 15; -fx-background-radius: 8;"/>
+                <Button fx:id="btnSettings" text="⚙️" onAction="#handleSettings"
+                        style="-fx-background-color: #6366F1; -fx-text-fill: white; -fx-font-size: 18px;
+                               -fx-cursor: hand; -fx-padding: 8 15; -fx-background-radius: 8;"/>
+            </HBox>
+        </HBox>
+    </top>
+
+    <!-- CENTER - Photo Display -->
+    <center>
+        <StackPane style="-fx-background-color: #1E293B;">
+            <VBox alignment="CENTER" spacing="20" style="-fx-padding: 30;">
+
+                <!-- Main Photo -->
+                <StackPane fx:id="photoContainer" prefHeight="460" maxWidth="900"
+                           style="-fx-background-color: black; -fx-background-radius: 20;
+                                  -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 30, 0, 0, 10);">
+                    <ImageView fx:id="photoView" preserveRatio="true" fitWidth="900" fitHeight="460"/>
+
+                    <!-- Photo Counter Badge -->
+                    <HBox alignment="TOP_RIGHT" StackPane.alignment="TOP_RIGHT">
+                        <Label fx:id="lblPhotoCounter" text="1/8"
+                               style="-fx-background-color: rgba(0,0,0,0.7); -fx-text-fill: white;
+                                      -fx-font-size: 14px; -fx-font-weight: bold; -fx-padding: 6 14;
+                                      -fx-background-radius: 20;">
+                            <HBox.margin><Insets top="16" right="16"/></HBox.margin>
+                        </Label>
+                    </HBox>
+
+                    <!-- Flèche gauche -->
+                    <HBox alignment="CENTER_LEFT" StackPane.alignment="CENTER_LEFT">
+                        <Button fx:id="btnPrevPhoto" text="◀" onAction="#handlePreviousPhoto"
+                                style="-fx-background-color: rgba(0,0,0,0.6); -fx-text-fill: white;
+                                       -fx-font-size: 28px; -fx-cursor: hand; -fx-background-radius: 50%;
+                                       -fx-min-width: 58; -fx-min-height: 58;">
+                            <HBox.margin><Insets left="16"/></HBox.margin>
+                        </Button>
+                    </HBox>
+
+                    <!-- Flèche droite -->
+                    <HBox alignment="CENTER_RIGHT" StackPane.alignment="CENTER_RIGHT">
+                        <Button fx:id="btnNextPhoto" text="▶" onAction="#handleNextPhoto"
+                                style="-fx-background-color: rgba(0,0,0,0.6); -fx-text-fill: white;
+                                       -fx-font-size: 28px; -fx-cursor: hand; -fx-background-radius: 50%;
+                                       -fx-min-width: 58; -fx-min-height: 58;">
+                            <HBox.margin><Insets right="16"/></HBox.margin>
+                        </Button>
+                    </HBox>
+                </StackPane>
+
+                <!-- ═══════════════════════════════════════════
+                     NARRATION — FIX : TextArea à la place du
+                     ScrollPane+Label pour un fond vraiment
+                     transparent et texte toujours lisible
+                ═══════════════════════════════════════════ -->
+                <VBox maxWidth="900" spacing="8"
+                      style="-fx-background-color: #1E3A5F;
+                             -fx-padding: 18 22;
+                             -fx-background-radius: 14;
+                             -fx-border-color: rgba(59,130,246,0.35);
+                             -fx-border-width: 1.5;
+                             -fx-border-radius: 14;">
+
+                    <Label text="📝 Narration"
+                           style="-fx-text-fill: #60A5FA;
+                                  -fx-font-size: 13px;
+                                  -fx-font-weight: bold;"/>
+
+                    <!-- ✅ TextArea en lecture seule : fond controllable,
+                         texte TOUJOURS blanc, wrap natif, pas de ScrollPane -->
+                    <TextArea fx:id="lblNarration"
+                              wrapText="true"
+                              editable="false"
+                              prefHeight="95"
+                              style="-fx-control-inner-background: #1E3A5F;
+                                     -fx-background-color: #1E3A5F;
+                                     -fx-text-fill: #F1F5F9;
+                                     -fx-font-size: 14px;
+                                     -fx-font-family: 'Segoe UI', sans-serif;
+                                     -fx-border-color: transparent;
+                                     -fx-background-insets: 0;
+                                     -fx-padding: 0;
+                                     -fx-highlight-fill: #3B82F6;
+                                     -fx-focus-color: transparent;
+                                     -fx-faint-focus-color: transparent;"/>
+                </VBox>
+            </VBox>
+
+            <!-- Loading Overlay -->
+            <StackPane fx:id="loadingOverlay" visible="false"
+                       style="-fx-background-color: rgba(0,0,0,0.92);">
+                <VBox alignment="CENTER" spacing="20">
+                    <ProgressIndicator style="-fx-progress-color: #F39C12;"
+                                       prefWidth="72" prefHeight="72"/>
+                    <Label text="🤖 Génération en cours..."
+                           style="-fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold;"/>
+                    <Label fx:id="lblLoadingStatus" text="Récupération des photos..."
+                           style="-fx-text-fill: rgba(255,255,255,0.65); -fx-font-size: 14px;"/>
+                </VBox>
+            </StackPane>
+        </StackPane>
+    </center>
+
+    <!-- BOTTOM - Audio Controls -->
+    <bottom>
+        <VBox style="-fx-background-color: linear-gradient(to bottom, #1E293B, #0F172A);
+                     -fx-padding: 20 40 24 40;
+                     -fx-border-color: rgba(255,255,255,0.07) transparent transparent transparent;
+                     -fx-border-width: 1 0 0 0;">
+
+            <!-- Barre de progression audio -->
+            <HBox alignment="CENTER" spacing="14">
+                <Label fx:id="lblCurrentTime" text="0:00"
+                       style="-fx-text-fill: rgba(255,255,255,0.6);
+                              -fx-font-size: 13px;
+                              -fx-font-family: monospace;
+                              -fx-min-width: 38;"/>
+
+                <ProgressBar fx:id="audioProgressBar" progress="0"
+                             prefHeight="6" HBox.hgrow="ALWAYS"
+                             style="-fx-accent: #F39C12; -fx-background-radius: 3;"/>
+
+                <Label fx:id="lblTotalTime" text="--:--"
+                       style="-fx-text-fill: rgba(255,255,255,0.6);
+                              -fx-font-size: 13px;
+                              -fx-font-family: monospace;
+                              -fx-min-width: 38;"/>
+            </HBox>
+
+            <!-- ✅ Message si pas d'audio -->
+            <Label fx:id="lblAudioStatus" text=""
+                   style="-fx-text-fill: #F87171;
+                          -fx-font-size: 11px;
+                          -fx-padding: 4 0 0 0;"
+                   visible="false" managed="false"/>
+
+            <Region prefHeight="12"/>
+
+            <!-- Contrôles de lecture -->
+            <HBox alignment="CENTER" spacing="14">
+
+                <Button fx:id="btnPrevious" text="⏮" onAction="#handlePrevious"
+                        style="-fx-background-color: rgba(255,255,255,0.10);
+                               -fx-text-fill: white; -fx-font-size: 20px;
+                               -fx-cursor: hand; -fx-padding: 11 18;
+                               -fx-background-radius: 12;
+                               -fx-border-color: rgba(255,255,255,0.18);
+                               -fx-border-radius: 12;"/>
+
+                <Button fx:id="btnPlayPause" text="▶" onAction="#handlePlayPause"
+                        style="-fx-background-color: #F39C12;
+                               -fx-text-fill: white; -fx-font-size: 26px;
+                               -fx-cursor: hand; -fx-padding: 14 22;
+                               -fx-background-radius: 50%;
+                               -fx-effect: dropshadow(gaussian, rgba(243,156,18,0.45), 14, 0, 0, 0);
+                               -fx-min-width: 68; -fx-min-height: 68;
+                               -fx-font-weight: bold;"/>
+
+                <Button fx:id="btnNext" text="⏭" onAction="#handleNext"
+                        style="-fx-background-color: rgba(255,255,255,0.10);
+                               -fx-text-fill: white; -fx-font-size: 20px;
+                               -fx-cursor: hand; -fx-padding: 11 18;
+                               -fx-background-radius: 12;
+                               -fx-border-color: rgba(255,255,255,0.18);
+                               -fx-border-radius: 12;"/>
+
+                <Region prefWidth="28"/>
+
+                <!-- Volume -->
+                <HBox alignment="CENTER" spacing="10">
+                    <Label text="🔊" style="-fx-font-size: 19px;"/>
+                    <Slider fx:id="volumeSlider" value="75" min="0" max="100" prefWidth="115"
+                            style="-fx-background-color: transparent;"/>
+                    <Label fx:id="lblVolume" text="75%"
+                           style="-fx-text-fill: rgba(255,255,255,0.65);
+                                  -fx-font-size: 12px; -fx-min-width: 38;"/>
+                </HBox>
+
+                <Region prefWidth="18"/>
+
+                <!-- Auto-play -->
+                <HBox alignment="CENTER" spacing="8"
+                      style="-fx-background-color: rgba(255,255,255,0.09);
+                             -fx-padding: 8 14;
+                             -fx-background-radius: 20;
+                             -fx-border-color: rgba(255,255,255,0.18);
+                             -fx-border-radius: 20;">
+                    <Label text="🔄 Auto"
+                           style="-fx-text-fill: rgba(255,255,255,0.75); -fx-font-size: 12px;"/>
+                    <CheckBox fx:id="chkAutoPlay" selected="true"/>
+                </HBox>
+            </HBox>
+        </VBox>
+    </bottom>
+
+</BorderPane>

@@ -209,5 +209,14 @@ public class UserCRUD implements CRUDuser<User> {
             throw new RuntimeException(e);
         }
     }
+
+    public void markEmailAsVerified(int userId) throws SQLException {
+        String sql = "UPDATE users SET email_verified = true WHERE id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ps.executeUpdate();
+            System.out.println("✅ Email marqué comme vérifié pour l'utilisateur ID: " );
+        }
+    }
 }
 

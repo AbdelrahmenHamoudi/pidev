@@ -1,181 +1,271 @@
-/* ========== STYLE GÉNÉRAL ========== */
+/* ========================================================
+   StyleRSV.css — Charte Graphique RE7LA
+   Couleurs :
+     Orange vif   : #F39C12
+     Jaune pastel : #F7DC6F
+     Bleu nuit    : #2C3E50
+     Turquoise    : #1ABC9C
+     Bleu météo   : #2C7BB2
+   ======================================================== */
+
+/* ===== GLOBAL ===== */
 .root {
-    -fx-font-family: "Segoe UI", "Arial", sans-serif;
+    -fx-font-family: 'Segoe UI', 'Inter', sans-serif;
+    -fx-font-smoothing-type: gray;
+    -fx-background-color: #F9FAFB;
 }
 
-/* ========== BACKGROUND ET OVERLAY ========== */
-#backgroundImage {
-    -fx-effect: null;
+/* ===== CONTAINER PRINCIPAL ===== */
+.front-container {
+    -fx-background-color: #F9FAFB;
 }
 
-/* Overlay assombri plus doux */
-.background-overlay {
-    -fx-fill: rgba(0, 0, 0, 0.4);
+/* ===== HEADER ===== */
+.front-header {
+    -fx-background-color: white;
+    -fx-padding: 25 40;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 10, 0, 0, 2);
 }
 
-/* ========== HEADER ========== */
-.header {
-    -fx-background-color: rgba(44, 62, 80, 0.85); /* #2C3E50 avec transparence */
-    -fx-border-color: rgba(255, 255, 255, 0.15);
-    -fx-border-width: 0 0 1 0;
-    -fx-padding: 10 30;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 2);
+.front-title {
+    -fx-font-size: 32px;
+    -fx-font-weight: 800;
+    -fx-fill: #F39C12;
+    -fx-letter-spacing: 2px;
 }
 
-/* Logo et titre */
-.logo-title {
+.front-subtitle {
+    -fx-font-size: 14px;
+    -fx-fill: #64748B;
+}
+
+/* ===== SEARCH BOX ===== */
+.search-box {
+    -fx-background-color: white;
+    -fx-border-color: #E2E8F0;
+    -fx-border-radius: 25;
+    -fx-background-radius: 25;
+    -fx-padding: 12 20;
+    -fx-font-size: 14px;
+    -fx-prompt-text-fill: #94A3B8;
+}
+
+.search-box:focused {
+    -fx-border-color: #F39C12;
+    -fx-effect: dropshadow(gaussian, rgba(243,156,18,0.25), 8, 0, 0, 0);
+}
+
+/* ===== BOUTONS PRINCIPAUX ===== */
+.btn-primary {
+    -fx-background-color: #F39C12;
     -fx-text-fill: white;
-    -fx-font-size: 22px;
     -fx-font-weight: bold;
+    -fx-padding: 12 30;
+    -fx-background-radius: 20;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(243,156,18,0.4), 8, 0, 0, 2);
 }
 
-.logo-subtitle {
-    -fx-text-fill: rgba(255, 255, 255, 0.8);
-    -fx-font-size: 12px;
+.btn-primary:hover {
+    -fx-background-color: #E67E22;
 }
 
-/* Menu de navigation */
-.nav-menu {
-    -fx-padding: 0 0 0 30;
-}
-
-.nav-item {
-    -fx-text-fill: rgba(255, 255, 255, 0.8);
-    -fx-font-size: 16px;
-    -fx-padding: 5 10;
+.btn-secondary {
+    -fx-background-color: #E2E8F0;
+    -fx-text-fill: #2C3E50;
+    -fx-font-weight: bold;
+    -fx-padding: 12 20;
+    -fx-background-radius: 15;
     -fx-cursor: hand;
 }
 
-.nav-item:hover {
-    -fx-text-fill: #E67E22;
-    -fx-background-color: rgba(255, 255, 255, 0.1);
-    -fx-background-radius: 5;
+.btn-secondary:hover {
+    -fx-background-color: #CBD5E1;
 }
 
-.nav-item-active {
-    -fx-text-fill: #E67E22;
-    -fx-font-size: 16px;
-    -fx-font-weight: bold;
-    -fx-padding: 5 10;
-    -fx-border-color: transparent transparent #E67E22 transparent;
-    -fx-border-width: 0 0 3 0;
+.btn-nav {
+    -fx-background-color: transparent;
+    -fx-text-fill: #2C3E50;
+    -fx-font-size: 13px;
+    -fx-font-weight: 500;
+    -fx-padding: 8 16;
+    -fx-background-radius: 15;
+    -fx-border-color: #E2E8F0;
+    -fx-border-radius: 15;
+    -fx-cursor: hand;
 }
 
-/* Profil utilisateur */
-.profile-chip {
-    -fx-background-color: rgba(255, 255, 255, 0.2);
-    -fx-background-radius: 30;
-    -fx-padding: 5 15;
-    -fx-border-color: rgba(255,255,255,0.3);
-    -fx-border-radius: 30;
+.btn-nav:hover {
+    -fx-background-color: rgba(243,156,18,0.1);
+    -fx-border-color: #F39C12;
+    -fx-text-fill: #F39C12;
 }
 
-.profile-chip .label {
+.btn-lang {
+    -fx-background-color: transparent;
+    -fx-border-color: #E2E8F0;
+    -fx-border-radius: 20;
+    -fx-background-radius: 20;
+    -fx-text-fill: #2C3E50;
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+    -fx-padding: 6 14;
+}
+
+.btn-lang:hover {
+    -fx-background-color: #F9FAFB;
+    -fx-border-color: #F39C12;
+    -fx-text-fill: #F39C12;
+}
+
+/* ===== BOUTON RÉSERVER ===== */
+.btn-reserve {
+    -fx-background-color: #1ABC9C;
     -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 12 20;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+    -fx-font-size: 14px;
 }
 
-/* ========== SCROLLPANE ========== */
-.main-scroll-pane {
-    -fx-background-color: transparent;
-    -fx-background: transparent;
+.btn-reserve:hover {
+    -fx-background-color: #17A589;
+    -fx-effect: dropshadow(gaussian, rgba(26,188,156,0.4), 10, 0, 0, 3);
 }
 
-.main-scroll-pane > .viewport {
-    -fx-background-color: transparent;
+.btn-reserve:disabled {
+    -fx-background-color: #95A5A6;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 12 20;
+    -fx-background-radius: 8;
 }
 
-/* ========== ZONE DE CONTENU ========== */
-.content-area {
-    -fx-background-color: transparent;
-    -fx-padding: 30;
+/* ===== BOUTON LIEUX PROCHES ===== */
+.btn-nearby {
+    -fx-background-color: #EBF5FB;
+    -fx-text-fill: #2980B9;
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+    -fx-padding: 9 10;
+    -fx-background-radius: 10;
+    -fx-cursor: hand;
+    -fx-border-color: #AED6F1;
+    -fx-border-radius: 10;
+    -fx-border-width: 1;
 }
 
-/* ========== CARTES ========== */
-.card {
-    -fx-background-color: rgba(255, 255, 255, 0.95);
+.btn-nearby:hover {
+    -fx-background-color: #2980B9;
+    -fx-text-fill: white;
+    -fx-border-color: #2980B9;
+    -fx-effect: dropshadow(gaussian, rgba(41,128,185,0.35), 8, 0, 0, 2);
+}
+
+.btn-nearby:disabled {
+    -fx-background-color: #F8F9FA;
+    -fx-text-fill: #BDC3C7;
+    -fx-border-color: #DEE2E6;
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+
+/* ===== ✅ BOUTON MÉTÉO (NOUVEAU) ===== */
+.btn-weather {
+    -fx-background-color: #EBF8FF;
+    -fx-text-fill: #2C7BB2;
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+    -fx-padding: 9 10;
+    -fx-background-radius: 10;
+    -fx-cursor: hand;
+    -fx-border-color: #90CDF4;
+    -fx-border-radius: 10;
+    -fx-border-width: 1;
+}
+
+.btn-weather:hover {
+    -fx-background-color: #2C7BB2;
+    -fx-text-fill: white;
+    -fx-border-color: #2C7BB2;
+    -fx-effect: dropshadow(gaussian, rgba(44,123,178,0.35), 8, 0, 0, 2);
+}
+
+.btn-weather:disabled {
+    -fx-background-color: #F8F9FA;
+    -fx-text-fill: #BDC3C7;
+    -fx-border-color: #DEE2E6;
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+
+/* ===== SIDEBAR / FILTER BOX ===== */
+.filter-box {
+    -fx-background-color: white;
     -fx-background-radius: 20;
     -fx-padding: 25;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.25), 20, 0, 0, 5);
-    -fx-border-color: rgba(255, 255, 255, 0.3);
-    -fx-border-radius: 20;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 2);
 }
 
-.card-title {
+.filter-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-fill: #2C3E50;
+}
+
+.filter-label {
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #64748B;
+}
+
+/* ===== FORM ELEMENTS ===== */
+.form-label {
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
     -fx-text-fill: #2C3E50;
-    -fx-font-size: 24px;
-    -fx-font-weight: bold;
-    -fx-border-color: transparent transparent #E67E22 transparent;
-    -fx-border-width: 0 0 3 0;
-    -fx-padding: 0 0 10 0;
 }
 
-/* ========== SECTION ACCUEIL ========== */
-.welcome-section {
-    -fx-alignment: center;
-    -fx-padding: 20 0;
-    -fx-spacing: 15;
+.text-field, .date-picker, .combo-box {
+    -fx-background-color: #F9FAFB;
+    -fx-border-color: #E2E8F0;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+    -fx-padding: 10 15;
+    -fx-font-size: 13px;
+    -fx-prompt-text-fill: #A0AEC0;
 }
 
-.welcome-title {
-    -fx-font-size: 48px;
-    -fx-font-weight: bold;
-    -fx-text-fill: white;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 10, 0, 0, 2);
-}
-
-.welcome-subtitle {
-    -fx-font-size: 24px;
-    -fx-text-fill: rgba(255, 255, 255, 0.9);
-    -fx-font-style: italic;
-}
-
-.welcome-decoration Circle {
-    -fx-fill: #E67E22;
-}
-
-/* ========== BARRE DE RECHERCHE ========== */
-.search-box-large {
+.text-field:focused, .date-picker:focused, .combo-box:focused {
+    -fx-border-color: #F39C12;
     -fx-background-color: white;
-    -fx-background-radius: 30;
-    -fx-border-color: #E67E22;
-    -fx-border-radius: 30;
-    -fx-max-width: 450px;
-    -fx-min-width: 300px;
-    -fx-pref-width: 400px;
-    -fx-effect: dropshadow(gaussian, rgba(230, 126, 34, 0.2), 8, 0, 0, 0);
+    -fx-effect: dropshadow(gaussian, #F39C12, 8, 0.3, 0, 0);
 }
 
-.search-field-large {
-    -fx-background-color: transparent;
-    -fx-text-fill: #2C3E50;
-    -fx-font-size: 15px;
-    -fx-prompt-text-fill: #95A5A6;
+.text-field:readonly {
+    -fx-background-color: #F0F4F8;
+    -fx-text-fill: #64748B;
 }
 
-/* ========== TUILES HÉBERGEMENT ========== */
-.hebergement-tile {
+/* ===== HÉBERGEMENT CARD ===== */
+.hebergement-card {
     -fx-background-color: white;
     -fx-background-radius: 15;
-    -fx-padding: 15;
-    -fx-spacing: 8;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 10, 0, 0, 2);
-    -fx-border-color: #ECF0F1;
-    -fx-border-radius: 15;
-    -fx-min-width: 220;
-    -fx-max-width: 260;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 12, 0, 0, 4);
+    -fx-cursor: hand;
 }
 
-.hebergement-tile:hover {
-    -fx-border-color: #E67E22;
-    -fx-effect: dropshadow(gaussian, rgba(230, 126, 34, 0.3), 15, 0, 0, 0);
-    -fx-cursor: hand;
-    -fx-scale-x: 1.02;
-    -fx-scale-y: 1.02;
+.hebergement-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(243,156,18,0.3), 15, 0, 0, 6);
+    -fx-translate-y: -3;
 }
 
 .tile-title {
     -fx-text-fill: #2C3E50;
-    -fx-font-size: 18px;
+    -fx-font-size: 16px;
     -fx-font-weight: bold;
 }
 
@@ -186,210 +276,144 @@
 
 .tile-price {
     -fx-text-fill: #27AE60;
-    -fx-font-size: 24px;
+    -fx-font-size: 20px;
     -fx-font-weight: bold;
 }
 
-.reserve-button {
-    -fx-background-color: #E67E22;
-    -fx-text-fill: white;
-    -fx-font-weight: bold;
-    -fx-background-radius: 8;
-    -fx-padding: 10 20;
-    -fx-cursor: hand;
-}
-
-.reserve-button:hover {
-    -fx-background-color: #D35400;
-}
-
-/* ========== IMAGES ========== */
-.hebergement-image-container,
-.tile-image-container {
-    -fx-background-color: white;
-    -fx-background-radius: 10;
-    -fx-padding: 8;
-    -fx-border-color: #E67E22;
-    -fx-border-radius: 10;
-    -fx-border-width: 2;
-}
-
-/* ========== FORMULAIRES ========== */
-.form-label {
-    -fx-text-fill: #2C3E50;
-    -fx-font-size: 14px;
-    -fx-font-weight: bold;
-}
-
-.text-field, .date-picker, .combo-box {
-    -fx-background-color: white;
-    -fx-background-radius: 8;
-    -fx-text-fill: #2C3E50;
-    -fx-font-size: 14px;
-    -fx-padding: 8 12;
-    -fx-border-color: #BDC3C7;
-    -fx-border-radius: 8;
-}
-
-.text-field:focused, .date-picker:focused, .combo-box:focused {
-    -fx-border-color: #E67E22;
-    -fx-border-width: 2px;
-}
-
-.text-field:readonly {
-    -fx-background-color: #ECF0F1;
-    -fx-text-fill: #7F8C8D;
-}
-
-/* ========== BOUTONS ========== */
-.action-button {
-    -fx-background-color: linear-gradient(to bottom, #E67E22, #D35400);
-    -fx-text-fill: white;
-    -fx-font-weight: bold;
-    -fx-padding: 12 20;
-    -fx-background-radius: 8;
-    -fx-cursor: hand;
-    -fx-font-size: 15px;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0, 0, 1);
-}
-
-.action-button:hover {
-    -fx-background-color: linear-gradient(to bottom, #D35400, #E67E22);
-}
-
-.secondary-button {
-    -fx-background-color: #3498DB;
-    -fx-text-fill: white;
-    -fx-font-weight: bold;
-    -fx-padding: 12 20;
-    -fx-background-radius: 8;
-    -fx-cursor: hand;
-}
-
-.secondary-button:hover {
-    -fx-background-color: #2980B9;
-}
-
-.delete-button {
-    -fx-background-color: #E74C3C;
-    -fx-text-fill: white;
-    -fx-font-weight: bold;
-    -fx-padding: 12 20;
-    -fx-background-radius: 8;
-    -fx-cursor: hand;
-}
-
-.delete-button:hover {
-    -fx-background-color: #C0392B;
-}
-
-/* ========== TABLEAU ========== */
-.table-view {
-    -fx-background-color: transparent;
-    -fx-border-color: #BDC3C7;
-    -fx-border-radius: 10;
-}
-
-.table-view .column-header-background {
-    -fx-background-color: #2C3E50;
-    -fx-background-radius: 10 10 0 0;
-}
-
-.table-view .column-header .label {
-    -fx-text-fill: white;
-    -fx-font-weight: bold;
-    -fx-font-size: 14px;
-}
-
-.table-view .table-cell {
-    -fx-text-fill: #2C3E50;
-    -fx-alignment: center-left;
-    -fx-padding: 10 5;
-    -fx-border-color: transparent transparent #ECF0F1 transparent;
-}
-
-.table-row-cell {
-    -fx-background-color: white;
-}
-
-.table-row-cell:selected {
-    -fx-background-color: #FDEBD0; /* orange très clair */
-}
-
-/* ========== SCROLLBAR ========== */
-.scroll-bar:vertical {
-    -fx-background-color: transparent;
-}
-
-.scroll-bar:vertical .thumb {
-    -fx-background-color: rgba(44, 62, 80, 0.5);
-    -fx-background-radius: 10;
-}
-
-.scroll-bar:vertical .thumb:hover {
-    -fx-background-color: #2C3E50;
-}
-
-/* ========== ÉLÉMENTS DIVERS ========== */
+/* ===== SELECTED HEBERGEMENT ===== */
 .selected-title {
     -fx-text-fill: #2C3E50;
-    -fx-font-size: 16px;
+    -fx-font-size: 14px;
     -fx-font-weight: bold;
 }
 
 .price-large {
-    -fx-text-fill: #E67E22;
-    -fx-font-size: 22px;
+    -fx-text-fill: #F39C12;
+    -fx-font-size: 18px;
     -fx-font-weight: bold;
 }
 
-.error-label {
-    -fx-text-fill: #e74c3c;
-    -fx-font-size: 11px;
-    -fx-padding: 2 0 0 0;
-    -fx-font-weight: bold;
-}
-/* Ajoutez ces styles à la fin de votre fichier CSS */
-
-.user-info-box {
-    -fx-background-color: rgba(44, 62, 80, 0.05);
-    -fx-background-radius: 10;
-    -fx-padding: 15;
-    -fx-border-color: #E67E22;
-    -fx-border-radius: 10;
-    -fx-border-width: 1;
-}
-
-.section-subtitle {
-    -fx-font-size: 16px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #2C3E50;
-    -fx-border-color: transparent transparent #E67E22 transparent;
-    -fx-border-width: 0 0 2 0;
-    -fx-padding: 0 0 5 0;
-}
-
+/* ===== USER INFO ===== */
 .info-label {
     -fx-text-fill: #7F8C8D;
-    -fx-font-size: 13px;
+    -fx-font-size: 12px;
     -fx-font-weight: bold;
 }
 
 .info-value {
     -fx-text-fill: #2C3E50;
-    -fx-font-size: 13px;
-}
-.nav-icon-btn {
-    -fx-background-color: transparent;
-    -fx-text-fill: white;
-    -fx-font-size: 20px;
-    -fx-cursor: hand;
-    -fx-padding: 5 10;
-    -fx-background-radius: 20;
+    -fx-font-size: 12px;
 }
 
-.nav-icon-btn:hover {
-    -fx-background-color: rgba(255,255,255,0.2);
-    -fx-scale-x: 1.1;
-    -fx-scale-y: 1.1;
+/* ===== ERROR LABELS ===== */
+.error-label {
+    -fx-text-fill: #E74C3C;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+/* ===== SECTION SUBTITLE ===== */
+.section-subtitle {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2C3E50;
+}
+
+/* ===== SCROLLBAR ===== */
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane .scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-pref-width: 12;
+}
+
+.scroll-pane .scroll-bar:vertical .thumb {
+    -fx-background-color: #CBD5E1;
+    -fx-background-radius: 10;
+}
+
+.scroll-pane .scroll-bar:vertical .thumb:hover {
+    -fx-background-color: #F39C12;
+}
+
+.scroll-pane .scroll-bar:vertical .track {
+    -fx-background-color: #F1F5F9;
+    -fx-background-radius: 10;
+}
+
+.scroll-pane .scroll-bar .increment-button,
+.scroll-pane .scroll-bar .decrement-button {
+    -fx-padding: 0;
+    -fx-background-color: transparent;
+}
+
+/* ===== WEATHER CARD (mini dans liste) ===== */
+.weather-card {
+    -fx-background-color: #F9FAFB;
+    -fx-background-radius: 10;
+    -fx-border-color: #E2E8F0;
+    -fx-border-radius: 10;
+    -fx-border-width: 1;
+}
+
+.weather-card:hover {
+    -fx-background-color: #FFF9F0;
+    -fx-border-color: #F39C12;
+}
+
+/* ===== CHECKBOX ===== */
+.check-box {
+    -fx-text-fill: #2C3E50;
+    -fx-font-size: 13px;
+}
+
+.check-box .box {
+    -fx-background-color: white;
+    -fx-border-color: #CBD5E1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+}
+
+.check-box:selected .box {
+    -fx-background-color: #1ABC9C;
+    -fx-border-color: #1ABC9C;
+}
+
+.check-box:selected .mark {
+    -fx-background-color: white;
+}
+
+/* ===== SEPARATOR ===== */
+.separator .line {
+    -fx-border-color: #E2E8F0;
+}
+
+/* ===== EMPTY STATE ===== */
+.empty-state-message {
+    -fx-font-size: 18px;
+    -fx-text-fill: #7F8C8D;
+    -fx-font-weight: bold;
+}
+
+/* ===== CARTE RÉSERVATION ===== */
+.reservation-card {
+    -fx-background-color: white;
+    -fx-background-radius: 15;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.07), 12, 0, 0, 3);
+    -fx-border-color: #F1F5F9;
+    -fx-border-radius: 15;
+    -fx-border-width: 1;
+}
+
+.reservation-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(243,156,18,0.2), 15, 0, 0, 5);
+    -fx-border-color: #F39C12;
+    -fx-translate-y: -2;
 }

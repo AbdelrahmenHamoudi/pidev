@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="600.0" prefWidth="900.0"
+            stylesheets="@Stylerapportia.css"
+            xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.Controllers.hebergement.back.RapportIAController">
+
+    <HBox AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
+          AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" spacing="0">
+
+        <!-- ═══════════════ PANNEAU GAUCHE – STATS ═══════════════ -->
+        <VBox prefWidth="280" styleClass="left-panel" spacing="0">
+            <padding><Insets top="30" left="25" right="25" bottom="30"/></padding>
+
+            <VBox spacing="5" styleClass="left-header">
+                <Label text="🤖 Rapport IA" styleClass="panel-title"/>
+                <Label fx:id="lblMoisAnnee" text="MARS 2026" styleClass="panel-month"/>
+                <Label text="Powered by Groq AI" styleClass="panel-badge"/>
+            </VBox>
+
+            <Region prefHeight="25"/>
+
+            <VBox spacing="12" fx:id="statsPreview">
+                <Label text="DONNÉES DU MOIS" styleClass="section-label"/>
+
+                <VBox styleClass="stat-mini-card" spacing="4">
+                    <Label text="📅  Réservations" styleClass="mini-label"/>
+                    <Label fx:id="lblStatReservations" text="–" styleClass="mini-value"/>
+                </VBox>
+
+                <VBox styleClass="stat-mini-card" spacing="4">
+                    <Label text="💰  Revenus" styleClass="mini-label"/>
+                    <Label fx:id="lblStatRevenus" text="–" styleClass="mini-value"/>
+                </VBox>
+
+                <VBox styleClass="stat-mini-card" spacing="4">
+                    <Label text="📊  Taux d'occupation" styleClass="mini-label"/>
+                    <Label fx:id="lblStatOccupation" text="–" styleClass="mini-value"/>
+                </VBox>
+
+                <VBox styleClass="stat-mini-card" spacing="4">
+                    <Label text="📍  Ville leader" styleClass="mini-label"/>
+                    <Label fx:id="lblStatVille" text="–" styleClass="mini-value"/>
+                </VBox>
+
+                <VBox styleClass="stat-mini-card" spacing="4">
+                    <Label text="🏠  Type préféré" styleClass="mini-label"/>
+                    <Label fx:id="lblStatType" text="–" styleClass="mini-value"/>
+                </VBox>
+
+                <VBox styleClass="stat-mini-card" spacing="4">
+                    <Label text="🏨  Hébergements" styleClass="mini-label"/>
+                    <Label fx:id="lblStatHebergements" text="–" styleClass="mini-value"/>
+                </VBox>
+            </VBox>
+
+            <Region VBox.vgrow="ALWAYS"/>
+
+            <VBox spacing="5" styleClass="api-info-box">
+                <Label text="API Gratuite" styleClass="api-badge"/>
+                <Label text="Groq – LLaMA 3.3 70B" styleClass="api-name"/>
+                <Label text="14 400 req/jour · Sans CB" styleClass="api-limits"/>
+            </VBox>
+        </VBox>
+
+        <!-- ═══════════════ PANNEAU DROIT – RAPPORT ═══════════════ -->
+        <VBox HBox.hgrow="ALWAYS" styleClass="right-panel" spacing="15">
+            <padding><Insets top="30" left="30" right="30" bottom="25"/></padding>
+
+            <!-- Top bar -->
+            <HBox alignment="CENTER_LEFT" spacing="15">
+                <VBox spacing="3" HBox.hgrow="ALWAYS">
+                    <Label text="Rapport Mensuel Intelligent" styleClass="report-title"/>
+                    <Label fx:id="lblStatusIA" text="✨ Prêt à générer votre rapport IA"
+                           styleClass="status-label"/>
+                </VBox>
+                <ProgressIndicator fx:id="progressIA"
+                                   styleClass="progress-ia" visible="false"/>
+            </HBox>
+
+            <!-- Zone rapport -->
+            <TextArea fx:id="txtRapport"
+                      VBox.vgrow="ALWAYS"
+                      wrapText="true"
+                      editable="false"
+                      styleClass="rapport-area"
+                      promptText="Le rapport généré par l'IA apparaîtra ici...
+
+Cliquez sur 'Générer avec l'IA' pour lancer l'analyse automatique."/>
+
+            <!-- ✅ Boutons d'action avec PDF -->
+            <HBox spacing="10" alignment="CENTER_RIGHT">
+
+                <!-- Copier -->
+                <Button fx:id="btnCopier"
+                        onAction="#copierRapport"
+                        text="📋  Copier"
+                        styleClass="copy-button"/>
+
+                <!-- ✅ NOUVEAU : Télécharger PDF -->
+                <Button fx:id="btnExportPDF"
+                        onAction="#exporterPDF"
+                        text="📄  Télécharger PDF"
+                        styleClass="pdf-button"/>
+
+                <!-- Générer -->
+                <Button fx:id="btnGenerer"
+                        onAction="#genererRapport"
+                        text="🤖  Générer avec l'IA"
+                        styleClass="generate-button"/>
+            </HBox>
+        </VBox>
+    </HBox>
+</AnchorPane>

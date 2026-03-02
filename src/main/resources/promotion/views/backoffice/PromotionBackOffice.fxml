@@ -1,0 +1,485 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+
+<!--
+  ✅ FIXED:
+   - Removed txtPrixParJour field (price is now dynamic, not manual)
+   - ComboBox items: "Hébergement / Activité / Voiture" (was Transport)
+   - Form grid is now 2 columns instead of 3 (% + fixe only)
+   - Everything else: styles, animations, layout preserved
+-->
+<AnchorPane prefHeight="760.0" prefWidth="1200.0"
+            stylesheets="@../../css/re7la-styles.css"
+            xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.Controllers.promotion.backoffice.PromotionBackOfficeController">
+
+    <!-- ═══════════════ SIDEBAR ═══════════════ -->
+    <VBox prefWidth="260.0" spacing="10.0" styleClass="sidebar"
+          AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+
+        <VBox alignment="CENTER"><VBox.margin><Insets top="25.0"/></VBox.margin>
+            <ImageView fitHeight="140.0" fitWidth="140.0" preserveRatio="true">
+                <image><Image url="@../../images/logo.png"/></image>
+            </ImageView>
+        </VBox>
+
+        <Label styleClass="sidebar-title" text="Tableau de bord">
+            <VBox.margin><Insets bottom="25.0" left="25.0"/></VBox.margin>
+        </Label>
+
+        <Button alignment="BASELINE_LEFT" maxWidth="Infinity" mnemonicParsing="false"
+                onAction="#handleShowUsers" styleClass="sidebar-button" text="👥 Gestion Utilisateurs"/>
+        <Button alignment="BASELINE_LEFT" maxWidth="Infinity" mnemonicParsing="false"
+                onAction="#handleShowAccounts" styleClass="sidebar-button" text="🏨 Gestion des Hébergements"/>
+        <Button alignment="BASELINE_LEFT" maxWidth="Infinity" mnemonicParsing="false"
+                onAction="#handleShowTransactions" styleClass="sidebar-button" text="🎯 Gestion des Activités"/>
+        <Button alignment="BASELINE_LEFT" maxWidth="Infinity" mnemonicParsing="false"
+                onAction="#handleShowCredits" styleClass="sidebar-button" text="🚗 Gestion des Trajets"/>
+        <Button alignment="BASELINE_LEFT" maxWidth="Infinity" mnemonicParsing="false"
+                onAction="#handleShowCashback" styleClass="sidebar-button" text="&#127873; Gestion des Promotions"/>
+        <Button fx:id="btnCommunaute" alignment="BASELINE_LEFT" maxWidth="Infinity"
+                mnemonicParsing="false" onAction="#handleShowCommunaute" styleClass="sidebar-button"
+                text="💬   Gestion Communauté" />
+        <!-- AI Pack Generator: visible ONLY when Promotions module is active -->
+        <!-- managed=false means it takes up NO space when hidden -->
+        <Button fx:id="btnAiPacks" alignment="BASELINE_LEFT" maxWidth="Infinity" mnemonicParsing="false"
+                onAction="#handleShowAiPacks" styleClass="sidebar-button" text="&#129302;   AI Pack Generator"
+                visible="false" managed="false"/>
+
+        <Region VBox.vgrow="ALWAYS"/>
+
+        <VBox spacing="5.0"><VBox.margin><Insets bottom="20.0"/></VBox.margin>
+            <Label style="-fx-text-fill: #94A3B8; -fx-font-size: 10px; -fx-padding: 0 0 0 22; -fx-font-weight: 700;" text="SYSTÈME"/>
+            <Button fx:id="btnParametres" alignment="BASELINE_LEFT" maxWidth="Infinity"
+                    mnemonicParsing="false" onAction="#handleShowSettings" styleClass="sidebar-button" text="⚙️   Paramètres"/>
+            <Button fx:id="btnDeconnexion" alignment="BASELINE_LEFT" maxWidth="Infinity"
+                    mnemonicParsing="false" onAction="#handleLogout" styleClass="sidebar-button" text="🚪   Déconnexion"/>
+        </VBox>
+    </VBox>
+
+    <!-- ═══════════════ MAIN ═══════════════ -->
+    <StackPane fx:id="mainContentStack"
+               AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="260.0"
+               AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+
+        <!-- ══ VIEW PROMOTION ══ -->
+        <ScrollPane fx:id="viewPromotion" fitToWidth="true" styleClass="main-scroll-pane">
+            <VBox spacing="18.0" styleClass="content-area">
+
+                <!-- TOP HEADER -->
+                <HBox alignment="CENTER_LEFT" spacing="15.0">
+                    <VBox>
+                        <Label styleClass="header-label" text="Gestion des Promotions"/>
+                        <Label styleClass="header-subtitle" text="Créez, gérez et suivez vos promotions"/>
+                    </VBox>
+                    <Region HBox.hgrow="ALWAYS"/>
+
+                    <!-- Search bar -->
+                    <HBox alignment="CENTER_LEFT" spacing="8.0"
+                          style="-fx-background-color: white; -fx-background-radius: 25;
+                                 -fx-padding: 8 16; -fx-border-color: #E2E8F0;
+                                 -fx-border-radius: 25; -fx-border-width: 1;">
+                        <Label text="🔍" style="-fx-text-fill: #94A3B8;"/>
+                        <TextField fx:id="searchPromoField" promptText="Rechercher une promotion..."
+                                   style="-fx-background-color: transparent; -fx-border-width: 0;
+                                          -fx-font-size: 13px; -fx-pref-width: 200;"/>
+                    </HBox>
+
+                    <!-- Bouton Statistiques -->
+                    <Button fx:id="btnStatistiques" mnemonicParsing="false"
+                            onAction="#handleShowStatistiques" text="📊  Statistiques"
+                            style="-fx-background-color: #2C3E50; -fx-text-fill: white;
+                                   -fx-font-weight: 700; -fx-font-size: 13px;
+                                   -fx-padding: 10 18; -fx-background-radius: 20; -fx-cursor: hand;"/>
+
+                    <!-- Admin chip -->
+                    <HBox alignment="CENTER" spacing="10.0"
+                          style="-fx-background-color: white; -fx-background-radius: 30;
+                                 -fx-padding: 5 15 5 8;
+                                 -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 6, 0, 0, 1);">
+                        <Circle fill="#F39C12" radius="14.0"/>
+                        <Label style="-fx-font-weight: bold; -fx-text-fill: #334155; -fx-font-size: 13px;" text="Admin"/>
+                    </HBox>
+                </HBox>
+
+                <!-- STATS CARDS -->
+                <HBox fx:id="statsHBox" spacing="15.0">
+                    <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="stat-card-hebergement" HBox.hgrow="ALWAYS">
+                        <Label style="-fx-font-size: 22px;" text="🎁"/>
+                        <VBox><Label styleClass="stat-title" text="Total Promotions"/><Label fx:id="statTotalPromo" styleClass="stat-value" text="0"/></VBox>
+                    </HBox>
+                    <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="stat-card-reservations" HBox.hgrow="ALWAYS">
+                        <Label style="-fx-font-size: 22px;" text="📦"/>
+                        <VBox><Label styleClass="stat-title" text="Packs"/><Label fx:id="statPacksPromo" styleClass="stat-value" text="0"/></VBox>
+                    </HBox>
+                    <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="stat-card-disponibles" HBox.hgrow="ALWAYS">
+                        <Label style="-fx-font-size: 22px;" text="✅"/>
+                        <VBox><Label styleClass="stat-title" text="Actives"/><Label fx:id="statActivesPromo" styleClass="stat-value" text="0"/></VBox>
+                    </HBox>
+                </HBox>
+
+                <!-- CONTENU PRINCIPAL : Form gauche + Cards droite -->
+                <HBox spacing="20.0" VBox.vgrow="ALWAYS">
+
+                    <!-- ── FORMULAIRE ── -->
+                    <VBox spacing="0" prefWidth="390" minWidth="360" maxWidth="400"
+                          style="-fx-background-color: white; -fx-background-radius: 16;
+                                 -fx-border-color: #E2E8F0; -fx-border-radius: 16; -fx-border-width: 1;
+                                 -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.07), 14, 0, 4, 4);">
+
+                        <!-- Form header strip -->
+                        <HBox alignment="CENTER_LEFT" spacing="10"
+                              style="-fx-background-color: #2C3E50; -fx-padding: 15 18;
+                                     -fx-background-radius: 16 16 0 0;">
+                            <Label text="➕" style="-fx-font-size: 15px;"/>
+                            <Label fx:id="formTitleLabel" text="Nouvelle Promotion"
+                                   style="-fx-font-size: 13px; -fx-font-weight: 800; -fx-text-fill: white;"/>
+                        </HBox>
+
+                        <!-- Scrollable form body -->
+                        <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
+                                    style="-fx-background-color: white; -fx-background: white; -fx-border-color: transparent;"
+                                    hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" prefHeight="490">
+                            <VBox spacing="0" style="-fx-padding: 16 18 8 18; -fx-background-color: white;">
+
+                                <!-- INFORMATIONS GÉNÉRALES -->
+                                <Label text="INFORMATIONS GÉNÉRALES"
+                                       style="-fx-font-size: 9px; -fx-font-weight: 700; -fx-text-fill: #94A3B8;
+                                              -fx-padding: 0 0 7 2;"/>
+                                <VBox spacing="8" style="-fx-padding: 0 0 14 0;">
+                                    <VBox spacing="3">
+                                        <Label text="Nom de la promotion *"
+                                               style="-fx-font-size: 11px; -fx-font-weight: 700; -fx-text-fill: #374151;"/>
+                                        <TextField fx:id="txtNom" promptText="Ex: Offre Été 2025" styleClass="text-field"/>
+                                    </VBox>
+                                    <VBox spacing="3">
+                                        <Label text="Description *"
+                                               style="-fx-font-size: 11px; -fx-font-weight: 700; -fx-text-fill: #374151;"/>
+                                        <TextArea fx:id="txtDescription" promptText="Décrivez la promotion…"
+                                                  styleClass="text-area" prefRowCount="2"/>
+                                    </VBox>
+                                </VBox>
+
+                                <Separator style="-fx-opacity: 0.5;"/>
+                                <!-- RÉDUCTION -->
+                                <Label text="RÉDUCTION"
+                                       style="-fx-font-size: 9px; -fx-font-weight: 700; -fx-text-fill: #94A3B8;
+                                              -fx-padding: 12 0 7 2;"/>
+                                <VBox spacing="8" style="-fx-padding: 0 0 14 0;">
+                                    <GridPane hgap="10">
+                                        <columnConstraints>
+                                            <ColumnConstraints percentWidth="50"/>
+                                            <ColumnConstraints percentWidth="50"/>
+                                        </columnConstraints>
+                                        <VBox spacing="3" GridPane.columnIndex="0">
+                                            <Label text="Pourcentage (%)"
+                                                   style="-fx-font-size: 11px; -fx-font-weight: 700; -fx-text-fill: #374151;"/>
+                                            <TextField fx:id="txtPourcentage" promptText="Ex: 20" styleClass="text-field"/>
+                                        </VBox>
+                                        <VBox spacing="3" GridPane.columnIndex="1">
+                                            <Label text="Montant fixe (TND)"
+                                                   style="-fx-font-size: 11px; -fx-font-weight: 700; -fx-text-fill: #374151;"/>
+                                            <TextField fx:id="txtFixe" promptText="Ex: 150" styleClass="text-field"/>
+                                        </VBox>
+                                    </GridPane>
+                                    <HBox spacing="6" alignment="CENTER_LEFT"
+                                          style="-fx-background-color: #F0FFF4; -fx-padding: 7 10;
+                                                 -fx-background-radius: 7;">
+                                        <Label text="💡" style="-fx-font-size: 11px;"/>
+                                        <Label text="Prix base récupéré automatiquement depuis l'offre"
+                                               style="-fx-font-size: 10px; -fx-text-fill: #276749;"/>
+                                    </HBox>
+                                </VBox>
+
+                                <Separator style="-fx-opacity: 0.5;"/>
+                                <!-- PÉRIODE -->
+                                <Label text="PÉRIODE DE VALIDITÉ"
+                                       style="-fx-font-size: 9px; -fx-font-weight: 700; -fx-text-fill: #94A3B8;
+                                              -fx-padding: 12 0 7 2;"/>
+                                <GridPane hgap="10" style="-fx-padding: 0 0 14 0;">
+                                    <columnConstraints>
+                                        <ColumnConstraints percentWidth="50"/>
+                                        <ColumnConstraints percentWidth="50"/>
+                                    </columnConstraints>
+                                    <VBox spacing="3" GridPane.columnIndex="0">
+                                        <Label text="Date début *"
+                                               style="-fx-font-size: 11px; -fx-font-weight: 700; -fx-text-fill: #374151;"/>
+                                        <DatePicker fx:id="dateDebut" maxWidth="Infinity"/>
+                                    </VBox>
+                                    <VBox spacing="3" GridPane.columnIndex="1">
+                                        <Label text="Date fin *"
+                                               style="-fx-font-size: 11px; -fx-font-weight: 700; -fx-text-fill: #374151;"/>
+                                        <DatePicker fx:id="dateFin" maxWidth="Infinity"/>
+                                    </VBox>
+                                </GridPane>
+
+                                <Separator style="-fx-opacity: 0.5;"/>
+                                <!-- OPTIONS -->
+                                <Label text="OPTIONS"
+                                       style="-fx-font-size: 9px; -fx-font-weight: 700; -fx-text-fill: #94A3B8;
+                                              -fx-padding: 12 0 7 2;"/>
+                                <VBox spacing="7" style="-fx-padding: 0 0 14 0;">
+                                    <HBox spacing="10" alignment="CENTER_LEFT"
+                                          style="-fx-background-color: #F9FAFB; -fx-padding: 9 12;
+                                                 -fx-background-radius: 8; -fx-border-color: #E2E8F0;
+                                                 -fx-border-radius: 8; -fx-border-width: 1;">
+                                        <CheckBox fx:id="chkPack"/>
+                                        <VBox spacing="1">
+                                            <Label text="📦 Pack combiné"
+                                                   style="-fx-font-size: 11px; -fx-font-weight: 700; -fx-text-fill: #2C3E50;"/>
+                                            <Label text="Combine plusieurs types d'offres"
+                                                   style="-fx-font-size: 9px; -fx-text-fill: #94A3B8;"/>
+                                        </VBox>
+                                    </HBox>
+                                    <HBox spacing="10" alignment="CENTER_LEFT"
+                                          style="-fx-background-color: #F9FAFB; -fx-padding: 9 12;
+                                                 -fx-background-radius: 8; -fx-border-color: #E2E8F0;
+                                                 -fx-border-radius: 8; -fx-border-width: 1;">
+                                        <CheckBox fx:id="chkLocked"/>
+                                        <VBox spacing="1">
+                                            <Label text="🔒 Verrouillée"
+                                                   style="-fx-font-size: 11px; -fx-font-weight: 700; -fx-text-fill: #2C3E50;"/>
+                                            <Label text="Accès par code QR uniquement"
+                                                   style="-fx-font-size: 9px; -fx-text-fill: #94A3B8;"/>
+                                        </VBox>
+                                    </HBox>
+                                </VBox>
+
+                                <Separator style="-fx-opacity: 0.5;"/>
+                                <!-- OFFRES ASSOCIÉES -->
+                                <Label text="OFFRES ASSOCIÉES"
+                                       style="-fx-font-size: 9px; -fx-font-weight: 700; -fx-text-fill: #94A3B8;
+                                              -fx-padding: 12 0 7 2;"/>
+                                <VBox spacing="8" style="-fx-padding: 0 0 6 0;">
+
+                                    <!-- Type selector -->
+                                    <ComboBox fx:id="comboTypeOffre"
+                                              promptText="① Choisir un type d'offre…"
+                                              maxWidth="Infinity"
+                                              style="-fx-background-color: white;
+                                                     -fx-border-color: #E2E8F0; -fx-border-radius: 8;
+                                                     -fx-background-radius: 8; -fx-font-size: 11px;
+                                                     -fx-font-weight: 600; -fx-cursor: hand;"/>
+
+                                    <!-- Offer list table — taller + styled -->
+                                    <VBox spacing="0"
+                                          style="-fx-background-color: white;
+                                                 -fx-border-color: #C7D2FE; -fx-border-radius: 10;
+                                                 -fx-border-width: 1.5;
+                                                 -fx-effect: dropshadow(gaussian, rgba(99,102,241,0.10), 8, 0, 0, 2);">
+                                        <Label text="② Sélectionner une offre dans la liste"
+                                               style="-fx-font-size: 9px; -fx-font-weight: 700;
+                                                      -fx-text-fill: #6366F1; -fx-padding: 6 10 4 10;
+                                                      -fx-background-color: #EEF2FF;
+                                                      -fx-background-radius: 10 10 0 0;"/>
+                                        <TableView fx:id="tableOffres" prefHeight="200"
+                                                   style="-fx-background-color: white;
+                                                          -fx-border-color: transparent;
+                                                          -fx-table-cell-border-color: #F1F5F9;">
+                                            <columns>
+                                                <TableColumn fx:id="colOffreId"      prefWidth="36"  text="ID"/>
+                                                <TableColumn fx:id="colOffreNom"     prefWidth="106" text="Nom"/>
+                                                <TableColumn fx:id="colOffreDetails" prefWidth="134" text="Prix / Détails"/>
+                                            </columns>
+                                        </TableView>
+                                    </VBox>
+
+                                    <!-- Add button -->
+                                    <Button onAction="#ajouterOffreAPromotion" maxWidth="Infinity"
+                                            text="③  Ajouter cette offre au pack"
+                                            style="-fx-background-color: #6366F1; -fx-text-fill: white;
+                                                   -fx-font-size: 11px; -fx-font-weight: 700;
+                                                   -fx-padding: 8 12; -fx-background-radius: 8;
+                                                   -fx-cursor: hand;
+                                                   -fx-effect: dropshadow(gaussian, rgba(99,102,241,0.25), 6, 0, 0, 2);"/>
+
+                                    <!-- Staged offers list (builds up as you add) -->
+                                    <VBox fx:id="stagedOffresBox" spacing="4"/>
+
+                                </VBox>
+
+                            </VBox>
+                        </ScrollPane>
+
+                        <!-- ACTION BUTTONS -->
+                        <VBox spacing="7" style="-fx-padding: 12 18 14 18; -fx-background-color: #F9FAFB;
+                                                  -fx-border-color: #E2E8F0; -fx-border-width: 1 0 0 0;
+                                                  -fx-background-radius: 0 0 16 16;">
+                            <Button fx:id="btnAjouter" maxWidth="Infinity" mnemonicParsing="false"
+                                    onAction="#addOrUpdate" prefHeight="40"
+                                    text="💾   Enregistrer la promotion"
+                                    style="-fx-background-color: #F39C12; -fx-text-fill: white;
+                                           -fx-font-weight: 800; -fx-font-size: 13px;
+                                           -fx-background-radius: 10; -fx-cursor: hand;
+                                           -fx-effect: dropshadow(gaussian, rgba(243,156,18,0.35), 8, 0, 0, 3);"/>
+                            <HBox spacing="7">
+                                <Button fx:id="btnSupprimer" maxWidth="Infinity" mnemonicParsing="false"
+                                        onAction="#deletePromotion" HBox.hgrow="ALWAYS" prefHeight="34"
+                                        text="🗑️  Supprimer"
+                                        style="-fx-background-color: white; -fx-text-fill: #E53E3E;
+                                               -fx-font-weight: 700; -fx-font-size: 11px;
+                                               -fx-background-radius: 8; -fx-cursor: hand;
+                                               -fx-border-color: #FECACA; -fx-border-radius: 8; -fx-border-width: 1;"/>
+                                <Button maxWidth="Infinity" mnemonicParsing="false"
+                                        onAction="#handleCancel" HBox.hgrow="ALWAYS" prefHeight="34"
+                                        text="↩  Annuler"
+                                        style="-fx-background-color: white; -fx-text-fill: #64748B;
+                                               -fx-font-weight: 700; -fx-font-size: 11px;
+                                               -fx-background-radius: 8; -fx-cursor: hand;
+                                               -fx-border-color: #CBD5E0; -fx-border-radius: 8; -fx-border-width: 1;"/>
+                            </HBox>
+                            <Button maxWidth="Infinity" mnemonicParsing="false"
+                                    onAction="#handleExportPDF" prefHeight="34"
+                                    text="📄  Exporter en PDF"
+                                    style="-fx-background-color: white; -fx-text-fill: #1ABC9C;
+                                           -fx-font-weight: 700; -fx-font-size: 11px;
+                                           -fx-background-radius: 8; -fx-cursor: hand;
+                                           -fx-border-color: #9AE6B4; -fx-border-radius: 8; -fx-border-width: 1;"/>
+                        </VBox>
+                    </VBox>
+
+                    <!-- ── LISTE CARDS PROMOTIONS ── -->
+                    <VBox HBox.hgrow="ALWAYS" spacing="14.0">
+                        <HBox alignment="CENTER_LEFT" spacing="12.0">
+                            <Label style="-fx-font-size: 16px; -fx-font-weight: 800; -fx-text-fill: #2C3E50;"
+                                   text="📋  Mes Promotions"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label style="-fx-font-size: 11px; -fx-text-fill: #94A3B8;"
+                                   text="Cliquez sur une card pour la modifier · Sélectionnez avant d'exporter en PDF"/>
+                        </HBox>
+
+                        <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
+                                    style="-fx-background-color: transparent; -fx-background: transparent; -fx-border-width: 0;">
+                            <GridPane fx:id="promoCardsGrid" hgap="16" vgap="16"/>
+                        </ScrollPane>
+                    </VBox>
+
+                </HBox>
+            </VBox>
+        </ScrollPane>
+
+        <!-- ══ VIEW EMPTY ══ -->
+        <VBox fx:id="viewEmpty" alignment="CENTER"
+              style="-fx-background-color: #F9FAFB;" visible="false">
+            <Label style="-fx-font-size: 50px;" text="🚧"/>
+            <Label style="-fx-font-size: 20px; -fx-text-fill: #94a3b8; -fx-font-weight: bold;"
+                   text="Interface en cours de développement"/>
+        </VBox>
+
+        <!-- ══ VIEW AI PACK GENERATOR ══ -->
+        <ScrollPane fx:id="viewAiPacks" fitToWidth="true" styleClass="main-scroll-pane"
+                    visible="false">
+            <VBox spacing="20" styleClass="content-area">
+
+                <!-- Header -->
+                <HBox alignment="CENTER_LEFT" spacing="15">
+                    <VBox spacing="3">
+                        <Label styleClass="header-label" text="🤖 AI Smart Pack Generator"/>
+                        <Label styleClass="header-subtitle"
+                               text="Détection automatique de packs basée sur les co-réservations des utilisateurs"/>
+                    </VBox>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button fx:id="btnAnalyse" onAction="#handleAnalyse"
+                            text="🔍 Lancer l'analyse IA"
+                            style="-fx-background-color: #7C3AED; -fx-text-fill: white;
+                                   -fx-font-weight: 700; -fx-font-size: 13px;
+                                   -fx-padding: 10 20; -fx-background-radius: 20; -fx-cursor: hand;
+                                   -fx-effect: dropshadow(gaussian, rgba(124,58,237,0.35), 8, 0, 0, 3);"/>
+                </HBox>
+
+                <!-- AI Stats cards -->
+                <HBox spacing="15">
+                    <HBox alignment="CENTER_LEFT" spacing="15" HBox.hgrow="ALWAYS"
+                          style="-fx-background-color: white; -fx-background-radius: 14;
+                                 -fx-padding: 18 22; -fx-border-color: #E9D8FD;
+                                 -fx-border-radius: 14; -fx-border-width: 1;
+                                 -fx-effect: dropshadow(gaussian, rgba(124,58,237,0.1), 10, 0, 0, 3);">
+                        <Label style="-fx-font-size: 24px;" text="🤖"/>
+                        <VBox>
+                            <Label style="-fx-font-size: 11px; -fx-text-fill: #94A3B8; -fx-font-weight: 700;"
+                                   text="Total Packs (dont IA)"/>
+                            <Label fx:id="statAiTotal"
+                                   style="-fx-font-size: 26px; -fx-font-weight: 900; -fx-text-fill: #7C3AED;"
+                                   text="0"/>
+                        </VBox>
+                    </HBox>
+                    <HBox alignment="CENTER_LEFT" spacing="15" HBox.hgrow="ALWAYS"
+                          style="-fx-background-color: white; -fx-background-radius: 14;
+                                 -fx-padding: 18 22; -fx-border-color: #D1FAE5;
+                                 -fx-border-radius: 14; -fx-border-width: 1;
+                                 -fx-effect: dropshadow(gaussian, rgba(16,185,129,0.1), 10, 0, 0, 3);">
+                        <Label style="-fx-font-size: 24px;" text="✅"/>
+                        <VBox>
+                            <Label style="-fx-font-size: 11px; -fx-text-fill: #94A3B8; -fx-font-weight: 700;"
+                                   text="Packs Actifs"/>
+                            <Label fx:id="statAiActive"
+                                   style="-fx-font-size: 26px; -fx-font-weight: 900; -fx-text-fill: #1ABC9C;"
+                                   text="0"/>
+                        </VBox>
+                    </HBox>
+                    <HBox alignment="CENTER_LEFT" spacing="15" HBox.hgrow="ALWAYS"
+                          style="-fx-background-color: white; -fx-background-radius: 14;
+                                 -fx-padding: 18 22; -fx-border-color: #FEF3C7;
+                                 -fx-border-radius: 14; -fx-border-width: 1;
+                                 -fx-effect: dropshadow(gaussian, rgba(243,156,18,0.1), 10, 0, 0, 3);">
+                        <Label style="-fx-font-size: 24px;" text="✨"/>
+                        <VBox>
+                            <Label style="-fx-font-size: 11px; -fx-text-fill: #94A3B8; -fx-font-weight: 700;"
+                                   text="Algorithme"/>
+                            <Label style="-fx-font-size: 13px; -fx-font-weight: 800; -fx-text-fill: #F39C12;"
+                                   text="Co-Réservation IA"/>
+                        </VBox>
+                    </HBox>
+                </HBox>
+
+                <!-- Status label -->
+                <HBox alignment="CENTER_LEFT" spacing="10"
+                      style="-fx-background-color: #F5F3FF; -fx-padding: 12 16;
+                             -fx-background-radius: 10; -fx-border-color: #DDD6FE;
+                             -fx-border-radius: 10; -fx-border-width: 1;">
+                    <Label text="💡" style="-fx-font-size: 14px;"/>
+                    <Label fx:id="aiStatusLabel"
+                           text="Cliquez sur « Lancer l'analyse IA » pour détecter les packs suggérés."
+                           style="-fx-font-size: 12px; -fx-text-fill: #7C3AED; -fx-font-weight: 600;"/>
+                </HBox>
+
+                <!-- Suggestions grid -->
+                <VBox spacing="12">
+                    <Label text="🃏 Suggestions de packs générées"
+                           style="-fx-font-size: 15px; -fx-font-weight: 800; -fx-text-fill: #2C3E50;"/>
+                    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
+                                style="-fx-background-color: transparent; -fx-background: transparent;
+                                       -fx-border-width: 0;" prefHeight="500">
+                        <GridPane fx:id="aiPacksGrid" hgap="18" vgap="18"/>
+                    </ScrollPane>
+                </VBox>
+
+            </VBox>
+        </ScrollPane>
+
+    </StackPane>
+</AnchorPane>

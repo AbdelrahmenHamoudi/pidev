@@ -1,9 +1,8 @@
 package org.example.Services.user;
 
-
+import org.example.Services.user.APIservices.EmailService;
 import org.example.Entites.user.EmailVerificationToken;
 import org.example.Entites.user.User;
-import org.example.Services.user.APIservices.EmailService;
 import org.example.Utils.MyBD;
 
 import java.sql.*;
@@ -19,12 +18,12 @@ public class EmailVerificationService {
     }
 
     /**
-     * Crée un token de vérification et envoie l'email
+     * Crée un token de vérification, envoie l'email et RETOURNE le code
      */
-    public boolean sendVerificationEmail(int userId) {
+    public String sendVerificationEmail(int userId) {
         try {
             User user = userCRUD.getUserById(userId);
-            if (user == null) return false;
+            if (user == null) return null;
 
             String code = EmailService.generateVerificationCode();
 
@@ -42,11 +41,14 @@ public class EmailVerificationService {
             }
 
             // Envoyer l'email
-            return EmailService.sendVerificationEmail(user.getE_mail(), user.getPrenom(), code);
+            EmailService.sendVerificationEmail(user.getE_mail(), user.getPrenom(), code);
+
+            // ✅ RETOURNER LE CODE
+            return code;
 
         } catch (SQLException e) {
             System.err.println("❌ Erreur envoi vérification email: " + e.getMessage());
-            return false;
+            return null;
         }
     }
 

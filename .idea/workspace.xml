@@ -5,83 +5,71 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="431c9e6b-677b-4bff-865a-a0c0bece7cc1" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/copilot.data.migration.ask2agent.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Controllers/hebergement/back/HebergementController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Controllers/hebergement/front/ReservationController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Controllers/user/ForgotPasswordController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Controllers/user/LoginController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Controllers/user/SignUpController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Controllers/user/admin/AdminLogsController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Controllers/user/admin/AdminNotificationsController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Controllers/user/admin/adminDashboardController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Controllers/user/admin/user/AdminUsersController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Controllers/user/admin/user/EmailVerificationController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Controllers/user/client/UserProfileController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Controllers/user/client/homeClientController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Controllers/user/customUserException.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Entites/user/AdminActionLog.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Entites/user/AdminNotification.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Entites/user/ConnexionLog.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Entites/user/EmailVerificationToken.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Entites/user/Status.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Entites/user/UserStats.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/GUI/HomePage.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Services/hebergement/ReservationCRUD.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Services/user/APIservices/EmailService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Services/user/APIservices/JWTService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Services/user/AdminActionLogService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Services/user/AdminNotificationService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Services/user/ConnexionLogService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Services/user/EmailVerificationService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Services/user/LoyaltyService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Services/user/UserCRUD.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Tests/TestUpdatePasswordParam.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Utils/UserSession.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/hebergement/back/HebergementBack.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/hebergement/back/StyleHB.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/hebergement/back/image/logo.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/hebergement/front/Reservation.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/hebergement/front/StyleRSV.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/hebergement/front/image/logo.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/hebergement/front/image/rehla.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/user/back/adminLogs.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/user/back/adminNotifications.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/user/back/users.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/user/back/users.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/user/dashboard/adminDashboard.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/user/dashboard/adminDashboard.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/user/dashboard/homeClient.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/user/dashboard/homeClient.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/user/front/userProfil.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/user/front/userProfil.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/user/image/logo.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/user/login/forgotPassword.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/user/login/login.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/user/login/login.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/user/signup/signup.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/user/signup/signup.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/Services/hebergement/HebergementCRUDTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/Services/hebergement/ReservationCRUDTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/Services/user/UserCRUDTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/Re7la_User.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Controllers/hebergement/back/AnalyseConcurrentielleController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Controllers/hebergement/back/RapportIAController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Controllers/hebergement/front/MesReservationsController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Controllers/hebergement/front/NearbyPlacesController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Controllers/hebergement/front/WeatherController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Controllers/user/AlphabetCaptchaController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Controllers/user/FaceLoginController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Controllers/user/LocationController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Entites/activite/ReservationDetail.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Entites/hebergement/Notification.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Entites/user/LocationInfo.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Entites/user/User2FA.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Services/hebergement/AnalyseConcurrentielleService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Services/hebergement/GeminiReportService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Services/hebergement/NotificationCRUD.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Services/user/APIservices/GeolocationService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Services/user/APIservices/SmsService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Services/user/APIservices/TwoFAService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Services/user/facelogin/FaceApiClient.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Services/user/facelogin/ImageBase64.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Utils/LanguageManager.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/hebergement/back/Analyseconcurrentielle.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/hebergement/back/Rapportia.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/hebergement/back/StyleAnalyse.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/hebergement/back/Stylerapportia.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/hebergement/front/Mesreservations.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/hebergement/front/NearbyPlacesDialog.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/hebergement/front/StyleMesRes.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/hebergement/front/StyleNearby.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/hebergement/front/StyleWeather.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/hebergement/front/Weatherdialog.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/twilio.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/user/login/FaceLogin.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Re7la_Trajet" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Entites/Hebergement.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Entites/hebergement/Hebergement.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Entites/Reservation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Entites/hebergement/Reservation.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Entites/Role.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Entites/user/Role.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Entites/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Entites/user/User.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Services/CRUDuser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Services/user/CRUDuser.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Services/HebergementCRUD.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Services/hebergement/HebergementCRUD.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Services/ReservationCRUD.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Services/UserCRUD.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Tests/MainConnection.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Utils/MyBD.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Utils/MyBD.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Controllers/hebergement/back/HebergementController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Controllers/hebergement/back/HebergementController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Controllers/hebergement/front/ReservationController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Controllers/hebergement/front/ReservationController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Controllers/user/LoginController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Controllers/user/LoginController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Controllers/user/SignUpController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Controllers/user/SignUpController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Controllers/user/admin/AdminLogsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Controllers/user/admin/AdminLogsController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Controllers/user/admin/AdminNotificationsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Controllers/user/admin/AdminNotificationsController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Controllers/user/admin/user/AdminUsersController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Controllers/user/admin/user/AdminUsersController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Controllers/user/admin/user/EmailVerificationController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Controllers/user/admin/user/EmailVerificationController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Controllers/user/client/UserProfileController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Controllers/user/client/UserProfileController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Controllers/user/client/homeClientController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Controllers/user/client/homeClientController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Entites/user/ConnexionLog.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Entites/user/ConnexionLog.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Services/hebergement/HebergementCRUD.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Services/hebergement/HebergementCRUD.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Services/hebergement/ReservationCRUD.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Services/hebergement/ReservationCRUD.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Services/user/ConnexionLogService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Services/user/ConnexionLogService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Services/user/EmailVerificationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Services/user/EmailVerificationService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Services/user/UserCRUD.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Services/user/UserCRUD.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Utils/Query.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Utils/Query.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/hebergement/back/HebergementBack.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/hebergement/back/HebergementBack.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/hebergement/back/StyleHB.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/hebergement/back/StyleHB.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/hebergement/front/Reservation.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/hebergement/front/Reservation.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/hebergement/front/StyleRSV.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/hebergement/front/StyleRSV.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/user/back/adminLogs.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/user/back/adminLogs.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/user/back/users.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/user/back/users.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/user/back/users.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/user/back/users.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/user/dashboard/homeClient.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/user/dashboard/homeClient.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/user/front/userProfil.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/user/front/userProfil.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/user/front/userProfil.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/user/front/userProfil.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/user/login/login.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/user/login/login.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/user/signup/signup.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/user/signup/signup.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -94,12 +82,13 @@
     </persistenceIdMap>
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="74" />
+    <option name="cachedIndexableFilesCount" value="247" />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="JUnit5 Test Class" />
+        <option value="CSS File" />
         <option value="FxmlFile" />
         <option value="Class" />
       </list>
@@ -124,35 +113,36 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Maven.Re7la_User [org.openjfx:javafx-maven-plugin:0.0.8:run].executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.MCP Project settings loaded": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit5",
-    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5": "",
-    "git-widget-placeholder": "Merging integration",
-    "junie.onboarding.icon.badge.shown": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/Abderrahmen/Desktop/ggg/Integration/Re7la_User",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Project",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0",
-    "settings.editor.selected.configurable": "preferences.lookFeel",
-    "to.speed.mode.migration.done": "true",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Maven.Re7la_User [org.openjfx:javafx-maven-plugin:0.0.8:run].executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary&quot;: &quot;JUnit5&quot;,
+    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5&quot;: &quot;&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;integration&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Abderrahmen/Desktop/ggg/Integration/Re7la_User&quot;,
+    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CreateTestDialog.Recents.Supers">
       <recent name="" />
@@ -186,11 +176,57 @@
       <workItem from="1771543101950" duration="4731000" />
       <workItem from="1771687120864" duration="1963000" />
       <workItem from="1771696491313" duration="3453000" />
+      <workItem from="1771700560373" duration="10000" />
+      <workItem from="1771700815259" duration="1429000" />
+      <workItem from="1771800374598" duration="1469000" />
+      <workItem from="1771875125487" duration="1926000" />
+      <workItem from="1771877118488" duration="8592000" />
+      <workItem from="1771885788483" duration="1611000" />
+      <workItem from="1771896099842" duration="2711000" />
+      <workItem from="1771899082510" duration="176000" />
+      <workItem from="1771899268907" duration="8000" />
+      <workItem from="1771899741360" duration="116000" />
+      <workItem from="1771933432646" duration="2129000" />
+      <workItem from="1772135371638" duration="4863000" />
+      <workItem from="1772143998982" duration="3037000" />
+      <workItem from="1772225882418" duration="10750000" />
+      <workItem from="1772311869072" duration="10998000" />
+      <workItem from="1772399064703" duration="3274000" />
+      <workItem from="1772402496435" duration="627000" />
+      <workItem from="1772403254656" duration="81000" />
+      <workItem from="1772422435448" duration="11142000" />
+      <workItem from="1772433903440" duration="1017000" />
+      <workItem from="1772480631344" duration="10972000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/example/GUI/HomePage.java</url>
+          <line>27</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/example/Controllers/user/client/UserProfileController.java</url>
+          <line>834</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/example/Controllers/hebergement/back/HebergementController.java</url>
+          <line>953</line>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+        <breakpoint enabled="true" type="java-exception">
+          <properties class="java.sql.SQLException" package="java.sql" />
+          <option name="timeStamp" value="3" />
+        </breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
   <component name="github-copilot-workspace">
     <instructionFileLocations>
