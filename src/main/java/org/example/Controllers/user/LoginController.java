@@ -469,10 +469,13 @@ public class LoginController implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/user/login/FaceLogin.fxml"));
             Parent root = loader.load();
 
-            Stage stage = new Stage();
-            stage.setTitle("Face ID");
+// ✅ Get the current stage (the one currently showing)
+            Stage stage = (Stage) emailField.getScene().getWindow();
+
+// ✅ Replace the scene (old window is replaced)
             stage.setScene(new Scene(root));
-            stage.initOwner(emailField.getScene().getWindow()); // optionnel
+            stage.setTitle("Face ID");
+            stage.centerOnScreen();
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();

@@ -184,28 +184,52 @@ public class UserProfileController implements Initializable {
             updateTwoFAStatus();
         }
     }
+
     @FXML
     private void handleFaceId(ActionEvent event) {
-        // JWT check (comme tes autres actions)
+        // 1. JWT guard
         if (!UserSession.getInstance().isTokenValid()) {
             showAlert("Session expirée", "Veuillez vous reconnecter", Alert.AlertType.WARNING);
             redirectToLogin();
             return;
         }
 
+        // 2. Check that the Face-ID server is reachable before opening the camera
+        org.example.Services.user.facelogin.FaceIdService probe =
+                new org.example.Services.user.facelogin.FaceIdService();
+        if (!probe.isServerRunning()) {
+            showAlert("Serveur indisponible",
+                    "Le serveur Face ID n'est pas accessible (http://127.0.0.1:5000).\n"
+                            + "Démarrez le serveur Python puis réessayez.",
+                    Alert.AlertType.WARNING);
+            return;
+        }
+
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/user/login/FaceLogin.fxml"));
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/user/login/FaceLoginActivate.fxml"));
             Parent root = loader.load();
 
+            // ── KEY INTEGRATION POINT ──────────────────────────────────────
+            // Pass the current user so the controller knows whose face to save.
+            org.example.Controllers.user.FaceLoginController faceCtrl = loader.getController();
+            faceCtrl.initForEnroll(currentUser);   // switches mode to ENROLL
+            // ──────────────────────────────────────────────────────────────
+
             Stage stage = new Stage();
-            stage.setTitle("Face ID");
+            stage.setTitle("Face ID – Enregistrement");
             stage.setScene(new Scene(root));
             stage.initOwner(((Node) event.getSource()).getScene().getWindow());
+
+            // Clean up camera when the window is closed
+            stage.setOnCloseRequest(e -> faceCtrl.shutdown());
+
             stage.show();
 
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert("Erreur", "Impossible d'ouvrir Face ID: " + e.getMessage(), Alert.AlertType.ERROR);
+            showAlert("Erreur", "Impossible d'ouvrir Face ID : " + e.getMessage(),
+                    Alert.AlertType.ERROR);
         }
     }
     private void updateTwoFAStatus() {

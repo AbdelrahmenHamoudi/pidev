@@ -35,8 +35,7 @@
 
                 <HBox spacing="10" alignment="CENTER">
                     <!-- Enroll: seulement si l'utilisateur est déjà connecté (via session) -->
-                    <Button text="ACTIVER FACE ID" onAction="#onEnrollFromSession" prefHeight="50" prefWidth="200" styleClass="tunisia-login-btn"/>
-                    <Button text="LOGIN" onAction="#onLogin" prefHeight="50" prefWidth="120" styleClass="tunisia-login-btn"/>
+                    <Button fx:id="captureBtn" text="LOGIN" onAction="#onLogin" prefHeight="50" prefWidth="120" styleClass="tunisia-login-btn"/>
                 </HBox>
 
                 <Label fx:id="statusLabel" styleClass="tunisia-signup-text" text="Status..." wrapText="true" maxWidth="380"/>
