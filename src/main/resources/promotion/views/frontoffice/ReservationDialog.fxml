@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.example.Controllers.promotion.frontoffice.ReservationDialogController"
+      spacing="0"
+      style="-fx-background-color: white;"
+      maxHeight="760">
+
+    <!-- ══ FIXED HEADER ══ -->
+    <HBox alignment="CENTER_LEFT" spacing="12"
+          style="-fx-background-color: #2C3E50; -fx-padding: 18 22;">
+        <Text text="🎁" style="-fx-font-size: 26px;"/>
+        <VBox spacing="2">
+            <Text text="Réserver une Promotion"
+                  style="-fx-font-size: 17px; -fx-font-weight: bold; -fx-fill: white;"/>
+            <Text fx:id="txtNomPromo" text=""
+                  style="-fx-font-size: 12px; -fx-fill: #F7DC6F;"/>
+        </VBox>
+    </HBox>
+
+    <!-- ══ SCROLLABLE CONTENT ══ -->
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
+                style="-fx-background-color: white; -fx-background: white; -fx-border-color: transparent;"
+                hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
+        <VBox spacing="14" style="-fx-padding: 20 22 10 22; -fx-background-color: white;">
+
+            <!-- INFOS PROMOTION -->
+            <VBox spacing="8" style="-fx-background-color: #F9FAFB; -fx-padding: 14;
+                                      -fx-background-radius: 10; -fx-border-color: #E2E8F0;
+                                      -fx-border-radius: 10; -fx-border-width: 1;">
+                <Text text="📋 Détails de la promotion"
+                      style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-fill: #2C3E50;"/>
+                <HBox spacing="20">
+                    <VBox spacing="3" HBox.hgrow="ALWAYS">
+                        <Text text="Période valable" style="-fx-font-size: 11px; -fx-fill: #64748B;"/>
+                        <Text fx:id="txtPeriodePromo" text=""
+                              style="-fx-font-size: 12px; -fx-fill: #2C3E50; -fx-font-weight: bold;"/>
+                    </VBox>
+                    <VBox spacing="3" HBox.hgrow="ALWAYS">
+                        <Text text="Réduction" style="-fx-font-size: 11px; -fx-fill: #64748B;"/>
+                        <Text fx:id="txtReduction" text=""
+                              style="-fx-font-size: 13px; -fx-fill: #F39C12; -fx-font-weight: bold;"/>
+                    </VBox>
+                </HBox>
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <Text text="💰 Prix de base :" style="-fx-font-size: 11px; -fx-fill: #64748B;"/>
+                    <Text fx:id="txtPrixBase" text="—"
+                          style="-fx-font-size: 12px; -fx-fill: #1ABC9C; -fx-font-weight: bold;"/>
+                </HBox>
+            </VBox>
+
+            <!-- PACK INFO BOX -->
+            <VBox fx:id="packInfoBox" spacing="6"
+                  style="-fx-background-color: #FFF9F0; -fx-padding: 12; -fx-background-radius: 10;
+                         -fx-border-color: #F39C12; -fx-border-radius: 10; -fx-border-width: 1;"
+                  visible="false" managed="false">
+                <Text text="📦 Offres incluses dans ce pack"
+                      style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-fill: #2C3E50;"/>
+            </VBox>
+
+            <!-- NB PERSONNES -->
+            <HBox fx:id="rowPersonnes" spacing="12" alignment="CENTER_LEFT"
+                  style="-fx-background-color: #F0FFF4; -fx-padding: 12; -fx-background-radius: 10;"
+                  visible="false" managed="false">
+                <Text text="👥 Nombre de personnes :"
+                      style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-fill: #2C3E50;"/>
+                <Spinner fx:id="spinnerPersonnes" prefWidth="90" editable="true"/>
+                <Text text="(Prix par personne depuis l'activité)"
+                      style="-fx-font-size: 10px; -fx-fill: #64748B;"/>
+            </HBox>
+
+            <!-- DISTANCE KM -->
+            <HBox fx:id="rowDistance" spacing="12" alignment="CENTER_LEFT"
+                  style="-fx-background-color: #EBF8FF; -fx-padding: 12; -fx-background-radius: 10;"
+                  visible="false" managed="false">
+                <Text text="🚗 Distance (km) :"
+                      style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-fill: #2C3E50;"/>
+                <TextField fx:id="txtDistanceKm" promptText="Ex: 150" prefWidth="95"
+                           style="-fx-font-size: 13px; -fx-padding: 7 10; -fx-background-radius: 8;
+                                  -fx-border-color: #CBD5E0; -fx-border-radius: 8;"/>
+                <Text text="(Prix/km depuis la voiture)"
+                      style="-fx-font-size: 10px; -fx-fill: #64748B;"/>
+            </HBox>
+
+            <!-- TARIFICATION -->
+            <VBox spacing="10" style="-fx-background-color: #FFF9F0; -fx-padding: 14;
+                                       -fx-background-radius: 10; -fx-border-color: #F7DC6F;
+                                       -fx-border-radius: 10; -fx-border-width: 1;">
+                <Text text="💰 Tarification"
+                      style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-fill: #2C3E50;"/>
+                <GridPane hgap="15" vgap="8">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="50"/>
+                        <ColumnConstraints percentWidth="50"/>
+                    </columnConstraints>
+                    <VBox spacing="3" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                        <Text text="Prix original" style="-fx-font-size: 11px; -fx-fill: #64748B;"/>
+                        <Text fx:id="txtPrixOriginal" text="0.00 TND"
+                              style="-fx-font-size: 13px; -fx-fill: #2C3E50;"/>
+                    </VBox>
+                    <VBox spacing="3" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <Text text="Réduction appliquée" style="-fx-font-size: 11px; -fx-fill: #64748B;"/>
+                        <Text fx:id="txtReductionMontant" text="-0.00 TND"
+                              style="-fx-font-size: 13px; -fx-fill: #E67E22;"/>
+                    </VBox>
+                </GridPane>
+                <Separator/>
+                <HBox spacing="10" alignment="CENTER">
+                    <Text text="Prix final :"
+                          style="-fx-font-size: 14px; -fx-fill: #2C3E50; -fx-font-weight: bold;"/>
+                    <Text fx:id="txtPrixFinal" text="0.00 TND"
+                          style="-fx-font-size: 20px; -fx-fill: #1ABC9C; -fx-font-weight: bold;"/>
+                    <Text text="✅" style="-fx-font-size: 18px;"/>
+                </HBox>
+            </VBox>
+
+            <!-- SÉLECTION DATES -->
+            <VBox spacing="10">
+                <Text text="📅 Votre période de réservation"
+                      style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-fill: #2C3E50;"/>
+                <GridPane hgap="15" vgap="8">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="50"/>
+                        <ColumnConstraints percentWidth="50"/>
+                    </columnConstraints>
+                    <VBox spacing="4" GridPane.columnIndex="0">
+                        <Text text="Date début *" style="-fx-font-size: 11px; -fx-fill: #64748B;"/>
+                        <DatePicker fx:id="dateDebutPicker" promptText="Sélectionnez..."
+                                    prefWidth="190" styleClass="text-field"/>
+                    </VBox>
+                    <VBox spacing="4" GridPane.columnIndex="1">
+                        <Text text="Date fin *" style="-fx-font-size: 11px; -fx-fill: #64748B;"/>
+                        <DatePicker fx:id="dateFinPicker" promptText="Sélectionnez..."
+                                    prefWidth="190" styleClass="text-field"/>
+                    </VBox>
+                </GridPane>
+                <HBox spacing="8" alignment="CENTER_LEFT"
+                      style="-fx-background-color: #FEF2F2; -fx-padding: 10; -fx-background-radius: 8;">
+                    <Text text="⚠️" style="-fx-font-size: 14px;"/>
+                    <Text fx:id="txtAvertissement"
+                          text="La période doit être comprise entre les dates de la promotion"
+                          style="-fx-font-size: 11px; -fx-fill: #E53E3E; -fx-wrapping-width: 350;"/>
+                </HBox>
+            </VBox>
+
+        </VBox>
+    </ScrollPane>
+
+    <!-- ══ FIXED FOOTER BUTTONS ══ -->
+    <HBox spacing="10" alignment="CENTER_RIGHT"
+          style="-fx-padding: 14 22; -fx-background-color: white;
+                 -fx-border-color: #E2E8F0; -fx-border-width: 1 0 0 0;">
+        <Button text="Annuler" onAction="#handleCancel"
+                style="-fx-background-color: #E2E8F0; -fx-text-fill: #2C3E50;
+                       -fx-font-weight: bold; -fx-padding: 11 24; -fx-background-radius: 8;
+                       -fx-cursor: hand;" prefWidth="120"/>
+        <Button fx:id="btnConfirmer" text="✅ Confirmer" onAction="#handleConfirmer"
+                style="-fx-background-color: #1ABC9C; -fx-text-fill: white;
+                       -fx-font-weight: bold; -fx-padding: 11 24; -fx-background-radius: 8;
+                       -fx-cursor: hand;" prefWidth="140"/>
+    </HBox>
+
+</VBox>

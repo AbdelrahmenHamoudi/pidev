@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
+
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+
+<BorderPane prefHeight="700.0" prefWidth="1100.0" stylesheets="@users.css"
+            xmlns="http://javafx.com/javafx/22"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.Controllers.user.admin.AdminLogsController">
+
+    <!-- TOP BAR -->
+    <top>
+        <VBox styleClass="nav-container">
+            <HBox alignment="CENTER_LEFT" spacing="30" styleClass="nav-bar">
+                <padding>
+                    <Insets top="15" right="40" bottom="15" left="40" />
+                </padding>
+
+                <HBox alignment="CENTER" spacing="12" styleClass="nav-logo">
+                    <StackPane styleClass="nav-logo-bg">
+                        <Circle radius="25" styleClass="nav-logo-circle" />
+                        <ImageView fitHeight="35" fitWidth="35">
+                            <Image url="@../image/logo.png" />
+                        </ImageView>
+                    </StackPane>
+                    <Label styleClass="nav-logo-text" text="RE7LA Admin" />
+                </HBox>
+
+                <Label styleClass="page-title" text="Logs de sécurité" />
+
+                <Region HBox.hgrow="ALWAYS" />
+
+                <HBox spacing="10">
+                    <Button onAction="#refreshStats" styleClass="secondary-button" text="🔄 Actualiser" />
+                    <Button styleClass="btn-home" text="← Retour au dashboard" onAction="#handleBack" />
+                </HBox>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- CENTER -->
+    <center>
+        <ScrollPane fitToWidth="true" styleClass="main-scroll-pane">
+            <VBox spacing="25" styleClass="content-area">
+                <padding>
+                    <Insets top="30" right="30" bottom="30" left="30" />
+                </padding>
+
+                <!-- STATS CARDS PRINCIPALES -->
+                <HBox spacing="20" alignment="CENTER">
+                    <VBox styleClass="stat-card-users" prefWidth="200" prefHeight="100">
+                        <Label styleClass="stat-title" text="Connexions aujourd'hui" />
+                        <Label fx:id="todayConnexionsLabel" styleClass="stat-value" text="0" />
+                    </VBox>
+
+                    <VBox styleClass="stat-card-admins" prefWidth="200" prefHeight="100">
+                        <Label styleClass="stat-title" text="Taux de succès" />
+                        <Label fx:id="successRateLabel" styleClass="stat-value" text="0%" />
+                    </VBox>
+
+                    <VBox styleClass="stat-card-users-standard" prefWidth="200" prefHeight="100">
+                        <Label styleClass="stat-title" text="Actions admin" />
+                        <Label fx:id="actionsCountLabel" styleClass="stat-value" text="0" />
+                    </VBox>
+                </HBox>
+
+                <!-- STATISTIQUES DE LOCALISATION -->
+                <HBox spacing="20" alignment="CENTER">
+                    <VBox styleClass="card" prefWidth="320" prefHeight="300" spacing="10">
+                        <Label styleClass="card-title" text="🌍 Connexions par pays" />
+                        <PieChart fx:id="countryPieChart" prefHeight="220" prefWidth="300"
+                                  style="-fx-background-color: transparent;"
+                                  animated="true" legendVisible="true"
+                                  labelsVisible="true" />
+                        <HBox spacing="20" alignment="CENTER">
+                            <VBox alignment="CENTER">
+                                <Label styleClass="stat-title" text="Pays le plus actif" />
+                                <Label fx:id="topCountryLabel" styleClass="stat-value-small" text="-" />
+                            </VBox>
+                            <VBox alignment="CENTER">
+                                <Label styleClass="stat-title" text="Pays uniques" />
+                                <Label fx:id="uniqueCountriesLabel" styleClass="stat-value-small" text="0" />
+                            </VBox>
+                        </HBox>
+                    </VBox>
+
+                    <VBox styleClass="card" prefWidth="320" prefHeight="300" spacing="10">
+                        <Label styleClass="card-title" text="📍 Top villes" />
+                        <ListView fx:id="cityListView" prefHeight="220" prefWidth="300"
+                                  styleClass="location-list" />
+                        <Label styleClass="stat-title" text="Villes les plus actives" />
+                    </VBox>
+                </HBox>
+
+                <!-- TABS -->
+                <TabPane styleClass="profile-tab-pane" tabClosingPolicy="UNAVAILABLE">
+
+                    <!-- TAB 1: LOGS DE CONNEXION -->
+                    <Tab text="🔐 Connexions">
+                        <VBox spacing="20" styleClass="tab-content">
+                            <padding>
+                                <Insets top="20" bottom="20" left="20" right="20" />
+                            </padding>
+
+                            <HBox alignment="CENTER_LEFT" spacing="15">
+                                <Label styleClass="filter-label" text="Filtrer :" />
+                                <ComboBox fx:id="userFilterCombo" promptText="Tous les utilisateurs" styleClass="filter-combo" prefWidth="200" />
+                                <DatePicker fx:id="dateFilterPicker" promptText="Date" styleClass="filter-combo" />
+                                <Button styleClass="secondary-button" text="Réinitialiser" onAction="#resetConnexionFilters" />
+                                <Region HBox.hgrow="ALWAYS" />
+                                <Label fx:id="totalLogsLabel" styleClass="history-count" text="0 connexions" />
+                            </HBox>
+
+                            <TableView fx:id="connexionTable" prefHeight="400">
+                                <columns>
+                                    <TableColumn fx:id="colLogId" prefWidth="50" text="ID" />
+                                    <TableColumn fx:id="colLogUser" prefWidth="120" text="Utilisateur" />
+                                    <TableColumn fx:id="colLogTime" prefWidth="150" text="Date/heure" />
+                                    <TableColumn fx:id="colLogIp" prefWidth="120" text="IP" />
+                                    <TableColumn fx:id="colLogDevice" prefWidth="200" text="Appareil" />
+                                    <TableColumn fx:id="colLogStatus" prefWidth="80" text="Statut" />
+                                    <TableColumn fx:id="colLogDuration" prefWidth="100" text="Durée" />
+                                    <!-- NOUVELLES COLONNES DE LOCALISATION -->
+                                    <TableColumn fx:id="colLogCountry" prefWidth="100" text="Pays" />
+                                    <TableColumn fx:id="colLogCity" prefWidth="100" text="Ville" />
+                                </columns>
+                            </TableView>
+                        </VBox>
+                    </Tab>
+
+                    <!-- TAB 2: ACTIONS ADMIN -->
+                    <Tab text="📋 Actions admin">
+                        <VBox spacing="20" styleClass="tab-content">
+                            <padding>
+                                <Insets top="20" bottom="20" left="20" right="20" />
+                            </padding>
+
+                            <HBox alignment="CENTER_LEFT" spacing="15">
+                                <Label styleClass="filter-label" text="Type :" />
+                                <ComboBox fx:id="actionTypeCombo" promptText="Toutes les actions" styleClass="filter-combo" prefWidth="150" />
+                                <ComboBox fx:id="adminFilterCombo" promptText="Tous les admins" styleClass="filter-combo" prefWidth="150" />
+                                <Button styleClass="secondary-button" text="Réinitialiser" onAction="#resetActionFilters" />
+                            </HBox>
+
+                            <TableView fx:id="actionTable" prefHeight="450">
+                                <columns>
+                                    <TableColumn fx:id="colActionId" prefWidth="50" text="ID" />
+                                    <TableColumn fx:id="colActionAdmin" prefWidth="120" text="Admin" />
+                                    <TableColumn fx:id="colActionType" prefWidth="100" text="Action" />
+                                    <TableColumn fx:id="colActionTarget" prefWidth="120" text="Cible" />
+                                    <TableColumn fx:id="colActionDesc" prefWidth="200" text="Description" />
+                                    <TableColumn fx:id="colActionTime" prefWidth="150" text="Date/heure" />
+                                    <TableColumn fx:id="colActionIp" prefWidth="120" text="IP" />
+                                </columns>
+                            </TableView>
+                        </VBox>
+                    </Tab>
+                </TabPane>
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>

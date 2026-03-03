@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
+
+<BorderPane prefHeight="560" prefWidth="700" stylesheets="@login.css"
+            xmlns="http://javafx.com/javafx/22"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.Controllers.user.FaceLoginController">
+
+    <center>
+        <StackPane styleClass="form-tunisia-wrapper">
+            <Region styleClass="form-bg-orange" />
+            <Region styleClass="form-bg-turquoise" />
+
+            <VBox alignment="CENTER" maxWidth="420" spacing="18" styleClass="tunisia-card">
+
+                <VBox alignment="CENTER" spacing="8">
+                    <StackPane styleClass="tunisia-welcome-icon">
+                        <Circle radius="32" styleClass="tunisia-welcome-circle" />
+                        <Circle radius="28" styleClass="tunisia-welcome-circle-inner" />
+                        <Label styleClass="tunisia-welcome-emoji" text="📷" />
+                    </StackPane>
+                    <VBox alignment="CENTER" spacing="2">
+                        <Label styleClass="tunisia-welcome-title" text="Face ID" />
+                        <Label styleClass="tunisia-form-title" text="Connexion" />
+                    </VBox>
+                    <Region styleClass="tunisia-title-decoration" />
+                </VBox>
+
+                <ImageView fx:id="cameraView" fitWidth="420" fitHeight="320" preserveRatio="true"
+                           style="-fx-border-color: rgba(26,188,156,0.35); -fx-border-width: 2; -fx-background-radius: 20; -fx-border-radius: 20;" />
+
+                <HBox spacing="10" alignment="CENTER">
+                    <!-- Enroll: seulement si l'utilisateur est déjà connecté (via session) -->
+                    <Button fx:id="captureBtn" text="LOGIN" onAction="#onLogin" prefHeight="50" prefWidth="120" styleClass="tunisia-login-btn"/>
+                </HBox>
+
+                <Label fx:id="statusLabel" styleClass="tunisia-signup-text" text="Status..." wrapText="true" maxWidth="380"/>
+
+            </VBox>
+        </StackPane>
+    </center>
+
+</BorderPane>

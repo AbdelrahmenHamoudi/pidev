@@ -1,0 +1,477 @@
+/* ============================================================ */
+/* RE7LA TUNISIE - PAGE DE PROFIL UTILISATEUR SIMPLIFIÉE      */
+/* Actions: Modifier compte | Supprimer compte | Déconnexion   */
+/* ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+.root {
+    -fx-font-family: 'Poppins', 'Segoe UI', sans-serif;
+    -fx-background-color: #FEF9F0;
+}
+
+/* ========== SCROLLPANE ========== */
+.content-scroll {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-border-width: 0;
+}
+
+.content-scroll > .viewport {
+    -fx-background-color: transparent;
+}
+
+.content-scroll .scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-pref-width: 12;
+}
+
+.content-scroll .scroll-bar:vertical .thumb {
+    -fx-background-color: rgba(26,188,156,0.3);
+    -fx-background-radius: 10;
+}
+
+.content-scroll .scroll-bar:vertical .thumb:hover {
+    -fx-background-color: #F39C12;
+}
+
+/* ========== NAVIGATION ========== */
+.nav-container {
+    -fx-background-color: white;
+    -fx-effect: dropshadow(gaussian, rgba(44,62,80,0.08), 15, 0, 0, 5);
+}
+
+.nav-bar {
+    -fx-alignment: center-left;
+    -fx-background-color: white;
+}
+
+/* Logo */
+.nav-logo {
+    -fx-cursor: hand;
+    -fx-padding: 5 15;
+    -fx-background-radius: 30;
+}
+
+.nav-logo:hover {
+    -fx-background-color: rgba(26,188,156,0.05);
+}
+
+.nav-logo-circle {
+    -fx-fill: rgba(26,188,156,0.15);
+    -fx-stroke: #1ABC9C;
+    -fx-stroke-width: 1.5;
+}
+
+.nav-logo-text {
+    -fx-text-fill: #2C3E50;
+    -fx-font-size: 22px;
+    -fx-font-weight: 800;
+}
+
+.nav-logo-subtext {
+    -fx-text-fill: #1ABC9C;
+    -fx-font-size: 10px;
+    -fx-font-weight: 600;
+}
+
+.nav-logo-tunisia {
+    -fx-text-fill: #1ABC9C;
+    -fx-font-size: 24px;
+}
+
+.btn-home {
+    -fx-background-color: #1ABC9C;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-background-radius: 25;
+    -fx-padding: 8 20;
+    -fx-cursor: hand;
+}
+
+.btn-home:hover {
+    -fx-background-color: #16a085;
+}
+
+/* ========== HEADER PROFIL ========== */
+.profile-header {
+    -fx-background-color: white;
+    -fx-background-radius: 30;
+    -fx-padding: 30;
+    -fx-effect: dropshadow(gaussian, rgba(44,62,80,0.05), 15, 0, 0, 5);
+}
+
+.profile-photo-section {
+    -fx-background-color: #F8FAFC;
+    -fx-background-radius: 30;
+    -fx-padding: 20;
+}
+
+.profile-photo-container {
+    -fx-alignment: center;
+    -fx-position: relative;
+}
+
+.profile-photo-circle {
+    -fx-fill: linear-gradient(to bottom, #1ABC9C, #16a085);
+}
+
+.profile-photo-circle-inner {
+    -fx-fill: white;
+    -fx-stroke: #1ABC9C;
+    -fx-stroke-width: 2;
+}
+
+.profile-photo {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8, 0, 0, 2);
+    -fx-background-radius: 50;
+}
+
+.photo-edit-btn {
+    -fx-background-color: #F39C12;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-background-radius: 20;
+    -fx-pref-width: 30;
+    -fx-pref-height: 30;
+    -fx-cursor: hand;
+    -fx-translate-x: 40;
+    -fx-translate-y: -40;
+}
+
+.photo-edit-btn:hover {
+    -fx-background-color: #e67e22;
+}
+
+.photo-change-btn {
+    -fx-background-color: #3498DB;
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+    -fx-background-radius: 20;
+    -fx-padding: 8 15;
+    -fx-cursor: hand;
+}
+
+.photo-change-btn:hover {
+    -fx-background-color: #2980b9;
+}
+
+.photo-filename {
+    -fx-text-fill: #7F8C8D;
+    -fx-font-size: 11px;
+    -fx-font-style: italic;
+}
+
+.profile-name {
+    -fx-text-fill: #2C3E50;
+    -fx-font-size: 28px;
+    -fx-font-weight: 800;
+}
+
+.profile-email {
+    -fx-text-fill: #7F8C8D;
+    -fx-font-size: 16px;
+}
+
+.profile-points {
+    -fx-text-fill: #F39C12;
+    -fx-font-size: 18px;
+    -fx-font-weight: 700;
+    -fx-background-color: rgba(243,156,18,0.1);
+    -fx-background-radius: 20;
+    -fx-padding: 5 15;
+}
+
+/* ========== FORMULAIRE ========== */
+.form-card {
+    -fx-background-color: white;
+    -fx-background-radius: 30;
+    -fx-padding: 30;
+    -fx-effect: dropshadow(gaussian, rgba(44,62,80,0.05), 10, 0, 0, 3);
+}
+
+.form-title {
+    -fx-text-fill: #2C3E50;
+    -fx-font-size: 22px;
+    -fx-font-weight: 700;
+    -fx-border-width: 0 0 2 0;
+    -fx-border-color: #F7DC6F;
+    -fx-padding: 0 0 15 0;
+}
+
+.form-grid {
+    -fx-padding: 10 0;
+}
+
+.form-label {
+    -fx-text-fill: #2C3E50;
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+}
+
+.form-field {
+    -fx-background-color: #F9FAFB;
+    -fx-border-color: #E2E8F0;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+    -fx-padding: 10 15;
+    -fx-font-size: 14px;
+    -fx-pref-height: 40;
+}
+
+.form-field:focused {
+    -fx-border-color: #1ABC9C;
+    -fx-background-color: white;
+}
+
+.form-datepicker {
+    -fx-background-color: #F9FAFB;
+    -fx-border-color: #E2E8F0;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+    -fx-pref-height: 40;
+}
+
+.form-datepicker .arrow-button {
+    -fx-background-color: #1ABC9C;
+    -fx-background-radius: 0 12 12 0;
+}
+
+/* ========== BOUTONS ========== */
+.btn-primary {
+    -fx-background-color: #1ABC9C;
+    -fx-text-fill: white;
+    -fx-font-size: 15px;
+    -fx-font-weight: 600;
+    -fx-background-radius: 25;
+    -fx-padding: 12 30;
+    -fx-cursor: hand;
+}
+
+.btn-primary:hover {
+    -fx-background-color: #16a085;
+}
+
+.btn-secondary {
+    -fx-background-color: #95A5A6;
+    -fx-text-fill: white;
+    -fx-font-size: 15px;
+    -fx-font-weight: 600;
+    -fx-background-radius: 25;
+    -fx-padding: 12 30;
+    -fx-cursor: hand;
+}
+
+.btn-secondary:hover {
+    -fx-background-color: #7f8c8d;
+}
+
+/* ========== SECTION SÉCURITÉ / 2FA ========== */
+.security-zone {
+    -fx-background-color: #F0F8FF;
+    -fx-background-radius: 30;
+    -fx-padding: 30;
+    -fx-border-color: #3498DB;
+    -fx-border-width: 2;
+    -fx-border-radius: 30;
+    -fx-effect: dropshadow(gaussian, rgba(52,152,219,0.1), 10, 0, 0, 3);
+}
+
+.security-title {
+    -fx-text-fill: #2C3E50;
+    -fx-font-size: 20px;
+    -fx-font-weight: 700;
+    -fx-alignment: center;
+}
+
+.security-card {
+    -fx-background-color: white;
+    -fx-background-radius: 25;
+    -fx-padding: 25;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 2);
+}
+
+.security-info-card {
+    -fx-background-color: white;
+    -fx-background-radius: 25;
+    -fx-padding: 25;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 2);
+}
+
+.security-icon {
+    -fx-alignment: center;
+}
+
+.security-emoji {
+    -fx-font-size: 40px;
+}
+
+.security-text {
+    -fx-text-fill: #2C3E50;
+    -fx-font-size: 16px;
+    -fx-font-weight: 700;
+}
+
+.security-status {
+    -fx-text-fill: #E74C3C;
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-background-color: rgba(231,76,60,0.1);
+    -fx-background-radius: 20;
+    -fx-padding: 5 15;
+}
+
+.security-status:enabled {
+    -fx-text-fill: #27AE60;
+    -fx-background-color: rgba(39,174,96,0.1);
+}
+
+.btn-security {
+    -fx-background-color: #3498DB;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-background-radius: 25;
+    -fx-padding: 10 20;
+    -fx-cursor: hand;
+}
+
+.btn-security:hover {
+    -fx-background-color: #2980b9;
+}
+
+.security-info-title {
+    -fx-text-fill: #2C3E50;
+    -fx-font-size: 15px;
+    -fx-font-weight: 700;
+}
+
+.security-info-text {
+    -fx-text-fill: #7F8C8D;
+    -fx-font-size: 12px;
+}
+
+.security-info-link {
+    -fx-text-fill: #3498DB;
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+}
+
+.security-info-link:hover {
+    -fx-text-fill: #2980b9;
+    -fx-underline: true;
+}
+
+/* ========== ZONE DANGEREUSE ========== */
+.danger-zone {
+    -fx-background-color: #FEF5F5;
+    -fx-background-radius: 30;
+    -fx-padding: 30;
+    -fx-border-color: #E74C3C;
+    -fx-border-width: 2;
+    -fx-border-radius: 30;
+}
+
+.danger-title {
+    -fx-text-fill: #E74C3C;
+    -fx-font-size: 20px;
+    -fx-font-weight: 700;
+    -fx-alignment: center;
+}
+
+.danger-card {
+    -fx-background-color: white;
+    -fx-background-radius: 25;
+    -fx-padding: 25;
+    -fx-pref-width: 250;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 2);
+}
+
+.danger-icon {
+    -fx-alignment: center;
+}
+
+.danger-emoji {
+    -fx-font-size: 40px;
+}
+
+.danger-text {
+    -fx-text-fill: #2C3E50;
+    -fx-font-size: 16px;
+    -fx-font-weight: 700;
+}
+
+.danger-warning {
+    -fx-text-fill: #7F8C8D;
+    -fx-font-size: 12px;
+}
+
+.btn-danger {
+    -fx-background-color: #E74C3C;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-background-radius: 25;
+    -fx-padding: 10 20;
+    -fx-cursor: hand;
+    -fx-pref-width: 180;
+}
+
+.btn-danger:hover {
+    -fx-background-color: #c0392b;
+}
+
+.btn-logout {
+    -fx-background-color: #3498DB;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-background-radius: 25;
+    -fx-padding: 10 20;
+    -fx-cursor: hand;
+    -fx-pref-width: 180;
+}
+
+.btn-logout:hover {
+    -fx-background-color: #2980b9;
+}
+
+/* ========== LABELS D'ERREUR ========== */
+.error-label {
+    -fx-text-fill: #E74C3C;
+    -fx-font-size: 11px;
+    -fx-font-weight: 600;
+    -fx-padding: 2 0 0 5;
+}
+
+/* ========== NOTE D'INFORMATION ========== */
+.info-note {
+    -fx-text-fill: #7F8C8D;
+    -fx-font-size: 12px;
+    -fx-font-style: italic;
+    -fx-alignment: center;
+}
+
+/* ========== FOOTER ========== */
+.footer {
+    -fx-background-color: #2C3E50;
+}
+
+.footer-divider {
+    -fx-background-color: rgba(255,255,255,0.1);
+    -fx-pref-height: 1;
+}
+
+.footer-copyright {
+    -fx-text-fill: #95A5A6;
+    -fx-font-size: 12px;
+}
+
+.footer-tunisia {
+    -fx-text-fill: #1ABC9C;
+    -fx-font-size: 14px;
+}

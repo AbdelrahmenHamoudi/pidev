@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
+<?import javafx.scene.image.Image?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.Controllers.promotion.frontoffice.PromotionFrontOfficeController"
+            styleClass="front-container"
+            stylesheets="@../../css/re7la-styles.css">
+
+    <top>
+        <VBox styleClass="front-header" spacing="12">
+            <HBox alignment="CENTER_LEFT" spacing="0" prefHeight="56">
+
+                <HBox alignment="CENTER_LEFT" spacing="10" minWidth="220">
+                    <ImageView fitWidth="46" fitHeight="46" preserveRatio="true">
+                        <image><Image url="@../../images/logo.png"/></image>
+                    </ImageView>
+                    <VBox alignment="CENTER_LEFT" spacing="1">
+                        <Text text="RE7LA" styleClass="front-title"/>
+                        <Text text="Profitez de nos meilleures promotions"
+                              style="-fx-font-size: 10px; -fx-fill: #94A3B8;"/>
+                    </VBox>
+                </HBox>
+
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <HBox alignment="CENTER" spacing="8">
+                    <Button fx:id="btnAccueil" text="Accueil"
+                            style="-fx-background-color: transparent; -fx-border-color: #DDDDDD;
+                                   -fx-border-radius: 20; -fx-background-radius: 20;
+                                   -fx-padding: 6 18; -fx-font-size: 12px; -fx-cursor: hand; -fx-text-fill: #374151;"/>
+
+                    <Button fx:id="btnProfil" text="Profil"
+                            style="-fx-background-color: transparent; -fx-border-color: #DDDDDD;
+                                   -fx-border-radius: 20; -fx-background-radius: 20;
+                                   -fx-padding: 6 18; -fx-font-size: 12px; -fx-cursor: hand; -fx-text-fill: #374151;"/>
+
+                    <!--  <ComboBox fx:id="languageSelector" prefWidth="82"
+                              style="-fx-background-color: transparent; -fx-border-color: #DDDDDD;
+                                     -fx-border-radius: 20; -fx-background-radius: 20;
+                                     -fx-font-size: 11px; -fx-cursor: hand;"/> -->
+
+                    <Button fx:id="btnMesReservations" text="Mes reservations"
+                            onAction="#handleMesReservations"
+                            style="-fx-background-color: #F39C12; -fx-text-fill: white;
+                                   -fx-font-weight: bold; -fx-padding: 7 18; -fx-background-radius: 20;
+                                   -fx-cursor: hand; -fx-font-size: 12px;
+                                   -fx-effect: dropshadow(gaussian, rgba(243,156,18,0.35), 8, 0, 0, 2);"/>
+                </HBox>
+
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <HBox alignment="CENTER_RIGHT" spacing="10" minWidth="230">
+                    <Label text="👤" style="-fx-font-size: 22px; -fx-text-fill: #AAAAAA;"/>
+                    <VBox alignment="CENTER_LEFT" spacing="2">
+                        <Label fx:id="labelUserName" text="Chargement..."
+                               style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #1E293B;"/>
+                        <Label fx:id="labelUserEmail" text=""
+                               style="-fx-font-size: 10px; -fx-text-fill: #94A3B8;"/>
+                    </VBox>
+                </HBox>
+
+            </HBox>
+
+            <HBox spacing="15" alignment="CENTER">
+                <TextField fx:id="searchField"
+                           promptText="🎁 Rechercher une promotion..."
+                           styleClass="search-box"
+                           HBox.hgrow="ALWAYS"/>
+                <Button text="Rechercher" styleClass="btn-primary"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" fitToHeight="true" pannable="true"
+                    style="-fx-background-color: transparent; -fx-border-color: transparent;">
+            <HBox spacing="25">
+                <padding><Insets top="25" right="25" bottom="25" left="25"/></padding>
+
+                <VBox spacing="14" prefWidth="280" maxWidth="280">
+                    <VBox styleClass="filter-box" spacing="16">
+                        <Text text="Filtres" styleClass="filter-title"/>
+                        <Separator/>
+                        <VBox spacing="10">
+                            <Label text="Type de promotion" styleClass="filter-label"/>
+                            <VBox spacing="8">
+                                <CheckBox fx:id="packCheckbox" text="Packs combines" selected="true"/>
+                                <CheckBox fx:id="individuCheckbox" text="Promotions individuelles" selected="true"/>
+                            </VBox>
+                        </VBox>
+                        <Separator/>
+                        <VBox spacing="10">
+                            <Label text="Disponibilite" styleClass="filter-label"/>
+                            <CheckBox fx:id="activeCheckbox" text="Uniquement actives" selected="true"/>
+                        </VBox>
+                        <Button text="Reinitialiser les filtres"
+                                styleClass="btn-secondary" maxWidth="Infinity" onAction="#resetFilters"/>
+                    </VBox>
+
+                    <VBox spacing="10"
+                          style="-fx-background-color: white; -fx-padding: 16; -fx-background-radius: 14;
+                                 -fx-border-color: #E2E8F0; -fx-border-width: 1; -fx-border-radius: 14;
+                                 -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 10, 0, 0, 3);">
+                        <Label text="Mon Profil"
+                               style="-fx-font-size: 12px; -fx-font-weight: 800; -fx-text-fill: #2C3E50;"/>
+                        <Separator/>
+                        <Text fx:id="sidebarUserName" text="---"
+                              style="-fx-font-size: 13px; -fx-font-weight: 700; -fx-fill: #2C3E50;"/>
+                        <Label fx:id="sidebarReservCount" text="0 reservation(s)"
+                               style="-fx-background-color: #EEF2F6; -fx-text-fill: #1ABC9C;
+                                      -fx-font-size: 11px; -fx-font-weight: 700; -fx-padding: 4 10; -fx-background-radius: 8;"/>
+                        <Label fx:id="loyaltyBadge" text="Debutant"
+                               style="-fx-background-color: #FEF3C7; -fx-text-fill: #D97706;
+                                      -fx-font-size: 10px; -fx-font-weight: 700; -fx-padding: 4 10; -fx-background-radius: 8;"/>
+                    </VBox>
+
+                    <VBox fx:id="sidebarTrendingBox" spacing="8"
+                          style="-fx-background-color: white; -fx-padding: 16; -fx-background-radius: 14;
+                                 -fx-border-color: #FEB2B2; -fx-border-width: 1; -fx-border-radius: 14;
+                                 -fx-effect: dropshadow(gaussian, rgba(229,62,62,0.1), 10, 0, 0, 3);">
+                        <Label text="En Tendance"
+                               style="-fx-font-size: 12px; -fx-font-weight: 800; -fx-text-fill: #E53E3E;"/>
+                        <Separator/>
+                    </VBox>
+
+                    <VBox fx:id="sidebarUpcomingBox" spacing="8"
+                          style="-fx-background-color: white; -fx-padding: 16; -fx-background-radius: 14;
+                                 -fx-border-color: #E2E8F0; -fx-border-width: 1; -fx-border-radius: 14;
+                                 -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 3);">
+                        <Label text="Prochaines Reservations"
+                               style="-fx-font-size: 12px; -fx-font-weight: 800; -fx-text-fill: #2C3E50;"/>
+                        <Separator/>
+                    </VBox>
+                </VBox>
+
+                <VBox spacing="20" HBox.hgrow="ALWAYS">
+                    <HBox alignment="CENTER_LEFT" spacing="15">
+                        <Text fx:id="resultsCountText" text="0 promotions trouvees"
+                              style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-fill: #2C3E50;"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button text="Actualiser" onAction="#handleRefresh"
+                                style="-fx-background-color: white; -fx-text-fill: #2C3E50;
+                                       -fx-font-weight: 700; -fx-font-size: 12px; -fx-padding: 8 16;
+                                       -fx-background-radius: 18; -fx-cursor: hand;
+                                       -fx-border-color: #E2E8F0; -fx-border-radius: 18; -fx-border-width: 1;"/>
+                        <Label text="Trier par:" style="-fx-text-fill: #7F8C8D;"/>
+                        <ComboBox fx:id="sortCombo" value="Tendance d_abord" prefWidth="200">
+                            <items>
+                                <FXCollections fx:factory="observableArrayList">
+                                    <String fx:value="Tendance d_abord"/>
+                                    <String fx:value="Plus recentes"/>
+                                    <String fx:value="Reduction croissante"/>
+                                    <String fx:value="Reduction decroissante"/>
+                                </FXCollections>
+                            </items>
+                        </ComboBox>
+                    </HBox>
+                    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
+                                style="-fx-background-color: transparent; -fx-border-color: transparent;">
+                        <GridPane fx:id="promotionsGrid" hgap="16" vgap="16"/>
+                    </ScrollPane>
+                </VBox>
+            </HBox>
+        </ScrollPane>
+    </center>
+
+</BorderPane>

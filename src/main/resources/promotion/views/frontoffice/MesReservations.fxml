@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.example.Controllers.promotion.frontoffice.MesReservationsController"
+      spacing="20"
+      style="-fx-background-color: #F9FAFB; -fx-padding: 30;">
+
+    <!-- HEADER -->
+    <HBox alignment="CENTER_LEFT" spacing="20">
+        <Button text="← Retour" onAction="#handleRetour"
+                style="-fx-background-color: #E2E8F0; -fx-text-fill: #2C3E50;
+                       -fx-font-weight: bold; -fx-padding: 10 20; -fx-background-radius: 10;
+                       -fx-cursor: hand;"/>
+
+        <VBox>
+            <Text text="📋 Mes Réservations"
+                  style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-fill: #2C3E50;"/>
+            <Text fx:id="txtUserName" text="John Doe"
+                  style="-fx-font-size: 14px; -fx-fill: #64748B;"/>
+        </VBox>
+
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <!-- Nombre de réservations -->
+        <HBox spacing="10" alignment="CENTER"
+              style="-fx-background-color: white; -fx-padding: 12 20; -fx-background-radius: 15;
+                     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8, 0, 0, 2);">
+            <Text text="📊" style="-fx-font-size: 20px;"/>
+            <VBox spacing="2">
+                <Text text="Total" style="-fx-font-size: 11px; -fx-fill: #64748B;"/>
+                <Text fx:id="txtTotalReservations" text="0"
+                      style="-fx-font-size: 18px; -fx-fill: #F39C12; -fx-font-weight: bold;"/>
+            </VBox>
+        </HBox>
+    </HBox>
+
+    <Separator/>
+
+    <!-- CONTENT CARD -->
+    <VBox spacing="20" style="-fx-background-color: white; -fx-padding: 25; -fx-background-radius: 20;
+                               -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 12, 0, 0, 4);">
+
+        <!-- Titre + Bouton Rafraîchir -->
+        <HBox alignment="CENTER_LEFT">
+            <Text text="Liste de vos réservations"
+                  style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-fill: #2C3E50;"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="🔄 Rafraîchir" onAction="#handleRefresh"
+                    style="-fx-background-color: #1ABC9C; -fx-text-fill: white;
+                           -fx-font-weight: bold; -fx-padding: 8 15; -fx-background-radius: 8;
+                           -fx-cursor: hand;"/>
+        </HBox>
+
+        <!-- CARDS CONTAINER -->
+        <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" minHeight="420"
+                    style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0;">
+            <VBox fx:id="reservationsContainer" spacing="12">
+                <padding><Insets top="4" right="4" bottom="4" left="4"/></padding>
+            </VBox>
+        </ScrollPane>
+
+        <!-- Info 24h -->
+        <HBox spacing="10" alignment="CENTER_LEFT"
+              style="-fx-background-color: #FFF9F0; -fx-padding: 12; -fx-background-radius: 8;">
+            <Text text="⚠️" style="-fx-font-size: 16px;"/>
+            <Text text="Vous pouvez annuler une réservation uniquement dans les 24h suivant sa création."
+                  style="-fx-font-size: 12px; -fx-fill: #F39C12; -fx-wrapping-width: 700;"/>
+        </HBox>
+
+        <!-- Empty State (caché par défaut) -->
+        <VBox fx:id="emptyState" alignment="CENTER" spacing="15"
+              style="-fx-padding: 50;" visible="false">
+            <Text text="📭" style="-fx-font-size: 64px;"/>
+            <Text text="Aucune réservation"
+                  style="-fx-font-size: 20px; -fx-fill: #94A3B8; -fx-font-weight: bold;"/>
+            <Text text="Vous n'avez pas encore réservé de promotion."
+                  style="-fx-font-size: 14px; -fx-fill: #CBD5E1;"/>
+        </VBox>
+
+    </VBox>
+
+</VBox>

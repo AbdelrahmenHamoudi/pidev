@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.web.WebView?>
+<?import javafx.scene.shape.Rectangle?>
+
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.example.Controllers.activite.WeatherMapController"
+      spacing="0"
+      style="-fx-background-color: #0F172A;
+             -fx-padding: 0;
+             -fx-background-radius: 20;
+             -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 30, 0, 0, 10);">
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- HEADER -->
+    <!-- ═══════════════════════════════════════════ -->
+    <HBox alignment="CENTER_LEFT" spacing="10"
+          style="-fx-padding: 16 20 14 20;
+                 -fx-border-color: transparent transparent rgba(255,255,255,0.07) transparent;
+                 -fx-border-width: 0 0 1 0;">
+        <VBox spacing="2" HBox.hgrow="ALWAYS">
+            <Label text="Meteo et Localisation"
+                   style="-fx-font-size: 14px;
+                          -fx-font-weight: bold;
+                          -fx-text-fill: #F8FAFC;
+                          -fx-font-family: 'Segoe UI Semibold';"/>
+            <Label text="Conditions en temps reel"
+                   style="-fx-font-size: 10px;
+                          -fx-text-fill: #64748B;
+                          -fx-font-family: 'Segoe UI';"/>
+        </VBox>
+        <Button fx:id="btnRefresh"
+                onAction="#refresh"
+                text="Actualiser"
+                style="-fx-background-color: rgba(99,102,241,0.15);
+                       -fx-border-color: rgba(99,102,241,0.4);
+                       -fx-border-width: 1;
+                       -fx-border-radius: 8;
+                       -fx-background-radius: 8;
+                       -fx-text-fill: #818CF8;
+                       -fx-font-size: 10px;
+                       -fx-font-weight: bold;
+                       -fx-padding: 5 12;
+                       -fx-cursor: hand;"/>
+    </HBox>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- METEO CARD -->
+    <!-- ═══════════════════════════════════════════ -->
+    <VBox spacing="0"
+          style="-fx-padding: 16 20;">
+
+        <!-- Gradient Card -->
+        <VBox spacing="10"
+              style="-fx-background-color: #1A2744;
+                     -fx-background-radius: 16;
+                     -fx-padding: 16;
+                     -fx-border-color: rgba(99,102,241,0.25);
+                     -fx-border-width: 1;
+                     -fx-border-radius: 16;
+                     -fx-effect: dropshadow(gaussian, rgba(99,102,241,0.2), 20, 0, 0, 5);">
+
+            <!-- Ville + Temp -->
+            <HBox alignment="CENTER_LEFT" spacing="12">
+                <StackPane>
+                    <ImageView fx:id="weatherIcon" fitWidth="52" fitHeight="52" preserveRatio="true"/>
+                </StackPane>
+
+                <VBox spacing="3" HBox.hgrow="ALWAYS">
+                    <Label fx:id="locationLabel" text="Chargement..."
+                           style="-fx-text-fill: #F1F5F9;
+                                  -fx-font-size: 16px;
+                                  -fx-font-weight: bold;
+                                  -fx-font-family: 'Segoe UI Semibold';"/>
+                    <Label fx:id="conditionLabel" text=""
+                           style="-fx-text-fill: #94A3B8;
+                                  -fx-font-size: 11px;
+                                  -fx-font-family: 'Segoe UI';"/>
+                </VBox>
+
+                <VBox alignment="CENTER_RIGHT" spacing="0">
+                    <Label fx:id="temperatureLabel" text="--"
+                           style="-fx-text-fill: #F8FAFC;
+                                  -fx-font-size: 36px;
+                                  -fx-font-weight: bold;
+                                  -fx-font-family: 'Segoe UI Light';"/>
+                    <Label fx:id="feelsLikeLabel" text=""
+                           style="-fx-text-fill: #64748B;
+                                  -fx-font-size: 10px;
+                                  -fx-font-family: 'Segoe UI';"/>
+                </VBox>
+            </HBox>
+
+            <!-- Divider -->
+            <Region prefHeight="1" maxHeight="1"
+                    style="-fx-background-color: rgba(255,255,255,0.07);"/>
+
+            <!-- Stats -->
+            <HBox spacing="0">
+                <!-- Humidite -->
+                <VBox alignment="CENTER" HBox.hgrow="ALWAYS" spacing="3">
+                    <Label text="Humidite"
+                           style="-fx-text-fill: #64748B; -fx-font-size: 9px; -fx-font-family: 'Segoe UI';"/>
+                    <Label fx:id="humidityLabel" text="--"
+                           style="-fx-text-fill: #60A5FA; -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI Semibold';"/>
+                </VBox>
+
+                <!-- Separateur vertical -->
+                <Region prefWidth="1" maxWidth="1"
+                        style="-fx-background-color: rgba(255,255,255,0.07);"/>
+
+                <!-- Vent -->
+                <VBox alignment="CENTER" HBox.hgrow="ALWAYS" spacing="3">
+                    <Label text="Vent"
+                           style="-fx-text-fill: #64748B; -fx-font-size: 9px; -fx-font-family: 'Segoe UI';"/>
+                    <Label fx:id="windLabel" text="--"
+                           style="-fx-text-fill: #34D399; -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI Semibold';"/>
+                </VBox>
+            </HBox>
+
+            <!-- Recommandation -->
+            <HBox fx:id="recommendationBox" spacing="8" alignment="CENTER_LEFT"
+                  style="-fx-background-color: rgba(255,255,255,0.06);
+                         -fx-padding: 8 10;
+                         -fx-background-radius: 8;
+                         -fx-border-color: rgba(255,255,255,0.1);
+                         -fx-border-width: 1;
+                         -fx-border-radius: 8;"
+                  visible="false" managed="false">
+                <Label fx:id="recommendationIcon" text="OK"
+                       style="-fx-text-fill: #34D399; -fx-font-size: 10px; -fx-font-weight: bold;"/>
+                <Label fx:id="recommendationLabel" text=""
+                       wrapText="true" HBox.hgrow="ALWAYS"
+                       style="-fx-text-fill: #CBD5E1; -fx-font-size: 11px; -fx-font-family: 'Segoe UI';"/>
+            </HBox>
+        </VBox>
+    </VBox>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- CARTE + LOCALISATION -->
+    <!-- ═══════════════════════════════════════════ -->
+    <VBox spacing="0" style="-fx-padding: 0 20 16 20;">
+
+        <HBox alignment="CENTER_LEFT" spacing="8" style="-fx-padding: 0 0 10 0;">
+            <Label text="Carte interactive"
+                   style="-fx-font-size: 12px;
+                          -fx-font-weight: bold;
+                          -fx-text-fill: #94A3B8;
+                          -fx-font-family: 'Segoe UI';"/>
+        </HBox>
+
+        <!-- WebView Carte -->
+        <StackPane prefHeight="240" maxWidth="Infinity"
+                   style="-fx-background-radius: 14;
+                          -fx-border-color: rgba(99,102,241,0.2);
+                          -fx-border-width: 1;
+                          -fx-border-radius: 14;
+                          -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 12, 0, 0, 4);
+                          -fx-background-color: #1E293B;">
+            <WebView fx:id="mapWebView" prefHeight="240"
+                     maxWidth="Infinity" maxHeight="Infinity"
+                     StackPane.alignment="CENTER"/>
+        </StackPane>
+
+        <!-- Adresse -->
+        <HBox spacing="8" alignment="CENTER_LEFT"
+              style="-fx-background-color: rgba(255,255,255,0.04);
+                     -fx-padding: 8 12;
+                     -fx-background-radius: 8;
+                     -fx-border-color: rgba(255,255,255,0.07);
+                     -fx-border-width: 1;
+                     -fx-border-radius: 8;
+                     -fx-margin: 10 0 0 0;">
+            <VBox.margin>
+                <Insets top="10"/>
+            </VBox.margin>
+            <Label text="Adresse"
+                   style="-fx-text-fill: #475569; -fx-font-size: 9px; -fx-font-weight: bold;"/>
+            <Label fx:id="addressLabel" text="Geolocalisation en cours..."
+                   wrapText="true" HBox.hgrow="ALWAYS"
+                   style="-fx-font-size: 10px; -fx-text-fill: #94A3B8; -fx-font-family: 'Segoe UI';"/>
+        </HBox>
+
+        <!-- Boutons -->
+        <HBox spacing="8" style="-fx-padding: 10 0 0 0;">
+            <Button fx:id="btnDirections"
+                    onAction="#openDirections"
+                    text="Itineraire"
+                    maxWidth="Infinity" HBox.hgrow="ALWAYS"
+                    style="-fx-background-color: linear-gradient(to right, #6366F1, #4F46E5);
+                           -fx-text-fill: white;
+                           -fx-font-weight: bold;
+                           -fx-font-size: 11px;
+                           -fx-padding: 10 14;
+                           -fx-background-radius: 10;
+                           -fx-cursor: hand;
+                           -fx-font-family: 'Segoe UI Semibold';
+                           -fx-effect: dropshadow(gaussian, rgba(99,102,241,0.45), 12, 0, 0, 4);"/>
+            <Button fx:id="btnOpenMaps"
+                    onAction="#openInMaps"
+                    text="Ouvrir Maps"
+                    maxWidth="Infinity" HBox.hgrow="ALWAYS"
+                    style="-fx-background-color: rgba(99,102,241,0.1);
+                           -fx-border-color: rgba(99,102,241,0.4);
+                           -fx-border-width: 1;
+                           -fx-border-radius: 10;
+                           -fx-text-fill: #818CF8;
+                           -fx-font-weight: bold;
+                           -fx-font-size: 11px;
+                           -fx-padding: 10 14;
+                           -fx-background-radius: 10;
+                           -fx-cursor: hand;
+                           -fx-font-family: 'Segoe UI Semibold';"/>
+        </HBox>
+    </VBox>
+</VBox>

@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="431c9e6b-677b-4bff-865a-a0c0bece7cc1" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Services/user/CameraService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Services/user/facelogin/FaceIdService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/user/login/FaceLoginActivate.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Controllers/user/FaceLoginController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Controllers/user/FaceLoginController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Controllers/user/LoginController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Controllers/user/LoginController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Controllers/user/client/UserProfileController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Controllers/user/client/UserProfileController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/user/front/userProfil.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/user/front/userProfil.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/user/login/FaceLogin.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/user/login/FaceLogin.fxml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CopilotPersistence">
+    <persistenceIdMap>
+      <entry key="_C:/Users/Abderrahmen/Desktop/ggg/Integration/Re7la_User" value="39nTNkSvctGpHYjP2htVOynlhCL" />
+    </persistenceIdMap>
+  </component>
+  <component name="EmbeddingIndexingInfo">
+    <option name="cachedIndexableFilesCount" value="247" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JUnit5 Test Class" />
+        <option value="CSS File" />
+        <option value="FxmlFile" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="McpProjectServerCommands">
+    <commands />
+    <urls />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 3
+}</component>
+  <component name="ProjectId" id="39nTNkSvctGpHYjP2htVOynlhCL" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Maven.Re7la_User [org.apache.maven.plugins:maven-clean-plugin:3.2.0:clean].executor": "Run",
+    "Maven.Re7la_User [org.apache.maven.plugins:maven-compiler-plugin:3.11.0:compile].executor": "Run",
+    "Maven.Re7la_User [org.apache.maven.plugins:maven-install-plugin:3.1.2:install].executor": "Run",
+    "Maven.Re7la_User [org.openjfx:javafx-maven-plugin:0.0.8:run].executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit5",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5": "",
+    "git-widget-placeholder": "prod",
+    "junie.onboarding.icon.badge.shown": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/Abderrahmen/Desktop/ggg/Integration/Re7la_User/src/main/resources/user/login",
+    "list.type.of.created.stylesheet": "CSS",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
+    "settings.editor.selected.configurable": "preferences.JavaFX",
+    "to.speed.mode.migration.done": "true",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Abderrahmen\Desktop\ggg\Integration\Re7la_User\src\main\resources\user\login" />
+    </key>
+    <key name="CreateTestDialog.Recents.Supers">
+      <recent name="" />
+    </key>
+    <key name="CreateTestDialog.RecentsKey">
+      <recent name="org.example.Services.hebergement" />
+      <recent name="org.example.Services.user" />
+    </key>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-30f59d01ecdd-2fc7cc6b9a17-intellij.indexing.shared.core-IU-253.30387.90" />
+        <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-IU-253.30387.90" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="431c9e6b-677b-4bff-865a-a0c0bece7cc1" name="Changes" comment="" />
+      <created>1771330796414</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1771330796414</updated>
+      <workItem from="1771330797468" duration="1494000" />
+      <workItem from="1771357691179" duration="4668000" />
+      <workItem from="1771438903302" duration="1402000" />
+      <workItem from="1771527917736" duration="959000" />
+      <workItem from="1771531302791" duration="11319000" />
+      <workItem from="1771543072853" duration="3000" />
+      <workItem from="1771543101950" duration="4731000" />
+      <workItem from="1771687120864" duration="1963000" />
+      <workItem from="1771696491313" duration="3453000" />
+      <workItem from="1771700560373" duration="10000" />
+      <workItem from="1771700815259" duration="1429000" />
+      <workItem from="1771800374598" duration="1469000" />
+      <workItem from="1771875125487" duration="1926000" />
+      <workItem from="1771877118488" duration="8592000" />
+      <workItem from="1771885788483" duration="1611000" />
+      <workItem from="1771896099842" duration="2711000" />
+      <workItem from="1771899082510" duration="176000" />
+      <workItem from="1771899268907" duration="8000" />
+      <workItem from="1771899741360" duration="116000" />
+      <workItem from="1771933432646" duration="2129000" />
+      <workItem from="1772135371638" duration="4863000" />
+      <workItem from="1772143998982" duration="3037000" />
+      <workItem from="1772225882418" duration="10750000" />
+      <workItem from="1772311869072" duration="10998000" />
+      <workItem from="1772399064703" duration="3274000" />
+      <workItem from="1772402496435" duration="627000" />
+      <workItem from="1772403254656" duration="81000" />
+      <workItem from="1772422435448" duration="11142000" />
+      <workItem from="1772433903440" duration="1017000" />
+      <workItem from="1772480631344" duration="10972000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/example/GUI/HomePage.java</url>
+          <line>27</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/example/Controllers/user/client/UserProfileController.java</url>
+          <line>858</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/example/Controllers/hebergement/back/HebergementController.java</url>
+          <line>953</line>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+        <breakpoint enabled="true" type="java-exception">
+          <properties class="java.sql.SQLException" package="java.sql" />
+          <option name="timeStamp" value="3" />
+        </breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+  <component name="github-copilot-workspace">
+    <instructionFileLocations>
+      <option value=".github/instructions" />
+    </instructionFileLocations>
+    <promptFileLocations>
+      <option value=".github/prompts" />
+    </promptFileLocations>
+  </component>
+</project>

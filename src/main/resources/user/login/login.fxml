@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.Background?>
+<?import javafx.scene.layout.BackgroundFill?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane prefHeight="560" prefWidth="1000" stylesheets="@login.css"
+            xmlns="http://javafx.com/javafx/22"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.Controllers.user.LoginController">
+
+    <!-- ============ BACKGROUND TUNISIE MÉDITERRANÉEN ============ -->
+    <background>
+        <Background>
+            <fills>
+                <BackgroundFill fill="linear-gradient(from 0% 0% to 100% 100%, #1ABC9C, #16a085, #1ABC9C, #0e8c73)" />
+            </fills>
+        </Background>
+    </background>
+
+    <!-- ============ LEFT PANEL - TUNISIE LUXE ============ -->
+    <left>
+        <StackPane prefWidth="420" styleClass="tunisia-hero-premium">
+
+            <!-- Motifs décoratifs tunisiens -->
+            <Region styleClass="tunisia-pattern-gold" />
+            <Region styleClass="tunisia-pattern-turquoise" />
+            <Region styleClass="tunisia-pattern-dots" />
+
+            <VBox alignment="CENTER" spacing="18" styleClass="tunisia-content">
+
+                <!-- Logo Premium avec effets -->
+                <StackPane styleClass="tunisia-logo-premium">
+                    <Circle radius="72" styleClass="tunisia-circle-outer" />
+                    <Circle radius="64" styleClass="tunisia-circle-middle" />
+                    <Circle radius="56" styleClass="tunisia-circle-inner" />
+                    <Circle radius="48" styleClass="tunisia-circle-glow" />
+                    <ImageView fitHeight="100" fitWidth="130" preserveRatio="true" styleClass="tunisia-logo-image">
+                        <Image url="@../image/logo.png" />
+                    </ImageView>
+                </StackPane>
+
+                <!-- Brand Tunisie -->
+                <VBox alignment="CENTER" spacing="4">
+                    <Text styleClass="tunisia-brand-name" text="RE7LA">
+                        <font>
+                            <Font name="System Bold" size="44" />
+                        </font>
+                    </Text>
+                    <Text styleClass="tunisia-brand-slogan" text="Tunisie Voyages &amp; Loisirs">
+                        <font>
+                            <Font size="15" />
+                        </font>
+                    </Text>
+                </VBox>
+
+                <!-- Destinations tunisiennes -->
+                <FlowPane alignment="CENTER" hgap="8" prefWidth="360" styleClass="tunisia-destinations-grid" vgap="8">
+                    <Label styleClass="destination-tunisia" text="Tunis" />
+                    <Label styleClass="destination-tunisia" text="Sousse" />
+                    <Label styleClass="destination-tunisia" text="Hammamet" />
+                    <Label styleClass="destination-tunisia" text="Djerba" />
+                    <Label styleClass="destination-tunisia" text="Sfax" />
+                    <Label styleClass="destination-tunisia" text="Tabarka" />
+                    <Label styleClass="destination-tunisia" text="Tozeur" />
+                    <Label styleClass="destination-tunisia" text="Carthage" />
+                    <Label styleClass="destination-tunisia" text="Monastir" />
+                    <Label styleClass="destination-tunisia" text="Mahdia" />
+                </FlowPane>
+
+                <!-- Statistiques Tunisie -->
+                <HBox alignment="CENTER" spacing="25" styleClass="tunisia-statistics">
+                    <VBox alignment="CENTER" spacing="2">
+                        <Label styleClass="stat-number-tunisia" text="30+" />
+                        <Label styleClass="stat-label-tunisia" text="Villes" />
+                    </VBox>
+                    <VBox alignment="CENTER" spacing="2">
+                        <Label styleClass="stat-number-tunisia" text="4.9" />
+                        <Label styleClass="stat-label-tunisia" text="Note ★" />
+                    </VBox>
+                    <VBox alignment="CENTER" spacing="2">
+                        <Label styleClass="stat-number-tunisia" text="15k+" />
+                        <Label styleClass="stat-label-tunisia" text="Voyageurs" />
+                    </VBox>
+                </HBox>
+
+                <!-- Badge Tunisie -->
+                <HBox alignment="CENTER" spacing="8" styleClass="tunisia-badge">
+                    <Label styleClass="tunisia-badge-icon" text="🇹🇳" />
+                    <Label styleClass="tunisia-badge-text" text="La plus belle destination" />
+                </HBox>
+
+            </VBox>
+        </StackPane>
+    </left>
+
+    <!-- ============ RIGHT PANEL - FORMULAIRE ÉLÉGANT ============ -->
+    <center>
+        <StackPane styleClass="form-tunisia-wrapper">
+
+            <!-- Éléments décoratifs -->
+            <Region styleClass="form-bg-orange" />
+            <Region styleClass="form-bg-turquoise" />
+
+            <VBox alignment="CENTER" maxWidth="340" spacing="18" styleClass="tunisia-card">
+
+                <!-- Header Tunisie -->
+                <VBox alignment="CENTER" spacing="8">
+                    <StackPane styleClass="tunisia-welcome-icon">
+                        <Circle radius="32" styleClass="tunisia-welcome-circle" />
+                        <Circle radius="28" styleClass="tunisia-welcome-circle-inner" />
+                        <Label styleClass="tunisia-welcome-emoji" text="🇹🇳" />
+                    </StackPane>
+                    <VBox alignment="CENTER" spacing="2">
+                        <Label styleClass="tunisia-welcome-title" text="Bienvenue en Re7la" />
+                        <Label styleClass="tunisia-form-title" text="Connexion" />
+                    </VBox>
+                    <Region styleClass="tunisia-title-decoration" />
+                </VBox>
+
+                <!-- ===== LOCALISATION CONTAINER ===== -->
+                <HBox fx:id="locationContainer" alignment="CENTER" prefHeight="40" prefWidth="300" />
+
+                <!-- Email Field -->
+                <VBox prefWidth="300" spacing="5">
+                    <Label styleClass="tunisia-field-label" text="📧 Email" />
+                    <TextField fx:id="emailField" promptText="exemple@re7la.tn" styleClass="tunisia-input" />
+                    <Label fx:id="emailError" styleClass="tunisia-error" text="" />
+                </VBox>
+
+                <!-- Password Field -->
+                <VBox prefWidth="300" spacing="5">
+                    <Label styleClass="tunisia-field-label" text="🔒 Mot de passe" />
+                    <PasswordField fx:id="passwordField" promptText="••••••••" styleClass="tunisia-input" />
+                    <Label fx:id="passwordError" styleClass="tunisia-error" text="" />
+                </VBox>
+
+                <!-- Forgot Password -->
+                <HBox alignment="CENTER_RIGHT" prefWidth="300">
+                    <Hyperlink onAction="#handleForgotPassword" styleClass="tunisia-forgot" text="Mot de passe oublié ?" />
+                </HBox>
+
+                <!-- ===== CAPTCHA CONTAINER ===== -->
+                <VBox fx:id="captchaContainer" alignment="CENTER" spacing="10" prefHeight="150" prefWidth="300" />
+
+                <!-- BOUTON CONNEXION - ORANGE ÉCLATANT #F39C12 -->
+                <Button onAction="#handleLogin" prefHeight="50" prefWidth="300" styleClass="tunisia-login-btn">
+                    <graphic>
+                        <HBox alignment="CENTER" spacing="12">
+                            <Label styleClass="tunisia-btn-icon" text="🇹🇳" />
+                            <Label styleClass="tunisia-btn-text" text="SE CONNECTER" />
+                            <Label styleClass="tunisia-btn-icon" text="✨" />
+                        </HBox>
+                    </graphic>
+                </Button>
+
+                <!-- ===== FACE ID LOGIN BUTTON (same chart) ===== -->
+                <Button onAction="#openFaceLogin" prefHeight="50" prefWidth="300" styleClass="tunisia-login-btn">
+                    <graphic>
+                        <HBox alignment="CENTER" spacing="12">
+                            <Label styleClass="tunisia-btn-icon" text="📷" />
+                            <Label styleClass="tunisia-btn-text" text="FACE ID" />
+                            <Label styleClass="tunisia-btn-icon" text="🔐" />
+                        </HBox>
+                    </graphic>
+                </Button>
+
+                <!-- SIGN UP -->
+                <HBox alignment="CENTER" spacing="6">
+                    <Label styleClass="tunisia-signup-text" text="Pas encore de compte ?" />
+                    <Hyperlink onAction="#handleSignUp" styleClass="tunisia-signup-link" text="Créer un compte" />
+                </HBox>
+
+                <!-- Security Badge -->
+                <HBox alignment="CENTER" spacing="12" styleClass="tunisia-security-premium">
+                    <Label styleClass="tunisia-security-icon" text="🛡️" />
+                    <Label styleClass="tunisia-security-text" text="Connexion 100% sécurisée" />
+                    <Label styleClass="tunisia-security-icon" text="✓" />
+                </HBox>
+
+            </VBox>
+        </StackPane>
+    </center>
+
+</BorderPane>

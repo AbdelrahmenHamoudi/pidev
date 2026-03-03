@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.Controllers.activite.MesReservationsController"
+            prefWidth="880" prefHeight="680"
+            style="-fx-background-color: #F7F4EF;">
+
+    <top>
+        <VBox style="-fx-background-color: linear-gradient(to right,#1A1A2E,#16213E); -fx-padding: 20 28;">
+            <HBox alignment="CENTER_LEFT" spacing="14">
+                <Label text="🎫" style="-fx-font-size: 26px;"/>
+                <VBox>
+                    <Label fx:id="lblTitre" text="Mes Réservations"
+                           style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+                    <Label text="Consultez et gérez vos réservations"
+                           style="-fx-font-size: 12px; -fx-text-fill: #94A3B8;"/>
+                </VBox>
+                <HBox HBox.hgrow="ALWAYS"/>
+                <Button text="🔄 Actualiser" onAction="#refresh"
+                        style="-fx-background-color:rgba(255,255,255,0.15);-fx-text-fill:white;
+                               -fx-padding:8 18;-fx-background-radius:8;-fx-cursor:hand;"/>
+            </HBox>
+            <HBox spacing="16" style="-fx-padding:14 0 0 0;">
+                <!-- Confirmées -->
+                <VBox alignment="CENTER" spacing="2"
+                      style="-fx-background-color:rgba(52,211,153,0.15);-fx-padding:10 22;
+                             -fx-background-radius:10;-fx-border-color:rgba(52,211,153,0.4);-fx-border-radius:10;">
+                    <Label fx:id="lblConf" text="0"
+                           style="-fx-font-size:26px;-fx-font-weight:bold;-fx-text-fill:#34D399;"/>
+                    <Label text="Confirmées" style="-fx-font-size:11px;-fx-text-fill:#94A3B8;"/>
+                </VBox>
+                <!-- Annulées -->
+                <VBox alignment="CENTER" spacing="2"
+                      style="-fx-background-color:rgba(248,113,113,0.15);-fx-padding:10 22;
+                             -fx-background-radius:10;-fx-border-color:rgba(248,113,113,0.4);-fx-border-radius:10;">
+                    <Label fx:id="lblAnn" text="0"
+                           style="-fx-font-size:26px;-fx-font-weight:bold;-fx-text-fill:#F87171;"/>
+                    <Label text="Annulées" style="-fx-font-size:11px;-fx-text-fill:#94A3B8;"/>
+                </VBox>
+            </HBox>
+        </VBox>
+    </top>
+
+    <center>
+        <VBox>
+            <!-- Filtre -->
+            <HBox alignment="CENTER_LEFT" spacing="10"
+                  style="-fx-background-color:white;-fx-padding:12 20;
+                         -fx-border-color:#E2E8F0;-fx-border-width:0 0 1 0;">
+                <Label text="Filtrer :" style="-fx-font-weight:bold;-fx-text-fill:#475569;"/>
+                <ComboBox fx:id="filtreStatut" prefWidth="150"/>
+            </HBox>
+
+            <!-- Liste -->
+            <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
+                        style="-fx-background-color:transparent;">
+                <VBox fx:id="container" spacing="12"
+                      style="-fx-padding:18 20;-fx-background-color:#F7F4EF;">
+                    <Label fx:id="lblVide" text="Aucune réservation."
+                           visible="false" managed="false"
+                           style="-fx-font-size:14px;-fx-text-fill:#94A3B8;-fx-font-style:italic;-fx-padding:30 0;"/>
+                </VBox>
+            </ScrollPane>
+        </VBox>
+    </center>
+</BorderPane>
