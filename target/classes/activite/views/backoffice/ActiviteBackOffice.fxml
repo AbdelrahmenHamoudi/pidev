@@ -1,0 +1,416 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
+
+<AnchorPane prefHeight="800.0" prefWidth="1200.0"
+            stylesheets="/activite/css/Bstyle.css"
+            xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.Controllers.activite.ActiviteBackOfficeController">
+
+    <!-- ═══════════════════════════════════════
+         SIDEBAR
+    ═══════════════════════════════════════ -->
+    <VBox fx:id="sidebar" prefWidth="240.0" spacing="10.0"
+          styleClass="sidebar"
+          AnchorPane.bottomAnchor="0.0"
+          AnchorPane.leftAnchor="0.0"
+          AnchorPane.topAnchor="0.0">
+
+        <VBox alignment="CENTER" spacing="15.0">
+            <VBox.margin><Insets top="25.0"/></VBox.margin>
+            <ImageView fitHeight="130.0" fitWidth="130.0" preserveRatio="true">
+                <image><Image url="@../../../activite/images/logo.png"/></image>
+            </ImageView>
+        </VBox>
+
+        <Label styleClass="sidebar-title" text="RE7LA">
+            <VBox.margin><Insets bottom="10.0" left="25.0"/></VBox.margin>
+        </Label>
+
+        <Label style="-fx-text-fill: #64748b; -fx-font-size: 11px;
+                      -fx-padding: 0 0 8 25; -fx-font-weight: 600;"
+               text="TABLEAU DE BORD"/>
+
+        <Button fx:id="btnGestionUtilisateurs" alignment="BASELINE_LEFT" maxWidth="Infinity"
+                mnemonicParsing="false" onAction="#handleShowUsers" styleClass="sidebar-button"
+                text="👥   Gestion Utilisateurs" />
+        <Button fx:id="btnComptesBancaires" alignment="BASELINE_LEFT" maxWidth="Infinity"
+                mnemonicParsing="false" onAction="#handleShowAccounts" styleClass="sidebar-button"
+                text="💳   Gestion des Hébergements" />
+        <Button fx:id="btnTransactions" alignment="BASELINE_LEFT" maxWidth="Infinity"
+                mnemonicParsing="false" onAction="#handleShowTransactions" styleClass="sidebar-button"
+                text="💸   Gestion des Activités" />
+        <Button fx:id="btnCredits" alignment="BASELINE_LEFT" maxWidth="Infinity"
+                mnemonicParsing="false" onAction="#handleShowCredits" styleClass="sidebar-button"
+                text="💰   Gestion des Trajets" />
+        <Button fx:id="btnCommunaute" alignment="BASELINE_LEFT" maxWidth="Infinity"
+                mnemonicParsing="false" onAction="#handleShowCommunaute" styleClass="sidebar-button"
+                text="💬   Gestion Communauté" />
+        <Button fx:id="btnCashback" alignment="BASELINE_LEFT" maxWidth="Infinity"
+                mnemonicParsing="false" onAction="#handleShowCashback" styleClass="sidebar-button"
+                text="🎁   Gestion des Promotions" />
+
+        <Region VBox.vgrow="ALWAYS"/>
+
+        <VBox spacing="5.0">
+            <VBox.margin><Insets bottom="20.0"/></VBox.margin>
+            <Label style="-fx-text-fill: #64748b; -fx-font-size: 11px; -fx-padding: 0 0 0 20;"
+                   text="SYSTÈME"/>
+            <Button alignment="BASELINE_LEFT" maxWidth="Infinity"
+                    mnemonicParsing="false" styleClass="sidebar-button"
+                    text="⚙️  Paramètres"/>
+            <Button alignment="BASELINE_LEFT" maxWidth="Infinity"
+                    mnemonicParsing="false" styleClass="sidebar-button"
+                    onAction="#handleLogout"
+                    text="🚪  Déconnexion"/>
+        </VBox>
+    </VBox>
+
+    <!-- ═══════════════════════════════════════
+         MAIN CONTENT
+    ═══════════════════════════════════════ -->
+    <StackPane AnchorPane.bottomAnchor="0.0"
+               AnchorPane.leftAnchor="240.0"
+               AnchorPane.rightAnchor="0.0"
+               AnchorPane.topAnchor="0.0">
+
+        <ScrollPane fitToWidth="true" styleClass="main-scroll-pane">
+            <VBox spacing="18.0" styleClass="content-area">
+
+                <!-- ─────────────────────────────────
+                     HEADER
+                ───────────────────────────────── -->
+                <HBox alignment="CENTER_LEFT" spacing="20.0">
+                    <VBox>
+                        <Label styleClass="header-label" text="Gestion des Activités"/>
+                        <Label styleClass="header-subtitle"
+                               text="Créer et gérer les activités avec leurs plannings"/>
+                    </VBox>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="search-box">
+                        <padding><Insets bottom="8.0" left="15.0" right="15.0" top="8.0"/></padding>
+                        <Label text="🔍" textFill="#94a3b8"/>
+                        <TextField fx:id="searchField" promptText="Rechercher..."
+                                   styleClass="search-field"/>
+                    </HBox>
+                    <HBox alignment="CENTER" spacing="10.0"
+                          style="-fx-background-color: white; -fx-background-radius: 30;
+                                 -fx-padding: 5 15 5 5;">
+                        <Circle fill="#e2e8f0" radius="16.0" stroke="WHITE" strokeType="INSIDE"/>
+                        <Label style="-fx-font-weight: bold; -fx-text-fill: #334155;
+                                      -fx-font-size: 13px;" text="Admin"/>
+                    </HBox>
+                </HBox>
+
+                <!-- ─────────────────────────────────
+                     STATS
+                ───────────────────────────────── -->
+                <HBox spacing="15.0">
+                    <HBox alignment="CENTER_LEFT" spacing="15.0"
+                          styleClass="stat-card-hebergement" HBox.hgrow="ALWAYS">
+                        <Label style="-fx-font-size: 24px; -fx-text-fill: #F7DC6F;" text="🎯"/>
+                        <VBox>
+                            <Label styleClass="stat-title" text="Total Activités"/>
+                            <Label fx:id="totalActivitesLabel" styleClass="stat-value" text="0"/>
+                        </VBox>
+                    </HBox>
+                    <HBox alignment="CENTER_LEFT" spacing="15.0"
+                          styleClass="stat-card-reservations" HBox.hgrow="ALWAYS">
+                        <Label style="-fx-font-size: 24px; -fx-text-fill: #2C3E50;" text="✅"/>
+                        <VBox>
+                            <Label styleClass="stat-title" text="Activités Actives"/>
+                            <Label fx:id="activesLabel" styleClass="stat-value" text="0"/>
+                        </VBox>
+                    </HBox>
+                    <HBox alignment="CENTER_LEFT" spacing="15.0"
+                          styleClass="stat-card-disponibles" HBox.hgrow="ALWAYS">
+                        <Label style="-fx-font-size: 24px; -fx-text-fill: #1ABC9C;" text="👥"/>
+                        <VBox>
+                            <Label styleClass="stat-title" text="Capacité Totale"/>
+                            <Label fx:id="capaciteLabel" styleClass="stat-value" text="0"/>
+                        </VBox>
+                    </HBox>
+                </HBox>
+
+                <!-- ═════════════════════════════════════════════════════
+                     LIGNE DU HAUT : FORMULAIRE ACTIVITÉ + FORMULAIRE PLANNING
+                     Les deux côte à côte, même hauteur
+                ═════════════════════════════════════════════════════ -->
+                <HBox spacing="18.0" alignment="TOP_LEFT">
+
+                    <!-- ── FORMULAIRE ACTIVITÉ (gauche) ────────────── -->
+                    <VBox spacing="15.0" styleClass="card" HBox.hgrow="ALWAYS">
+                        <Label styleClass="card-title" text="📝  Formulaire Activité"/>
+
+                        <VBox spacing="12.0">
+                            <!-- Nom -->
+                            <VBox spacing="5.0">
+                                <Label styleClass="form-label" text="Nom de l'activité *"/>
+                                <TextField fx:id="txtNom"
+                                           promptText="Ex: Randonnée en montagne"
+                                           styleClass="text-field"/>
+                            </VBox>
+
+                            <!-- Description -->
+                            <VBox spacing="5.0">
+                                <Label styleClass="form-label" text="Description *"/>
+                                <TextArea fx:id="txtDescription"
+                                          promptText="Décrivez l'activité..."
+                                          styleClass="text-area"
+                                          wrapText="true" prefRowCount="3"/>
+                            </VBox>
+
+                            <!-- Lieu + Type -->
+                            <GridPane hgap="12.0" vgap="10.0">
+                                <columnConstraints>
+                                    <ColumnConstraints percentWidth="50"/>
+                                    <ColumnConstraints percentWidth="50"/>
+                                </columnConstraints>
+                                <VBox spacing="5.0" GridPane.columnIndex="0">
+                                    <Label styleClass="form-label" text="Lieu *"/>
+                                    <TextField fx:id="txtLieu" promptText="Ville"
+                                               styleClass="text-field"/>
+                                </VBox>
+                                <VBox spacing="5.0" GridPane.columnIndex="1">
+                                    <Label styleClass="form-label" text="Type *"/>
+                                    <ComboBox fx:id="comboType" promptText="Type"
+                                              styleClass="text-field" maxWidth="Infinity"/>
+                                </VBox>
+                            </GridPane>
+
+                            <!-- Capacité + Prix -->
+                            <GridPane hgap="12.0" vgap="10.0">
+                                <columnConstraints>
+                                    <ColumnConstraints percentWidth="50"/>
+                                    <ColumnConstraints percentWidth="50"/>
+                                </columnConstraints>
+                                <VBox spacing="5.0" GridPane.columnIndex="0">
+                                    <Label styleClass="form-label" text="Capacité Max *"/>
+                                    <TextField fx:id="txtCapacite" promptText="20"
+                                               styleClass="text-field"/>
+                                </VBox>
+                                <VBox spacing="5.0" GridPane.columnIndex="1">
+                                    <Label styleClass="form-label" text="Prix / Pers (TND) *"/>
+                                    <TextField fx:id="txtPrix" promptText="45.00"
+                                               styleClass="text-field"/>
+                                </VBox>
+                            </GridPane>
+
+                            <!-- Statut -->
+                            <VBox spacing="5.0">
+                                <Label styleClass="form-label" text="Statut"/>
+                                <ComboBox fx:id="comboStatut" styleClass="text-field"
+                                          maxWidth="Infinity"/>
+                            </VBox>
+
+                            <!-- Image upload avec aperçu -->
+                            <VBox spacing="8.0">
+                                <Label styleClass="form-label" text="Image de l'activité"/>
+
+                                <HBox spacing="12.0" alignment="CENTER_LEFT">
+                                    <!-- Aperçu -->
+                                    <StackPane fx:id="imagePreviewPane"
+                                               prefWidth="90" prefHeight="90"
+                                               style="-fx-background-color: #F1F5F9;
+                                                      -fx-background-radius: 10;
+                                                      -fx-border-color: #CBD5E1;
+                                                      -fx-border-width: 1.5;
+                                                      -fx-border-radius: 10;">
+                                        <Label fx:id="lblImagePlaceholder" text="🖼"
+                                               style="-fx-font-size: 28px; -fx-text-fill: #94A3B8;"/>
+                                        <ImageView fx:id="imagePreview"
+                                                   fitWidth="88" fitHeight="88"
+                                                   preserveRatio="true"
+                                                   visible="false" managed="false"/>
+                                    </StackPane>
+
+                                    <!-- Infos + boutons -->
+                                    <VBox spacing="8.0" HBox.hgrow="ALWAYS">
+                                        <Label fx:id="lblImageName"
+                                               text="Aucune image sélectionnée"
+                                               wrapText="true"
+                                               style="-fx-text-fill: #64748B; -fx-font-size: 11px;"/>
+                                        <HBox spacing="8.0">
+                                            <Button fx:id="btnChoisirImage"
+                                                    onAction="#choisirImage"
+                                                    text="📁  Choisir une image"
+                                                    prefHeight="34"
+                                                    HBox.hgrow="ALWAYS" maxWidth="Infinity"
+                                                    style="-fx-background-color: #3B82F6;
+                                                           -fx-text-fill: white;
+                                                           -fx-font-weight: bold;
+                                                           -fx-font-size: 12px;
+                                                           -fx-background-radius: 8;
+                                                           -fx-cursor: hand;"/>
+                                            <Button fx:id="btnSupprimerImage"
+                                                    onAction="#supprimerImage"
+                                                    text="✕"
+                                                    prefHeight="34" prefWidth="34"
+                                                    visible="false" managed="false"
+                                                    style="-fx-background-color: #FEE2E2;
+                                                           -fx-text-fill: #DC2626;
+                                                           -fx-font-weight: bold;
+                                                           -fx-background-radius: 8;
+                                                           -fx-cursor: hand;"/>
+                                        </HBox>
+                                        <Label style="-fx-text-fill: #94A3B8; -fx-font-size: 10px;"
+                                               text="Formats : JPG, PNG, GIF — max 5 Mo"/>
+                                    </VBox>
+                                </HBox>
+
+                                <!-- Champ caché stockant le chemin pour le controller -->
+                                <TextField fx:id="txtImage" visible="false" managed="false"/>
+                            </VBox>
+                        </VBox>
+
+                        <Region VBox.vgrow="ALWAYS"/>
+
+                        <!-- Boutons d'action -->
+                        <VBox spacing="8.0" style="-fx-padding: 6 0 0 0;">
+                            <Button fx:id="btnAjouter" maxWidth="Infinity"
+                                    onAction="#addOrUpdateActivite"
+                                    prefHeight="42.0" styleClass="action-button"
+                                    text="💾  Enregistrer l'activité"/>
+                            <HBox spacing="10.0">
+                                <Button fx:id="btnSupprimer" maxWidth="Infinity"
+                                        onAction="#deleteActivite"
+                                        prefHeight="38.0" styleClass="delete-button"
+                                        text="🗑️  Supprimer" HBox.hgrow="ALWAYS"/>
+                                <Button maxWidth="Infinity"
+                                        onAction="#handleCancel"
+                                        prefHeight="38.0" styleClass="secondary-button"
+                                        text="❌  Annuler" HBox.hgrow="ALWAYS"/>
+                            </HBox>
+                        </VBox>
+                    </VBox>
+
+                    <!-- ── FORMULAIRE PLANNING (droite) ────────────── -->
+                    <VBox spacing="15.0" styleClass="card" HBox.hgrow="ALWAYS">
+                        <Label styleClass="card-title" text="📅  Plannings de l'activité"/>
+
+                        <!-- Zone ajout planning -->
+                        <VBox spacing="12.0"
+                              style="-fx-background-color: #F9FAFB;
+                                     -fx-padding: 16;
+                                     -fx-background-radius: 12;
+                                     -fx-border-color: #E2E8F0;
+                                     -fx-border-width: 1;
+                                     -fx-border-radius: 12;">
+
+                            <Label style="-fx-font-size: 13px; -fx-font-weight: 600;
+                                          -fx-text-fill: #2C3E50;"
+                                   text="➕  Ajouter un créneau"/>
+
+                            <!-- Date -->
+                            <VBox spacing="5.0">
+                                <Label styleClass="form-label" text="Date"/>
+                                <DatePicker fx:id="planningDatePicker"
+                                            styleClass="text-field" maxWidth="Infinity"/>
+                            </VBox>
+
+                            <!-- Heure début + Heure fin -->
+                            <HBox spacing="14.0">
+                                <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                                    <Label styleClass="form-label" text="Heure de début"/>
+                                    <HBox spacing="6.0" alignment="CENTER_LEFT">
+                                        <Spinner fx:id="spinnerHeureDebut" editable="true"
+                                                 prefWidth="62"/>
+                                        <Label text="h"
+                                               style="-fx-text-fill: #64748b;
+                                                      -fx-font-weight: bold;
+                                                      -fx-padding: 6 0 0 0;"/>
+                                        <Spinner fx:id="spinnerMinuteDebut" editable="true"
+                                                 prefWidth="62"/>
+                                        <Label text="min"
+                                               style="-fx-text-fill: #64748b;
+                                                      -fx-font-size: 11px;
+                                                      -fx-padding: 8 0 0 0;"/>
+                                    </HBox>
+                                </VBox>
+
+                                <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                                    <Label styleClass="form-label" text="Heure de fin"/>
+                                    <HBox spacing="6.0" alignment="CENTER_LEFT">
+                                        <Spinner fx:id="spinnerHeureFin" editable="true"
+                                                 prefWidth="62"/>
+                                        <Label text="h"
+                                               style="-fx-text-fill: #64748b;
+                                                      -fx-font-weight: bold;
+                                                      -fx-padding: 6 0 0 0;"/>
+                                        <Spinner fx:id="spinnerMinuteFin" editable="true"
+                                                 prefWidth="62"/>
+                                        <Label text="min"
+                                               style="-fx-text-fill: #64748b;
+                                                      -fx-font-size: 11px;
+                                                      -fx-padding: 8 0 0 0;"/>
+                                    </HBox>
+                                </VBox>
+                            </HBox>
+
+                            <Button fx:id="btnAjouterPlanning"
+                                    onAction="#addPlanningToList"
+                                    styleClass="secondary-button"
+                                    text="➕  Ajouter ce créneau"
+                                    maxWidth="Infinity" prefHeight="38"/>
+                        </VBox>
+
+                        <!-- Liste des plannings ajoutés -->
+                        <VBox spacing="8.0">
+                            <Label style="-fx-font-size: 13px; -fx-font-weight: 600;
+                                          -fx-text-fill: #334155;"
+                                   text="Créneaux enregistrés :"/>
+
+                            <ScrollPane fitToWidth="true" prefHeight="200"
+                                        style="-fx-background-color: transparent;
+                                               -fx-border-color: transparent;">
+                                <VBox fx:id="planningsListContainer" spacing="8.0">
+                                    <Label style="-fx-text-fill: #94a3b8; -fx-font-size: 12px;
+                                                  -fx-padding: 10 0 0 4;"
+                                           text="Aucun planning ajouté"/>
+                                </VBox>
+                            </ScrollPane>
+                        </VBox>
+                    </VBox>
+                </HBox>
+
+                <!-- ═════════════════════════════════════════════════════
+                     LIGNE DU BAS : TABLE DES ACTIVITÉS (pleine largeur)
+                ═════════════════════════════════════════════════════ -->
+                <VBox spacing="14.0" styleClass="card">
+                    <HBox alignment="CENTER_LEFT" spacing="12.0">
+                        <Label styleClass="card-title" text="📋  Liste des Activités"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="btnRefresh" onAction="#refreshData"
+                                styleClass="secondary-button" text="🔄  Actualiser"/>
+                    </HBox>
+
+                    <TableView fx:id="tableActivites"
+                               prefHeight="340.0"
+                               VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="colId"     prefWidth="55"  text="ID"/>
+                            <TableColumn fx:id="colNom"    prefWidth="190" text="Nom"/>
+                            <TableColumn fx:id="colLieu"   prefWidth="130" text="Lieu"/>
+                            <TableColumn fx:id="colType"   prefWidth="110" text="Type"/>
+                            <TableColumn fx:id="colPrix"   prefWidth="95"  text="Prix"/>
+                            <TableColumn fx:id="colStatut" prefWidth="105" text="Statut"/>
+                            <TableColumn fx:id="colActions" prefWidth="175" text="Actions"/>
+                        </columns>
+                    </TableView>
+
+                    <Label fx:id="paginationLabel"
+                           style="-fx-text-fill: #64748b; -fx-font-size: 12px;"
+                           text="0 activités"/>
+                </VBox>
+
+            </VBox>
+        </ScrollPane>
+    </StackPane>
+
+</AnchorPane>

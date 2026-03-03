@@ -1,0 +1,368 @@
+/* =====================================================
+   RE7LA UI STYLE — VERSION STABLE
+===================================================== */
+
+/* ================= GLOBAL ================= */
+.root {
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+    -fx-background-color: #F5F7FA;
+}
+
+/* ================= CONTAINERS ================= */
+.front-container {
+    -fx-padding: 20;
+    -fx-background-color: transparent;
+}
+
+/* ================= HEADER ================= */
+.front-header {
+    -fx-background-color: linear-gradient(to right, #2C3E50, #1ABC9C);
+    -fx-padding: 30;
+    -fx-background-radius: 20;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 20, 0, 0, 8);
+}
+
+.front-title {
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+    -fx-fill: white;
+}
+
+.front-subtitle {
+    -fx-font-size: 16px;
+    -fx-fill: white;
+}
+
+/* ================= SEARCH ================= */
+.search-box {
+    -fx-background-radius: 12;
+    -fx-padding: 12;
+    -fx-border-color: #E0E0E0;
+    -fx-border-radius: 12;
+}
+
+.search-box:focused {
+    -fx-border-color: #F39C12;
+    -fx-effect: dropshadow(gaussian, rgba(243,156,18,0.25), 12, 0, 0, 4);
+}
+
+/* ================= BUTTONS ================= */
+.btn-primary {
+    -fx-background-color: #F39C12;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10;
+    -fx-padding: 12 20;
+    -fx-cursor: hand;
+}
+
+.btn-primary:hover {
+    -fx-background-color: #E67E22;
+}
+
+/* ================= FILTER BOX ================= */
+.filter-box {
+    -fx-background-color: linear-gradient(to bottom, #ffffff, #f7f8fa);
+    -fx-background-radius: 25;
+    -fx-padding: 30;
+    -fx-spacing: 20;
+    -fx-border-radius: 25;
+    -fx-border-color: #e0e6ed;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 30, 0, 0, 10);
+    -fx-font-family: "Segoe UI", "Arial", sans-serif;
+}
+
+.filter-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-fill: #2c3e50;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 2, 0, 0, 2);
+}
+
+.filter-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #34495e;
+}
+
+.separator .line {
+    -fx-border-color: #eceff1;
+    -fx-border-width: 1;
+}
+
+.slider .track {
+    -fx-background-color: linear-gradient(to right, #dfe6e9, #cfd9e3);
+    -fx-background-radius: 10;
+    -fx-pref-height: 8;
+}
+
+.slider .thumb {
+    -fx-background-color: #4f46e5;
+    -fx-background-radius: 50%;
+    -fx-pref-width: 18;
+    -fx-pref-height: 18;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 4, 0, 0, 2);
+}
+
+.slider .tick-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #7f8c8d;
+}
+
+#prixText {
+    -fx-font-size: 13px;
+    -fx-fill: #2c3e50;
+    -fx-font-weight: bold;
+}
+
+.combo-box {
+    -fx-background-radius: 15;
+    -fx-border-radius: 15;
+    -fx-border-color: #dcdde1;
+    -fx-padding: 6 12 6 12;
+    -fx-font-size: 13px;
+}
+
+.combo-box:focused {
+    -fx-border-color: #4f46e5;
+    -fx-border-width: 2;
+}
+
+.check-box {
+    -fx-font-size: 13px;
+    -fx-text-fill: #2c3e50;
+}
+
+.check-box .box {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #dcdde1;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-pref-width: 16;
+    -fx-pref-height: 16;
+}
+
+.check-box:selected .box {
+    -fx-background-color: #4f46e5;
+    -fx-border-color: #4f46e5;
+}
+
+.btn-secondary {
+    -fx-background-color: linear-gradient(to right, #4f46e5, #6c5ce7);
+    -fx-text-fill: white;
+    -fx-background-radius: 20;
+    -fx-font-weight: bold;
+    -fx-padding: 12 20 12 20;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 5, 0, 0, 2);
+    -fx-font-size: 14px;
+}
+
+.btn-secondary:hover {
+    -fx-background-color: linear-gradient(to right, #4338ca, #5a4dd7);
+}
+
+.region {
+    -fx-background-color: transparent;
+}
+
+.filter-box *:hover {
+    -fx-cursor: hand;
+}
+
+/* =====================================================
+   ACTIVITY CARD — NOUVEAU STYLE (photo référence)
+===================================================== */
+
+/* ── Carte principale ── */
+.activity-card {
+    -fx-background-color: white;
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
+    -fx-border-color: #E8ECF0;
+    -fx-border-width: 1.5;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 16, 0, 0, 5);
+    -fx-padding: 0;
+    -fx-pref-width: 210;
+    -fx-max-width: 210;
+}
+
+.activity-card:hover {
+    -fx-scale-x: 1.03;
+    -fx-scale-y: 1.03;
+    -fx-border-color: #F39C12;
+    -fx-effect: dropshadow(gaussian, rgba(243,156,18,0.38), 28, 0, 0, 10);
+    -fx-cursor: hand;
+}
+
+/* ── Badge type (coin haut droit de l'image) ── */
+.activity-type-badge {
+    -fx-background-color: rgba(255, 255, 255, 0.22);
+    -fx-text-fill: white;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-border-color: rgba(255,255,255,0.55);
+    -fx-border-width: 1;
+    -fx-padding: 4 12;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 4, 0, 0, 1);
+}
+
+/* ── Zone contenu blanc (bas de la carte) ── */
+.activity-content {
+    -fx-padding: 16 18 18 18;
+    -fx-spacing: 10;
+    -fx-background-color: white;
+    -fx-background-radius: 0 0 18 18;
+}
+
+/* ── Titre ── */
+.activity-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-fill: #1A2340;
+}
+
+/* ── Lieu ── */
+.activity-location {
+    -fx-font-size: 12px;
+    -fx-fill: #8A95A5;
+}
+
+/* ── Description ── */
+.activity-description {
+    -fx-font-size: 12.5px;
+    -fx-fill: #6C7A8D;
+    -fx-line-spacing: 2;
+}
+
+/* ── Prix ── */
+.activity-price {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-fill: #F39C12;
+}
+
+/* ── Statut disponible ── */
+.activity-status-available {
+    -fx-background-color: #E8F8F5;
+    -fx-text-fill: #1ABC9C;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 20;
+    -fx-padding: 5 12;
+    -fx-border-radius: 20;
+    -fx-border-color: #1ABC9C;
+    -fx-border-width: 1;
+}
+
+/* ── Statut complet ── */
+.activity-status-complet {
+    -fx-background-color: #FDECEA;
+    -fx-text-fill: #E74C3C;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 20;
+    -fx-padding: 5 12;
+    -fx-border-radius: 20;
+    -fx-border-color: #E74C3C;
+    -fx-border-width: 1;
+}
+
+/* =====================================================
+   PLANNING (VERSION ORIGINALE)
+===================================================== */
+
+.planning-card {
+    -fx-background-color: linear-gradient(to right, #FFFFFF, #F8FFFE);
+    -fx-background-radius: 16;
+    -fx-padding: 20;
+    -fx-border-color: #E0E0E0;
+    -fx-border-width: 2;
+    -fx-border-radius: 16;
+    -fx-pref-height: 140;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 15, 0, 0, 6);
+    -fx-alignment: CENTER_LEFT;
+}
+
+.planning-card:hover {
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+    -fx-border-color: #F39C12;
+    -fx-effect: dropshadow(gaussian, rgba(243,156,18,0.3), 20, 0, 0, 10);
+    -fx-background-color: linear-gradient(to right, #FFFBF5, #FFF8EC);
+}
+
+.planning-date-box {
+    -fx-background-color: linear-gradient(to bottom, #F39C12, #E67E22);
+    -fx-background-radius: 12;
+    -fx-padding: 20;
+    -fx-alignment: CENTER;
+    -fx-min-width: 100;
+    -fx-pref-width: 120;
+    -fx-effect: dropshadow(gaussian, rgba(243,156,18,0.4), 12, 0, 0, 5);
+}
+
+.planning-day {
+    -fx-font-size: 42px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.planning-month {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.planning-info {
+    -fx-spacing: 10;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 0 0 0 10;
+}
+
+.planning-time {
+    -fx-font-size: 18px;
+    -fx-text-fill: #F39C12;
+    -fx-font-weight: bold;
+}
+
+.planning-places {
+    -fx-font-size: 16px;
+    -fx-text-fill: #1ABC9C;
+    -fx-font-weight: bold;
+}
+
+.planning-reserve-btn {
+    -fx-background-color: linear-gradient(to right, #1ABC9C, #16A085);
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-padding: 15 35;
+    -fx-background-radius: 10;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(26,188,156,0.4), 15, 0, 0, 6);
+    -fx-min-width: 150;
+}
+
+.planning-reserve-btn:hover {
+    -fx-background-color: linear-gradient(to right, #16A085, #138D75);
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+
+.planning-reserve-btn:pressed {
+    -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
+}
+
+/* ================= SCROLL ================= */
+.scroll-pane {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane .viewport {
+    -fx-background-color: transparent;
+}

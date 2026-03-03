@@ -1,0 +1,604 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.Background?>
+<?import javafx.scene.layout.BackgroundFill?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<!-- CORRECTION: Version JavaFX 22 au lieu de 25 -->
+
+<BorderPane prefHeight="900" prefWidth="1400" stylesheets="@homeClient.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.Controllers.user.client.homeClientController">
+
+    <!-- ============ BACKGROUND GRADIENT ============ -->
+    <background>
+        <Background>
+            <fills>
+                <BackgroundFill fill="linear-gradient(from 0% 0% to 100% 100%, #FEF9F0, #FFF5EB, #FEF2E6)" />
+            </fills>
+        </Background>
+    </background>
+
+    <!-- ============ TOP NAVIGATION BAR ============ -->
+    <top>
+        <VBox styleClass="nav-container">
+            <!-- Main Navigation -->
+            <HBox alignment="CENTER_LEFT" spacing="30" styleClass="nav-bar">
+                <padding>
+                    <Insets bottom="15" left="40" right="40" top="15" />
+                </padding>
+
+                <!-- Logo RE7LA avec nom visible -->
+                <HBox alignment="CENTER" onMouseClicked="#handleLogoClick" spacing="12" styleClass="nav-logo">
+                    <StackPane styleClass="nav-logo-bg">
+                        <Circle radius="28" styleClass="nav-logo-circle" />
+                        <ImageView fitHeight="40" fitWidth="40" preserveRatio="true">
+                            <Image url="@../image/logo.png" />
+                        </ImageView>
+                    </StackPane>
+                    <VBox alignment="CENTER_LEFT">
+                        <Label styleClass="nav-logo-text" text="RE7LA" />
+                        <Label styleClass="nav-logo-subtext" text="Voyage en Tunisie" />
+                    </VBox>
+                    <Label styleClass="nav-logo-tunisia" text="🇹🇳" />
+                </HBox>
+
+                <!-- Navigation Links -->
+                <HBox spacing="20" styleClass="nav-links">
+                    <Button styleClass="nav-link-active" text="Accueil" />
+                    <Button onAction="#handelhebergement" styleClass="nav-link" text="Hébergements" />
+                    <Button onAction="#handlActivite" styleClass="nav-link" text="Activités" />
+                    <Button fx:id="btntrajet" onAction="#showTrajet" styleClass="nav-link" text="Trajets" />
+                    <Button styleClass="nav-link" text="Promotions" />
+                    <Button onAction="#handleShowCommunaute" styleClass="nav-link" text="Communauté" />
+                </HBox>
+
+                <Region HBox.hgrow="ALWAYS" />
+
+                <!-- Search Bar -->
+                <HBox spacing="8" styleClass="nav-search">
+                    <TextField promptText="Où voulez-vous aller ?" styleClass="nav-search-field" />
+                    <Button styleClass="nav-search-btn" text="🔍" />
+                </HBox>
+
+                <!-- User Menu avec image dynamique -->
+                <HBox onMouseClicked="#handleUserMenuClick" spacing="20" styleClass="nav-user">
+                    <Button styleClass="nav-notif-btn" text="🔔" />
+                    <StackPane styleClass="nav-avatar">
+                        <Circle fill="linear-gradient(to bottom, #1ABC9C, #16a085)" radius="24" />
+                        <!-- Image de l'utilisateur connecté (sera mise à jour dynamiquement) -->
+                        <ImageView fx:id="userAvatarImage" fitHeight="42" fitWidth="42" styleClass="nav-avatar-img">
+                            <Image url="https://i.pravatar.cc/150?u=user" />
+                        </ImageView>
+                        <Circle fill="#2ECC71" radius="7" translateX="14" translateY="14" />
+                    </StackPane>
+                    <VBox alignment="CENTER_LEFT">
+                        <!-- Nom de l'utilisateur connecté (sera mis à jour dynamiquement) -->
+                        <Label fx:id="userNameLabel" styleClass="nav-user-name" text="Ahmed Ben Ali" />
+                        <Label fx:id="userPointsLabel" styleClass="nav-user-points" text="🏆 1250 points" />
+                    </VBox>
+                </HBox>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- ============ CENTER CONTENT ============ -->
+    <center>
+        <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" styleClass="content-scroll">
+            <VBox alignment="TOP_CENTER" spacing="50" styleClass="home-content">
+                <padding>
+                    <Insets bottom="50" left="50" right="50" top="30" />
+                </padding>
+
+                <!-- ===== HERO SECTION ===== -->
+                <StackPane prefHeight="400" styleClass="hero-section">
+                    <Region styleClass="hero-overlay" />
+                    <VBox alignment="CENTER" spacing="25" styleClass="hero-content">
+                        <Text styleClass="hero-title" text="Voyagez autrement en Tunisie">
+                            <font>
+                                <Font name="System Bold" size="52" />
+                            </font>
+                        </Text>
+                        <Text styleClass="hero-subtitle" text="Découvrez des expériences uniques, des hébergements de charme et des activités authentiques">
+                            <font>
+                                <Font size="20" />
+                            </font>
+                        </Text>
+
+                        <!-- Quick Search Card -->
+                        <HBox alignment="CENTER" spacing="15" styleClass="hero-search-card">
+                            <VBox spacing="5">
+                                <Label styleClass="search-label" text="📍 Destination" />
+                                <TextField promptText="Tunis, Sousse, Djerba..." styleClass="hero-search-field" />
+                            </VBox>
+                            <VBox spacing="5">
+                                <Label styleClass="search-label" text="📅 Dates" />
+                                <HBox spacing="8">
+                                    <DatePicker promptText="Arrivée" styleClass="hero-datepicker" />
+                                    <DatePicker promptText="Départ" styleClass="hero-datepicker" />
+                                </HBox>
+                            </VBox>
+                            <VBox spacing="5">
+                                <Label styleClass="search-label" text="👥 Voyageurs" />
+                                <ComboBox promptText="2 adultes" styleClass="hero-combo" />
+                            </VBox>
+                            <Button prefHeight="48" prefWidth="160" styleClass="hero-search-btn" text="🔍 Rechercher" />
+                        </HBox>
+
+                        <!-- Stats Badge -->
+                        <HBox alignment="CENTER" spacing="30" styleClass="hero-stats">
+                            <VBox alignment="CENTER" spacing="5">
+                                <Label styleClass="stat-number" text="500+" />
+                                <Label styleClass="stat-label" text="Hébergements" />
+                            </VBox>
+                            <VBox alignment="CENTER" spacing="5">
+                                <Label styleClass="stat-number" text="300+" />
+                                <Label styleClass="stat-label" text="Activités" />
+                            </VBox>
+                            <VBox alignment="CENTER" spacing="5">
+                                <Label styleClass="stat-number" text="15k+" />
+                                <Label styleClass="stat-label" text="Voyageurs" />
+                            </VBox>
+                            <VBox alignment="CENTER" spacing="5">
+                                <Label styleClass="stat-number" text="4.9" />
+                                <Label styleClass="stat-label" text="Note ★" />
+                            </VBox>
+                        </HBox>
+                    </VBox>
+                </StackPane>
+
+                <!-- ===== SECTION 1: DESTINATIONS POPULAIRES ===== -->
+                <VBox spacing="25">
+                    <HBox alignment="CENTER_LEFT">
+                        <VBox spacing="8">
+                            <Label styleClass="section-tag" text="🌍 EXPLOREZ" />
+                            <Label styleClass="section-title" text="Destinations populaires" />
+                            <Label styleClass="section-subtitle" text="Les lieux préférés de notre communauté" />
+                        </VBox>
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Hyperlink fx:id="bttrajet" onAction="#showtrajet" styleClass="section-view-all" text="Voir toutes les destinations ›" />
+                    </HBox>
+
+                    <!-- Destination Cards Grid -->
+                    <GridPane alignment="CENTER" hgap="25" vgap="25">
+                        <columnConstraints>
+                            <ColumnConstraints />
+                            <ColumnConstraints />
+                            <ColumnConstraints />
+                            <ColumnConstraints />
+                        </columnConstraints>
+                        <rowConstraints>
+                            <RowConstraints />
+                        </rowConstraints>
+
+                        <!-- Djerba -->
+                        <VBox prefWidth="280" styleClass="destination-card" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                            <StackPane prefHeight="160" styleClass="destination-image-djerba">
+                                <Region styleClass="destination-overlay" />
+                                <Label styleClass="destination-rating" text="★ 4.9" />
+                                <Label styleClass="destination-price" text="Dès 150DT/nuit" />
+                            </StackPane>
+                            <VBox spacing="10" styleClass="destination-info">
+                                <HBox alignment="CENTER_LEFT" spacing="10">
+                                    <Label styleClass="destination-name" text="Djerba" />
+                                    <Label styleClass="destination-location" text="📍 Sud Tunisien" />
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" spacing="15">
+                                    <Label styleClass="destination-meta" text="🏨 24 hébergements" />
+                                    <Label styleClass="destination-meta" text="🎯 15 activités" />
+                                </HBox>
+                                <FlowPane hgap="8" vgap="8">
+                                    <Label styleClass="destination-badge" text="Plages" />
+                                    <Label styleClass="destination-badge" text="Île" />
+                                    <Label styleClass="destination-badge" text="Détente" />
+                                </FlowPane>
+                            </VBox>
+                        </VBox>
+
+                        <!-- Hammamet -->
+                        <VBox prefWidth="280" styleClass="destination-card" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                            <StackPane prefHeight="160" styleClass="destination-image-hammamet">
+                                <Region styleClass="destination-overlay" />
+                                <Label styleClass="destination-rating" text="★ 4.8" />
+                                <Label styleClass="destination-price" text="Dès 120DT/nuit" />
+                            </StackPane>
+                            <VBox spacing="10" styleClass="destination-info">
+                                <HBox alignment="CENTER_LEFT" spacing="10">
+                                    <Label styleClass="destination-name" text="Hammamet" />
+                                    <Label styleClass="destination-location" text="📍 Cap Bon" />
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" spacing="15">
+                                    <Label styleClass="destination-meta" text="🏨 32 hébergements" />
+                                    <Label styleClass="destination-meta" text="🎯 22 activités" />
+                                </HBox>
+                                <FlowPane hgap="8" vgap="8">
+                                    <Label styleClass="destination-badge" text="Plages" />
+                                    <Label styleClass="destination-badge" text="Médina" />
+                                    <Label styleClass="destination-badge" text="Golf" />
+                                </FlowPane>
+                            </VBox>
+                        </VBox>
+
+                        <!-- Sousse -->
+                        <VBox prefWidth="280" styleClass="destination-card" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                            <StackPane prefHeight="160" styleClass="destination-image-sousse">
+                                <Region styleClass="destination-overlay" />
+                                <Label styleClass="destination-rating" text="★ 4.7" />
+                                <Label styleClass="destination-price" text="Dès 100DT/nuit" />
+                            </StackPane>
+                            <VBox spacing="10" styleClass="destination-info">
+                                <HBox alignment="CENTER_LEFT" spacing="10">
+                                    <Label styleClass="destination-name" text="Sousse" />
+                                    <Label styleClass="destination-location" text="📍 Centre-Est" />
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" spacing="15">
+                                    <Label styleClass="destination-meta" text="🏨 28 hébergements" />
+                                    <Label styleClass="destination-meta" text="🎯 19 activités" />
+                                </HBox>
+                                <FlowPane hgap="8" vgap="8">
+                                    <Label styleClass="destination-badge" text="Médina" />
+                                    <Label styleClass="destination-badge" text="Port" />
+                                    <Label styleClass="destination-badge" text="Plages" />
+                                </FlowPane>
+                            </VBox>
+                        </VBox>
+
+                        <!-- Tozeur -->
+                        <VBox prefWidth="280" styleClass="destination-card" GridPane.columnIndex="3" GridPane.rowIndex="0">
+                            <StackPane prefHeight="160" styleClass="destination-image-tozeur">
+                                <Region styleClass="destination-overlay" />
+                                <Label styleClass="destination-rating" text="★ 4.6" />
+                                <Label styleClass="destination-price" text="Dès 90DT/nuit" />
+                            </StackPane>
+                            <VBox spacing="10" styleClass="destination-info">
+                                <HBox alignment="CENTER_LEFT" spacing="10">
+                                    <Label styleClass="destination-name" text="Tozeur" />
+                                    <Label styleClass="destination-location" text="📍 Sud-Ouest" />
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" spacing="15">
+                                    <Label styleClass="destination-meta" text="🏨 15 hébergements" />
+                                    <Label styleClass="destination-meta" text="🎯 12 activités" />
+                                </HBox>
+                                <FlowPane hgap="8" vgap="8">
+                                    <Label styleClass="destination-badge" text="Désert" />
+                                    <Label styleClass="destination-badge" text="Oasis" />
+                                    <Label styleClass="destination-badge" text="Star Wars" />
+                                </FlowPane>
+                            </VBox>
+                        </VBox>
+                    </GridPane>
+                </VBox>
+
+                <!-- ===== SECTION 2: HÉBERGEMENTS RECOMMANDÉS ===== -->
+                <VBox spacing="25">
+                    <HBox alignment="CENTER_LEFT">
+                        <VBox spacing="8">
+                            <Label styleClass="section-tag" text="🏨 SÉJOURNEZ" />
+                            <Label styleClass="section-title" text="Hébergements recommandés" />
+                            <Label styleClass="section-subtitle" text="Des lieux uniques sélectionnés pour vous" />
+                        </VBox>
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Hyperlink onAction="#lienHebergement" styleClass="section-view-all" text="Voir tous les hébergements ›" />
+                    </HBox>
+
+                    <HBox alignment="CENTER" spacing="25">
+                        <!-- Hébergement 1 -->
+                        <VBox prefWidth="300" styleClass="hebergement-card">
+                            <StackPane prefHeight="180" styleClass="hebergement-image-1">
+                                <Region styleClass="hebergement-overlay" />
+                                <Label styleClass="hebergement-tag" text="🔥 -20%" />
+                                <Label styleClass="hebergement-favorite" text="❤️" />
+                            </StackPane>
+                            <VBox spacing="10" styleClass="hebergement-info">
+                                <HBox alignment="CENTER_LEFT" spacing="10">
+                                    <Label styleClass="hebergement-name" text="Dar El Médina" />
+                                    <Label styleClass="hebergement-type" text="Riad" />
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" spacing="5">
+                                    <Label styleClass="hebergement-rating" text="★ 4.9" />
+                                    <Label styleClass="hebergement-reviews" text="(128 avis)" />
+                                </HBox>
+                                <Label styleClass="hebergement-location" text="📍 Médina de Tunis" />
+                                <HBox alignment="CENTER_LEFT" spacing="10">
+                                    <Label styleClass="hebergement-price" text="250 DT" />
+                                    <Label styleClass="hebergement-night" text="/nuit" />
+                                </HBox>
+                                <FlowPane hgap="8" styleClass="amenities" vgap="8">
+                                    <Label styleClass="amenity" text="WiFi" />
+                                    <Label styleClass="amenity" text="Piscine" />
+                                    <Label styleClass="amenity" text="Petit-déj" />
+                                    <Label styleClass="amenity" text="Clim" />
+                                </FlowPane>
+                                <Button prefWidth="280" styleClass="hebergement-btn" text="Réserver" />
+                            </VBox>
+                        </VBox>
+
+                        <!-- Hébergement 2 -->
+                        <VBox prefWidth="300" styleClass="hebergement-card">
+                            <StackPane prefHeight="180" styleClass="hebergement-image-2">
+                                <Region styleClass="hebergement-overlay" />
+                                <Label styleClass="hebergement-tag" text="✨ Coup de cœur" />
+                                <Label styleClass="hebergement-favorite" text="❤️" />
+                            </StackPane>
+                            <VBox spacing="10" styleClass="hebergement-info">
+                                <HBox alignment="CENTER_LEFT" spacing="10">
+                                    <Label styleClass="hebergement-name" text="Hotel Sahara" />
+                                    <Label styleClass="hebergement-type" text="Luxe" />
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" spacing="5">
+                                    <Label styleClass="hebergement-rating" text="★ 4.8" />
+                                    <Label styleClass="hebergement-reviews" text="(256 avis)" />
+                                </HBox>
+                                <Label styleClass="hebergement-location" text="📍 Djerba" />
+                                <HBox alignment="CENTER_LEFT" spacing="10">
+                                    <Label styleClass="hebergement-price" text="320 DT" />
+                                    <Label styleClass="hebergement-night" text="/nuit" />
+                                </HBox>
+                                <FlowPane hgap="8" styleClass="amenities" vgap="8">
+                                    <Label styleClass="amenity" text="WiFi" />
+                                    <Label styleClass="amenity" text="Spa" />
+                                    <Label styleClass="amenity" text="Plage" />
+                                    <Label styleClass="amenity" text="Parking" />
+                                </FlowPane>
+                                <Button prefWidth="280" styleClass="hebergement-btn" text="Réserver" />
+                            </VBox>
+                        </VBox>
+
+                        <!-- Hébergement 3 -->
+                        <VBox prefWidth="300" styleClass="hebergement-card">
+                            <StackPane prefHeight="180" styleClass="hebergement-image-3">
+                                <Region styleClass="hebergement-overlay" />
+                                <Label styleClass="hebergement-tag" text="🆕 Nouveau" />
+                                <Label styleClass="hebergement-favorite" text="❤️" />
+                            </StackPane>
+                            <VBox spacing="10" styleClass="hebergement-info">
+                                <HBox alignment="CENTER_LEFT" spacing="10">
+                                    <Label styleClass="hebergement-name" text="Villa Jasmine" />
+                                    <Label styleClass="hebergement-type" text="Villa" />
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" spacing="5">
+                                    <Label styleClass="hebergement-rating" text="★ 5.0" />
+                                    <Label styleClass="hebergement-reviews" text="(42 avis)" />
+                                </HBox>
+                                <Label styleClass="hebergement-location" text="📍 Hammamet" />
+                                <HBox alignment="CENTER_LEFT" spacing="10">
+                                    <Label styleClass="hebergement-price" text="450 DT" />
+                                    <Label styleClass="hebergement-night" text="/nuit" />
+                                </HBox>
+                                <FlowPane hgap="8" styleClass="amenities" vgap="8">
+                                    <Label styleClass="amenity" text="Piscine" />
+                                    <Label styleClass="amenity" text="Jardin" />
+                                    <Label styleClass="amenity" text="Cuisine" />
+                                    <Label styleClass="amenity" text="WiFi" />
+                                </FlowPane>
+                                <Button prefWidth="280" styleClass="hebergement-btn" text="Réserver" />
+                            </VBox>
+                        </VBox>
+                    </HBox>
+                </VBox>
+
+                <!-- ===== SECTION 3: ACTIVITÉS POPULAIRES ===== -->
+                <VBox spacing="25">
+                    <HBox alignment="CENTER_LEFT">
+                        <VBox spacing="8">
+                            <Label styleClass="section-tag" text="🎯 EXPÉRIENCES" />
+                            <Label styleClass="section-title" text="Activités à ne pas manquer" />
+                            <Label styleClass="section-subtitle" text="Vivez des moments inoubliables" />
+                        </VBox>
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Hyperlink onAction="#handelactivite" styleClass="section-view-all" text="Voir toutes les activités ›" />
+                    </HBox>
+
+                    <HBox alignment="CENTER" spacing="25">
+                        <!-- Activité 1 -->
+                        <VBox prefWidth="230" styleClass="activite-card">
+                            <StackPane prefHeight="140" styleClass="activite-image-1">
+                                <Region styleClass="activite-overlay" />
+                                <Label styleClass="activite-category" text="🌊 Plage" />
+                            </StackPane>
+                            <VBox spacing="8" styleClass="activite-info">
+                                <Label styleClass="activite-name" text="Jet-ski à Hammamet" />
+                                <HBox alignment="CENTER_LEFT" spacing="5">
+                                    <Label styleClass="activite-rating" text="★ 4.8" />
+                                    <Label styleClass="activite-duration" text="• 2h" />
+                                </HBox>
+                                <Label styleClass="activite-price" text="120 DT/pers" />
+                                <Button prefWidth="210" styleClass="activite-btn" text="Réserver" />
+                            </VBox>
+                        </VBox>
+
+                        <!-- Activité 2 -->
+                        <VBox prefWidth="230" styleClass="activite-card">
+                            <StackPane prefHeight="140" styleClass="activite-image-2">
+                                <Region styleClass="activite-overlay" />
+                                <Label styleClass="activite-category" text="🏜️ Désert" />
+                            </StackPane>
+                            <VBox spacing="8" styleClass="activite-info">
+                                <Label styleClass="activite-name" text="Quad à Tozeur" />
+                                <HBox alignment="CENTER_LEFT" spacing="5">
+                                    <Label styleClass="activite-rating" text="★ 4.9" />
+                                    <Label styleClass="activite-duration" text="• 3h" />
+                                </HBox>
+                                <Label styleClass="activite-price" text="150 DT/pers" />
+                                <Button prefWidth="210" styleClass="activite-btn" text="Réserver" />
+                            </VBox>
+                        </VBox>
+
+                        <!-- Activité 3 -->
+                        <VBox prefWidth="230" styleClass="activite-card">
+                            <StackPane prefHeight="140" styleClass="activite-image-3">
+                                <Region styleClass="activite-overlay" />
+                                <Label styleClass="activite-category" text="🏛️ Culture" />
+                            </StackPane>
+                            <VBox spacing="8" styleClass="activite-info">
+                                <Label styleClass="activite-name" text="Visite de Carthage" />
+                                <HBox alignment="CENTER_LEFT" spacing="5">
+                                    <Label styleClass="activite-rating" text="★ 4.7" />
+                                    <Label styleClass="activite-duration" text="• 4h" />
+                                </HBox>
+                                <Label styleClass="activite-price" text="80 DT/pers" />
+                                <Button prefWidth="210" styleClass="activite-btn" text="Réserver" />
+                            </VBox>
+                        </VBox>
+
+                        <!-- Activité 4 -->
+                        <VBox prefWidth="230" styleClass="activite-card">
+                            <StackPane prefHeight="140" styleClass="activite-image-4">
+                                <Region styleClass="activite-overlay" />
+                                <Label styleClass="activite-category" text="🍽️ Gastronomie" />
+                            </StackPane>
+                            <VBox spacing="8" styleClass="activite-info">
+                                <Label styleClass="activite-name" text="Cours de cuisine" />
+                                <HBox alignment="CENTER_LEFT" spacing="5">
+                                    <Label styleClass="activite-rating" text="★ 4.9" />
+                                    <Label styleClass="activite-duration" text="• 3h" />
+                                </HBox>
+                                <Label styleClass="activite-price" text="90 DT/pers" />
+                                <Button prefWidth="210" styleClass="activite-btn" text="Réserver" />
+                            </VBox>
+                        </VBox>
+                    </HBox>
+                </VBox>
+
+                <!-- ===== SECTION 4: PROMOTIONS EXCLUSIVES ===== -->
+                <VBox spacing="25" styleClass="promo-section">
+                    <HBox alignment="CENTER_LEFT">
+                        <VBox spacing="8">
+                            <Label styleClass="section-tag" text="🏷️ OFFRE SPÉCIALE" />
+                            <Label styleClass="section-title" text="Promotions du moment" />
+                            <Label styleClass="section-subtitle" text="Économisez jusqu'à 40% sur vos réservations" />
+                        </VBox>
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Hyperlink styleClass="section-view-all" text="Voir toutes les promotions ›" />
+                    </HBox>
+
+                    <HBox alignment="CENTER" spacing="25">
+                        <!-- Promo 1 -->
+                        <VBox prefWidth="300" styleClass="promo-card">
+                            <HBox alignment="CENTER_LEFT" spacing="15">
+                                <StackPane styleClass="promo-icon">
+                                    <Circle fill="rgba(26,188,156,0.1)" radius="30" />
+                                    <Label styleClass="promo-emoji" text="🏨" />
+                                </StackPane>
+                                <VBox>
+                                    <Label styleClass="promo-title" text="-30% sur votre 1ère réservation" />
+                                    <Label styleClass="promo-code" text="Code: RE7LA30" />
+                                </VBox>
+                            </HBox>
+                            <Label styleClass="promo-validity" text="Valable jusqu'au 30/04/2026" />
+                        </VBox>
+
+                        <!-- Promo 2 -->
+                        <VBox prefWidth="300" styleClass="promo-card">
+                            <HBox alignment="CENTER_LEFT" spacing="15">
+                                <StackPane styleClass="promo-icon">
+                                    <Circle fill="rgba(243,156,18,0.1)" radius="30" />
+                                    <Label styleClass="promo-emoji" text="🎯" />
+                                </StackPane>
+                                <VBox>
+                                    <Label styleClass="promo-title" text="2 activités achetées = 1 offerte" />
+                                    <Label styleClass="promo-code" text="Code: ACTIVITE3" />
+                                </VBox>
+                            </HBox>
+                            <Label styleClass="promo-validity" text="Valable jusqu'au 15/05/2026" />
+                        </VBox>
+
+                        <!-- Promo 3 -->
+                        <VBox prefWidth="300" styleClass="promo-card">
+                            <HBox alignment="CENTER_LEFT" spacing="15">
+                                <StackPane styleClass="promo-icon">
+                                    <Circle fill="rgba(155,89,182,0.1)" radius="30" />
+                                    <Label styleClass="promo-emoji" text="🚗" />
+                                </StackPane>
+                                <VBox>
+                                    <Label styleClass="promo-title" text="-20% sur tous les trajets" />
+                                    <Label styleClass="promo-code" text="Code: TRAJET20" />
+                                </VBox>
+                            </HBox>
+                            <Label styleClass="promo-validity" text="Valable jusqu'au 20/04/2026" />
+                        </VBox>
+                    </HBox>
+                </VBox>
+
+                <!-- ===== SECTION 5: AVIS CLIENTS ===== -->
+                <VBox spacing="25">
+                    <HBox alignment="CENTER_LEFT">
+                        <VBox spacing="8">
+                            <Label styleClass="section-tag" text="💬 AVIS" />
+                            <Label styleClass="section-title" text="Ce que disent nos voyageurs" />
+                            <Label styleClass="section-subtitle" text="Plus de 10 000 avis vérifiés" />
+                        </VBox>
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Hyperlink onAction="#handleshowCommunaute" styleClass="section-view-all" text="Voir tous les avis ›" />
+                    </HBox>
+
+                    <HBox alignment="CENTER" spacing="25">
+                        <!-- Avis 1 -->
+                        <VBox prefWidth="300" styleClass="review-card">
+                            <HBox alignment="CENTER_LEFT" spacing="15">
+                                <ImageView fitHeight="50" fitWidth="50" styleClass="review-avatar">
+                                    <Image url="https://i.pravatar.cc/150?u=1" />
+                                </ImageView>
+                                <VBox>
+                                    <Label styleClass="review-name" text="Sarra Mansour" />
+                                    <Label styleClass="review-rating" text="★★★★★" />
+                                    <Label styleClass="review-date" text="Séjour à Djerba" />
+                                </VBox>
+                            </HBox>
+                            <Label styleClass="review-text" text="Excellent séjour ! L'hébergement était magnifique, propre et bien situé. Le personnel était aux petits soins." wrapText="true" />
+                        </VBox>
+
+                        <!-- Avis 2 -->
+                        <VBox prefWidth="300" styleClass="review-card">
+                            <HBox alignment="CENTER_LEFT" spacing="15">
+                                <ImageView fitHeight="50" fitWidth="50" styleClass="review-avatar">
+                                    <Image url="https://i.pravatar.cc/150?u=2" />
+                                </ImageView>
+                                <VBox>
+                                    <Label styleClass="review-name" text="Mohamed Salah" />
+                                    <Label styleClass="review-rating" text="★★★★★" />
+                                    <Label styleClass="review-date" text="Activité à Tozeur" />
+                                </VBox>
+                            </HBox>
+                            <Label styleClass="review-text" text="Une expérience inoubliable ! La randonnée en quad dans le désert était incroyable. Guide professionnel." wrapText="true" />
+                        </VBox>
+
+                        <!-- Avis 3 -->
+                        <VBox prefWidth="300" styleClass="review-card">
+                            <HBox alignment="CENTER_LEFT" spacing="15">
+                                <ImageView fitHeight="50" fitWidth="50" styleClass="review-avatar">
+                                    <Image url="https://i.pravatar.cc/150?u=3" />
+                                </ImageView>
+                                <VBox>
+                                    <Label styleClass="review-name" text="Ines Ben Ali" />
+                                    <Label styleClass="review-rating" text="★★★★☆" />
+                                    <Label styleClass="review-date" text="Séjour à Hammamet" />
+                                </VBox>
+                            </HBox>
+                            <Label styleClass="review-text" text="Très belle expérience. L'application est intuitive et facile à utiliser. Service client réactif." wrapText="true" />
+                        </VBox>
+                    </HBox>
+                </VBox>
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>
