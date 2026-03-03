@@ -12,6 +12,7 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+<<<<<<< HEAD
 
         <!-- Versions centralisées -->
         <javafx.version>22.0.1</javafx.version>
@@ -24,12 +25,17 @@
     <dependencies>
 
         <!-- ===== BASE DE DONNÉES ===== -->
+=======
+    </properties>
+    <dependencies>
+>>>>>>> 163ad6c339d030cfc3d254311ba83692fcc179f7
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.33</version>
         </dependency>
 
+<<<<<<< HEAD
         <!-- ===== JAVAFX ===== -->
         <dependency>
             <groupId>org.openjfx</groupId>
@@ -300,4 +306,8 @@
         </plugins>
     </build>
 
+=======
+    </dependencies>
+
+>>>>>>> 163ad6c339d030cfc3d254311ba83692fcc179f7
 </project>

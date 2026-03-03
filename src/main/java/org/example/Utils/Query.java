@@ -3,11 +3,18 @@ package org.example.Utils;
 public class Query {
 
     // user query
+<<<<<<< HEAD
     public static String addUserQuery =
             "INSERT INTO users (nom, prenom, date_naiss, e_mail, num_tel, mot_de_pass, image, role, status) " +
                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
     public static final String getUserByEmailQuery = "SELECT * FROM users WHERE e_mail = ?";
     public static String deleteUserQuery = "DELETE FROM users WHERE id=?";
+=======
+    public static String addUserQuery ="INSERT INTO users " +
+            "(nom, prenom, date_naiss, e_mail, num_tel, mot_de_pass, image, role, status) " +
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)" ;
+    public  static String deleteUserQuery ="DELETE FROM users WHERE id=?";
+>>>>>>> 163ad6c339d030cfc3d254311ba83692fcc179f7
     public static String updateUserQuery =
             "UPDATE users SET " + "nom = ?, " +
                     "prenom = ?, " +
@@ -21,10 +28,20 @@ public class Query {
             "UPDATE users SET " +
                     "mot_de_pass = ? " +
                     "WHERE id = ?";
+<<<<<<< HEAD
     public static String updateImageQuery ="UPDATE users SET image = ? WHERE id = ?";
     public static String getUserByName = "SELECT * FROM users WHERE nom LIKE ?";
     public static String showUsers = "SELECT * FROM users";
     public static String signIn = "SELECT * FROM users WHERE e_mail = ? AND mot_de_pass = ?";
+=======
+    public static String updateImageQuery =
+            "UPDATE users SET " +
+                    "image = ? " +
+                    "WHERE id = ?";
+   public static String getUserByName = "SELECT * FROM users WHERE nom LIKE ?";
+   public static String showUsers = "SELECT * FROM users";
+   public static String signIn = "SELECT * FROM users WHERE e_mail = ? AND mot_de_pass = ?";
+>>>>>>> 163ad6c339d030cfc3d254311ba83692fcc179f7
 
 
     //hebergement
@@ -42,6 +59,7 @@ public class Query {
     public static String showhebergementQuery =
             "SELECT * FROM hebergement";
 
+<<<<<<< HEAD
     // INSERT : Ajouter une réservation
     public static String addReservationQuery =
             "INSERT INTO reservation (hebergement_id, user_id, dateDebutR, dateFinR, statutR) " +
@@ -148,3 +166,20 @@ public class Query {
     public static String showCommentaireQuery =
             "SELECT * FROM commentaire";
 }
+=======
+    public static String addReservationQuery =
+            "INSERT INTO reservation (id_reservation,id_utilisateur, id_hebergement, dateDebutR, dateFinR, prixTotalR, prixKM, statutR) " +
+                    "VALUES (?,?, ?, ?, ?, ?, ?, ?)";
+
+    public static String updateReservationQuery =
+            "UPDATE reservation SET id_user=?, id_hebergement=?, dateDebutR=?, dateFinR=?, prixTotalR=?, prixKM=?, statutR=? " +
+                    "WHERE id_reservation=?";
+
+    public static String deleteReservationQuery =
+            "DELETE FROM reservation WHERE id_reservation=?";
+
+    public static String showReservationQuery =
+            "SELECT * FROM reservation";
+
+}
+>>>>>>> 163ad6c339d030cfc3d254311ba83692fcc179f7

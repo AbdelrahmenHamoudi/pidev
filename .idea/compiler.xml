@@ -6,8 +6,10 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="Re7la_User" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="Re7la_User" target="17" />
+    </bytecodeTargetLevel>
   </component>
 </project>
