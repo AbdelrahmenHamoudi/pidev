@@ -157,6 +157,38 @@
                     </HBox>
                 </VBox>
 
+                <!-- ===== SECTION 2FA (DOUBLE AUTHENTIFICATION) ===== -->
+                <VBox spacing="20" styleClass="security-zone">
+                    <Label styleClass="security-title" text="🔐 Sécurité du compte" />
+
+                    <HBox spacing="30" alignment="CENTER">
+                        <!-- État de la 2FA -->
+                        <VBox spacing="15" alignment="CENTER" styleClass="security-card" prefWidth="300">
+                            <StackPane styleClass="security-icon">
+                                <Circle radius="35" fill="rgba(52,152,219,0.1)" />
+                                <Label styleClass="security-emoji" text="🔐" />
+                            </StackPane>
+                            <Label styleClass="security-text" text="Authentification à deux facteurs" />
+                            <Label fx:id="twoFAStatusLabel" styleClass="security-status" text="Désactivée" />
+                            <Button fx:id="twoFABtn" styleClass="btn-security" text="🔐 Activer la 2FA" onAction="#handleTwoFA" prefWidth="200" />
+                            <Button styleClass="btn-security"
+                                    text="📷 Activer Face ID"
+                                    onAction="#handleFaceId"
+                                    prefWidth="200"/>
+                        </VBox>
+
+
+                        <!-- Informations 2FA -->
+                        <VBox spacing="10" alignment="CENTER_LEFT" styleClass="security-info-card" prefWidth="300">
+                            <Label styleClass="security-info-title" text="📱 Qu'est-ce que la 2FA ?" />
+                            <Label styleClass="security-info-text" text="• Renforce la sécurité de votre compte" wrapText="true" />
+                            <Label styleClass="security-info-text" text="• Un code temporaire vous sera demandé à chaque connexion" wrapText="true" />
+                            <Label styleClass="security-info-text" text="• Utilisez Google Authenticator ou une application compatible" wrapText="true" />
+                            <Hyperlink styleClass="security-info-link" text="En savoir plus" onAction="#handleLearnMore2FA" />
+                        </VBox>
+                    </HBox>
+                </VBox>
+
                 <!-- ===== SECTION ACTIONS DANGEREUSES ===== -->
                 <VBox spacing="20" styleClass="danger-zone">
                     <Label styleClass="danger-title" text="⚠️ Zone dangereuse" />

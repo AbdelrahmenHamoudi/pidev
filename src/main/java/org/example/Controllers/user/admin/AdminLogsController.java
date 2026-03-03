@@ -11,6 +11,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.chart.PieChart;
 import javafx.stage.Stage;
 import javafx.application.Platform;
 import org.example.Entites.user.AdminActionLog;
@@ -24,6 +25,7 @@ import org.example.Services.user.APIservices.JWTService;
 
 import java.net.URL;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -49,6 +51,10 @@ public class AdminLogsController implements Initializable {
     @FXML private TableColumn<ConnexionLog, String> colLogStatus;
     @FXML private TableColumn<ConnexionLog, String> colLogDuration;
 
+    // Nouvelles colonnes pour la localisation
+    @FXML private TableColumn<ConnexionLog, String> colLogCountry;
+    @FXML private TableColumn<ConnexionLog, String> colLogCity;
+
     @FXML private TableView<AdminActionLog> actionTable;
     @FXML private TableColumn<AdminActionLog, Integer> colActionId;
     @FXML private TableColumn<AdminActionLog, String> colActionAdmin;
@@ -57,6 +63,12 @@ public class AdminLogsController implements Initializable {
     @FXML private TableColumn<AdminActionLog, String> colActionDesc;
     @FXML private TableColumn<AdminActionLog, String> colActionTime;
     @FXML private TableColumn<AdminActionLog, String> colActionIp;
+
+    // Nouveaux composants pour les statistiques de localisation
+    @FXML private PieChart countryPieChart;
+    @FXML private ListView<String> cityListView;
+    @FXML private Label topCountryLabel;
+    @FXML private Label uniqueCountriesLabel;
 
     private final ConnexionLogService logService = new ConnexionLogService();
     private final AdminActionLogService actionService = new AdminActionLogService();
@@ -115,6 +127,7 @@ public class AdminLogsController implements Initializable {
         loadStats();
         loadConnexionLogs();
         loadActionLogs();
+        loadLocationStats();
         setupFilters();
 
         String token = UserSession.getInstance().getToken();
@@ -172,6 +185,17 @@ public class AdminLogsController implements Initializable {
                 return new SimpleStringProperty("En cours");
             }
         });
+
+        // Nouvelles colonnes de localisation
+        colLogCountry.setCellValueFactory(cellData ->
+                new SimpleStringProperty(cellData.getValue().getCountry() != null ?
+                        cellData.getValue().getCountry() : "-")
+        );
+
+        colLogCity.setCellValueFactory(cellData ->
+                new SimpleStringProperty(cellData.getValue().getCity() != null ?
+                        cellData.getValue().getCity() : "-")
+        );
     }
 
     private void setupActionTable() {
@@ -213,7 +237,59 @@ public class AdminLogsController implements Initializable {
         actionTable.setItems(actionLogs);
     }
 
+    private void loadLocationStats() {
+        // Statistiques par pays
+        List<Object[]> countryStats = logService.getCountryStats();
+        ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
+
+        int totalCountries = 0;
+        String topCountry = "";
+        int topCountryCount = 0;
+
+        for (Object[] stat : countryStats) {
+            String country = (String) stat[0];
+            int count = (int) stat[1];
+            pieChartData.add(new PieChart.Data(country + " (" + count + ")", count));
+
+            totalCountries++;
+            if (count > topCountryCount) {
+                topCountryCount = count;
+                topCountry = country;
+            }
+        }
+
+        countryPieChart.setData(pieChartData);
+        countryPieChart.setTitle("Répartition des connexions par pays");
+        countryPieChart.setLabelsVisible(true);
+        countryPieChart.setLegendVisible(true);
+
+        topCountryLabel.setText(topCountry + " (" + topCountryCount + " connexions)");
+        uniqueCountriesLabel.setText(String.valueOf(totalCountries));
+
+        // Statistiques par ville
+        List<Object[]> cityStats = logService.getCityStats();
+        ObservableList<String> cityItems = FXCollections.observableArrayList();
+
+        for (Object[] stat : cityStats) {
+            String city = (String) stat[0];
+            String country = (String) stat[1];
+            int count = (int) stat[2];
+            cityItems.add("📍 " + city + ", " + country + " : " + count + " connexion(s)");
+        }
+
+        cityListView.setItems(cityItems);
+
+        // Si pas de données
+        if (cityItems.isEmpty()) {
+            cityListView.setItems(FXCollections.observableArrayList("Aucune donnée de localisation disponible"));
+        }
+        if (pieChartData.isEmpty()) {
+            countryPieChart.setData(FXCollections.observableArrayList(new PieChart.Data("Aucune donnée", 1)));
+        }
+    }
+
     private void setupFilters() {
+        // À implémenter si nécessaire
     }
 
     @FXML
@@ -246,6 +322,18 @@ public class AdminLogsController implements Initializable {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @FXML
+    private void refreshStats() {
+        if (!checkAdminAuth()) return;
+
+        loadStats();
+        loadConnexionLogs();
+        loadActionLogs();
+        loadLocationStats();
+
+        showAlert("Succès", "Statistiques actualisées", Alert.AlertType.INFORMATION);
     }
 
     private void showAlert(String title, String message, Alert.AlertType type) {

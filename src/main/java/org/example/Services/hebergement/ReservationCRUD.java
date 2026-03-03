@@ -47,7 +47,7 @@ public class ReservationCRUD implements CRUD<Reservation> {
         ps.setInt(6, r.getId_reservation());
 
         ps.executeUpdate();
-        System.out.println("✏️ Réservation modifiée !");
+        System.out.println(" Réservation modifiée !");
     }
 
     @Override
@@ -244,4 +244,30 @@ public class ReservationCRUD implements CRUD<Reservation> {
 
         return list;
     }
+
+
+
+    /**
+     * ✅ Méthode updateStatut - choisissez celle qui correspond à votre BDD
+     * =====================================================================
+     * Lancez "DESCRIBE reservation;" dans MySQL pour voir le vrai nom de colonne.
+     */
+
+
+
+    // ══════════════════════════════════════════════════
+// OPTION 2 — colonne nommée : statutR
+// ══════════════════════════════════════════════════
+    public void updateStatut(Reservation reservation) throws SQLException {
+        String query = "UPDATE reservation SET statutR = ? WHERE id_reservation = ?";
+        try (PreparedStatement ps = con.prepareStatement(query)) {
+            ps.setString(1, reservation.getStatutR());
+            ps.setInt(2, reservation.getId_reservation());
+            ps.executeUpdate();
+        }
+    }
+
+
+
+
 }

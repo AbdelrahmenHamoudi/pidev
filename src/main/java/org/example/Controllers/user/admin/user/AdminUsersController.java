@@ -1321,16 +1321,95 @@ public class AdminUsersController implements Initializable {
         }
     }
 
-    @FXML private void handleShowTransactions(ActionEvent event) {
+    @FXML
+    private void handleShowTransactions(ActionEvent event) {
         if (!checkAdminAuth()) return;
-        showAlert("Information", "🎯 Gestion des Activités - En cours de développement", Alert.AlertType.INFORMATION);
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/activite/views/backoffice/ActiviteBackOffice.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+            Scene scene = new Scene(root);
+
+            // Ajouter le CSS si nécessaire (optionnel)
+            try {
+                String css = getClass().getResource("/activite/css/Bstyle.css").toExternalForm();
+                scene.getStylesheets().add(css);
+            } catch (Exception e) {
+                System.out.println("⚠️ CSS non trouvé, chargement sans styles");
+            }
+
+            stage.setScene(scene);
+            stage.setTitle("Gestion des Activités - RE7LA");
+            stage.centerOnScreen();
+            stage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Erreur", "❌ Impossible de charger l'interface de gestion des activités: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
     }
 
-    @FXML private void handleShowCredits(ActionEvent event) {
+    @FXML
+    private void handleShowCredits(ActionEvent event) {
         if (!checkAdminAuth()) return;
-        showAlert("Information", "🚗 Gestion des Trajets - En cours de développement", Alert.AlertType.INFORMATION);
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Trajet/gestionvoitureettrajet.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+            Scene scene = new Scene(root);
+
+            // Ajouter le CSS si nécessaire (optionnel)
+            try {
+                String css = getClass().getResource("/Trajet/style.css").toExternalForm();
+                scene.getStylesheets().add(css);
+            } catch (Exception e) {
+                System.out.println("⚠️ CSS non trouvé, chargement sans styles");
+            }
+
+            stage.setScene(scene);
+            stage.setTitle("Gestion des Voitures et Trajets - RE7LA");
+            stage.centerOnScreen();
+            stage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Erreur", "❌ Impossible de charger l'interface de gestion des trajets: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
     }
 
+    @FXML
+    private void handleShowCommunaute(ActionEvent event) {
+        if (!checkAdminAuth()) return;
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/communaute/PublicationCommentaire.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+            Scene scene = new Scene(root);
+
+            // Ajouter le CSS si nécessaire
+            try {
+                String css = getClass().getResource("/communaute/Communaute.css").toExternalForm();
+                scene.getStylesheets().add(css);
+            } catch (Exception e) {
+                System.out.println("⚠️ CSS communauté non trouvé, chargement sans styles");
+            }
+
+            stage.setScene(scene);
+            stage.setTitle("Gestion de la Communauté - RE7LA");
+            stage.centerOnScreen();
+            stage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Erreur", "❌ Impossible de charger l'interface de gestion de la communauté: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
+    }
     @FXML private void handleShowCashback(ActionEvent event) {
         if (!checkAdminAuth()) return;
         showAlert("Information", "🏷️ Gestion des Promotions - En cours de développement", Alert.AlertType.INFORMATION);

@@ -20,11 +20,14 @@ import org.example.Services.user.AdminNotificationService;
 import org.example.Services.user.EmailVerificationService;
 import org.example.Utils.UserSession;
 import org.example.Services.user.APIservices.EmailService;
+import org.example.Services.user.APIservices.SmsService;
+import org.example.Controllers.user.AlphabetCaptchaController;
 
 import java.io.File;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 
 public class SignUpController {
 
@@ -37,6 +40,8 @@ public class SignUpController {
     @FXML private PasswordField passwordField;
     @FXML private PasswordField confirmPasswordField;
     @FXML private CheckBox termsCheckBox;
+
+    @FXML private VBox captchaContainer;
 
     @FXML private Label prenomError;
     @FXML private Label nomError;
@@ -56,9 +61,12 @@ public class SignUpController {
     private File selectedImageFile;
     private boolean isCheckingEmail = false;
 
+    private AlphabetCaptchaController captchaController;
+
     @FXML
     public void initialize() {
         setupRealTimeValidation();
+        initCaptcha();
 
         imageUrlField.textProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null && !newValue.isEmpty()) {
@@ -82,6 +90,22 @@ public class SignUpController {
                 }
             }
         });
+    }
+
+    private void initCaptcha() {
+        captchaController = new AlphabetCaptchaController(new AlphabetCaptchaController.CaptchaCallback() {
+            @Override
+            public void onSuccess() {
+                System.out.println("✅ CAPTCHA alphabétique validé");
+            }
+
+            @Override
+            public void onError(String error) {
+                System.err.println("❌ Erreur CAPTCHA: " + error);
+            }
+        });
+
+        captchaContainer.getChildren().add(captchaController.getView());
     }
 
     private void setupRealTimeValidation() {
@@ -261,14 +285,6 @@ public class SignUpController {
     private boolean validateForm() {
         boolean isValid = true;
 
-        prenomField.setText(prenomField.getText());
-        nomField.setText(nomField.getText());
-        emailField.setText(emailField.getText());
-        telephoneField.setText(telephoneField.getText());
-        dateNaissPicker.setValue(dateNaissPicker.getValue());
-        passwordField.setText(passwordField.getText());
-        confirmPasswordField.setText(confirmPasswordField.getText());
-
         if (!prenomError.getText().isEmpty()) isValid = false;
         if (!nomError.getText().isEmpty()) isValid = false;
         if (!emailError.getText().isEmpty()) isValid = false;
@@ -292,6 +308,15 @@ public class SignUpController {
     private void handleSignUp(ActionEvent event) {
         if (!validateForm()) return;
 
+        // ✅ Vérification CAPTCHA
+        if (!captchaController.isVerified()) {
+            showAlert(Alert.AlertType.WARNING,
+                    "🔐 Validation requise",
+                    "Vérification de sécurité",
+                    "Veuillez recopier les lettres affichées");
+            return;
+        }
+
         Button signUpBtn = (Button) event.getSource();
         signUpBtn.setDisable(true);
         signUpBtn.setText("INSCRIPTION EN COURS...");
@@ -311,6 +336,7 @@ public class SignUpController {
                 imageUrl = imageUrlField.getText().trim();
             }
 
+            // ✅ CRÉER L'UTILISATEUR (avec email_non_vérifié)
             User newUser = new User();
             newUser.setNom(nom);
             newUser.setPrenom(prenom);
@@ -321,28 +347,53 @@ public class SignUpController {
             newUser.setImage(imageUrl);
             newUser.setRole(Role.user);
             newUser.setStatus(Status.Unbanned);
+            // Note: email_verified = false par défaut
 
             userCRUD.createUser(newUser);
-
-            // ✅ Récupérer l'utilisateur créé avec son ID
             User createdUser = userCRUD.getUserByEmail(email);
 
-            // ✅ ENVOI EMAIL DE BIENVENUE (DYNAMIQUE)
-            EmailService.sendWelcomeEmail(email, prenom);
-            System.out.println("📧 Email de bienvenue envoyé à: " + email);
-
-            // ✅ ENVOI EMAIL DE VÉRIFICATION (DYNAMIQUE)
+            // ✅ ENVOI EMAIL DE VÉRIFICATION
             EmailVerificationService verificationService = new EmailVerificationService();
-            verificationService.sendVerificationEmail(createdUser.getId());
+            String verificationCode = verificationService.sendVerificationEmail(createdUser.getId());
             System.out.println("📧 Email de vérification envoyé à: " + email);
+            System.out.println("🔐 Code de vérification: " + verificationCode);
 
-            // ✅ NOTIFICATION: Nouvel utilisateur inscrit
-            User admin = UserSession.getInstance().getCurrentUser();
-            String adminName = (admin != null) ? admin.getPrenom() + " " + admin.getNom() : "Système";
-            notifService.notifyNewUser(adminName, prenom + " " + nom);
+            // ✅ OUVRIR LA BOÎTE DE DIALOGUE DE VÉRIFICATION
+            boolean verified = showVerificationDialog(email, verificationCode);
 
-            showSuccessMessage();
-            redirectToLogin(event);
+            if (verified) {
+                // ✅ MARQUER L'EMAIL COMME VÉRIFIÉ
+                userCRUD.markEmailAsVerified(createdUser.getId());
+
+                // ✅ ENVOI EMAIL DE BIENVENUE (après vérification)
+                EmailService.sendWelcomeEmail(email, prenom);
+                System.out.println("📧 Email de bienvenue envoyé à: " + email);
+
+                // ✅ ENVOI SMS DE BIENVENUE (après vérification)
+                if (telephone != null && !telephone.isEmpty()) {
+                    boolean smsSent = SmsService.sendWelcomeSms(createdUser);
+                    if (smsSent) {
+                        System.out.println("📱 SMS de bienvenue envoyé à: " + telephone);
+                    }
+                }
+
+                // ✅ NOTIFICATION ADMIN
+                User admin = UserSession.getInstance().getCurrentUser();
+                String adminName = (admin != null) ? admin.getPrenom() + " " + admin.getNom() : "Système";
+                notifService.notifyNewUser(adminName, prenom + " " + nom);
+
+                showSuccessMessage();
+                redirectToLogin(event);
+            } else {
+                // ❌ SI CODE INCORRECT, SUPPRIMER LE COMPTE
+                userCRUD.deleteUser(createdUser);
+                showAlert(Alert.AlertType.ERROR,
+                        "❌ Vérification échouée",
+                        "Code incorrect",
+                        "Le code de vérification est incorrect. Votre inscription a été annulée.");
+                signUpBtn.setDisable(false);
+                signUpBtn.setText("S'INSCRIRE");
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -350,10 +401,60 @@ public class SignUpController {
                     "❌ Erreur d'inscription",
                     "Création de compte échouée",
                     "Erreur: " + e.getMessage());
-        } finally {
             signUpBtn.setDisable(false);
             signUpBtn.setText("S'INSCRIRE");
         }
+    }
+
+    private boolean showVerificationDialog(String email, String expectedCode) {
+        // Créer la boîte de dialogue
+        Dialog<String> dialog = new Dialog<>();
+        dialog.setTitle("🔐 Vérification email");
+        dialog.setHeaderText("Code de vérification envoyé à " + email);
+
+        // Style
+        DialogPane dialogPane = dialog.getDialogPane();
+        dialogPane.setStyle("-fx-background-color: white; -fx-border-color: #1ABC9C; -fx-border-width: 2; -fx-border-radius: 15; -fx-background-radius: 15;");
+
+        // Boutons
+        ButtonType verifyButtonType = new ButtonType("VÉRIFIER", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(verifyButtonType, ButtonType.CANCEL);
+
+        // Contenu
+        VBox content = new VBox(10);
+        content.setPadding(new javafx.geometry.Insets(20));
+
+        Label instructionLabel = new Label("Entrez le code à 6 chiffres reçu par email :");
+        instructionLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #2C3E50;");
+
+        TextField codeField = new TextField();
+        codeField.setPromptText("123456");
+        codeField.setStyle("-fx-font-size: 18px; -fx-alignment: center; -fx-pref-width: 200;");
+
+        Label errorLabel = new Label();
+        errorLabel.setStyle("-fx-text-fill: #E74C3C; -fx-font-size: 12px;");
+
+        content.getChildren().addAll(instructionLabel, codeField, errorLabel);
+        dialogPane.setContent(content);
+
+        // Validation
+        Button verifyButton = (Button) dialog.getDialogPane().lookupButton(verifyButtonType);
+        verifyButton.setStyle("-fx-background-color: #F39C12; -fx-text-fill: white; -fx-font-weight: bold;");
+
+        // Activer/désactiver le bouton
+        verifyButton.addEventFilter(ActionEvent.ACTION, event -> {
+            String enteredCode = codeField.getText().trim();
+            if (enteredCode.isEmpty()) {
+                errorLabel.setText("❌ Veuillez saisir le code");
+                event.consume();
+            } else if (!enteredCode.equals(expectedCode)) {
+                errorLabel.setText("❌ Code incorrect");
+                event.consume();
+            }
+        });
+
+        Optional<String> result = dialog.showAndWait();
+        return result.isPresent();
     }
 
     @FXML
@@ -396,29 +497,25 @@ public class SignUpController {
         }
     }
 
-    private void clearErrors() {
-        prenomError.setText("");
-        nomError.setText("");
-        dateError.setText("");
-        emailError.setText("");
-        telephoneError.setText("");
-        imageUrlError.setText("");
-        passwordError.setText("");
-        confirmPasswordError.setText("");
-    }
-
     private void showSuccessMessage() {
         String fullName = prenomField.getText().trim() + " " + nomField.getText().trim();
+        String telephone = telephoneField.getText().trim();
+
+        String smsMessage = "";
+        if (telephone != null && !telephone.isEmpty()) {
+            smsMessage = "📱 Un SMS de bienvenue vous a été envoyé.\n";
+        }
 
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("✅ Inscription réussie");
         alert.setHeaderText("Bienvenue sur RE7LA Tunisie !");
         alert.setContentText(
                 "👤 " + fullName + "\n" +
-                        "📧 " + emailField.getText().trim() + "\n\n" +
+                        "📧 " + emailField.getText().trim() + "\n" +
+                        "📞 " + (telephone.isEmpty() ? "Non renseigné" : telephone) + "\n\n" +
                         "✨ Votre compte a été créé avec succès.\n" +
                         "📧 Un email de bienvenue vous a été envoyé.\n" +
-                        "🔐 Un code de vérification a été envoyé à votre adresse email.\n" +
+                        smsMessage +
                         "🌍 Vous allez être redirigé vers la page de connexion."
         );
 

@@ -14,10 +14,20 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.application.Platform;
+import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;
+import javafx.geometry.Insets;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.DialogPane;
+import javafx.scene.control.TextField;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
 import org.example.Entites.user.User;
 import org.example.Services.user.UserCRUD;
 import org.example.Utils.UserSession;
 import org.example.Services.user.APIservices.JWTService;
+import org.example.Services.user.APIservices.TwoFAService;
 
 import java.io.File;
 import java.net.URL;
@@ -27,6 +37,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.io.ByteArrayInputStream;
 
 public class UserProfileController implements Initializable {
 
@@ -55,12 +66,17 @@ public class UserProfileController implements Initializable {
     @FXML private Label newPasswordError;
     @FXML private Label confirmPasswordError;
 
+    // ============ 2FA ============
+    @FXML private Label twoFAStatusLabel;
+    @FXML private Button twoFABtn;
+
     // ============ UTILISATEUR CONNECTÉ ============
     private User currentUser;
     private File selectedImageFile;
 
-    // ============ SERVICE CRUD ============
+    // ============ SERVICES ============
     private final UserCRUD userCRUD = new UserCRUD();
+    private final TwoFAService twoFAService = new TwoFAService();
 
     // ============ FLAG POUR ÉVITER LES VÉRIFICATIONS MULTIPLES ============
     private boolean isCheckingEmail = false;
@@ -163,7 +179,186 @@ public class UserProfileController implements Initializable {
             lastNameField.setText(lastNameField.getText());
             emailField.setText(emailField.getText());
             phoneField.setText(phoneField.getText());
+
+            // ✅ Mise à jour du statut 2FA
+            updateTwoFAStatus();
         }
+    }
+    @FXML
+    private void handleFaceId(ActionEvent event) {
+        // JWT check (comme tes autres actions)
+        if (!UserSession.getInstance().isTokenValid()) {
+            showAlert("Session expirée", "Veuillez vous reconnecter", Alert.AlertType.WARNING);
+            redirectToLogin();
+            return;
+        }
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/user/login/FaceLogin.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = new Stage();
+            stage.setTitle("Face ID");
+            stage.setScene(new Scene(root));
+            stage.initOwner(((Node) event.getSource()).getScene().getWindow());
+            stage.show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Erreur", "Impossible d'ouvrir Face ID: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
+    }
+    private void updateTwoFAStatus() {
+        if (currentUser != null) {
+            boolean is2FAEnabled = twoFAService.is2FAEnabled(currentUser.getId());
+            if (is2FAEnabled) {
+                twoFAStatusLabel.setText("Activée ✓");
+                twoFAStatusLabel.setStyle("-fx-text-fill: #27AE60; -fx-background-color: rgba(39,174,96,0.1); -fx-background-radius: 20; -fx-padding: 5 15;");
+                twoFABtn.setText("🔐 Gérer la 2FA");
+            } else {
+                twoFAStatusLabel.setText("Désactivée ✗");
+                twoFAStatusLabel.setStyle("-fx-text-fill: #E74C3C; -fx-background-color: rgba(231,76,60,0.1); -fx-background-radius: 20; -fx-padding: 5 15;");
+                twoFABtn.setText("🔐 Activer la 2FA");
+            }
+        }
+    }
+
+    @FXML
+    private void handleTwoFA(ActionEvent event) {
+        if (currentUser == null) return;
+
+        boolean is2FAEnabled = twoFAService.is2FAEnabled(currentUser.getId());
+
+        if (is2FAEnabled) {
+            show2FADisableDialog();
+        } else {
+            show2FAEnableDialog();
+        }
+    }
+
+    private void show2FAEnableDialog() {
+        // Générer la configuration 2FA
+        TwoFAService.TwoFASetup setup = twoFAService.generateSecret(currentUser.getId());
+        if (setup == null) {
+            showAlert("Erreur", "Impossible de générer la configuration 2FA", Alert.AlertType.ERROR);
+            return;
+        }
+
+        // Créer le dialogue
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("🔐 Activer la double authentification");
+        dialog.setHeaderText("Scannez le QR code avec Google Authenticator");
+
+        DialogPane dialogPane = dialog.getDialogPane();
+        dialogPane.setStyle("-fx-background-color: white; -fx-border-color: #3498DB; -fx-border-width: 2; -fx-border-radius: 15; -fx-background-radius: 15;");
+        dialogPane.setPrefWidth(400);
+
+        // Contenu
+        VBox content = new VBox(15);
+        content.setPadding(new Insets(20));
+        content.setAlignment(javafx.geometry.Pos.CENTER);
+
+        // QR Code
+        if (setup.getQrCodeBase64() != null) {
+            byte[] imageBytes = java.util.Base64.getDecoder().decode(setup.getQrCodeBase64());
+            Image qrImage = new Image(new ByteArrayInputStream(imageBytes));
+            ImageView qrView = new ImageView(qrImage);
+            qrView.setFitHeight(200);
+            qrView.setFitWidth(200);
+            content.getChildren().add(qrView);
+        }
+
+        // Clé secrète
+        Label secretLabel = new Label("Ou saisissez cette clé manuellement :");
+        secretLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #2C3E50;");
+
+        TextField secretField = new TextField(setup.getSecretKey());
+        secretField.setEditable(false);
+        secretField.setStyle("-fx-font-family: monospace; -fx-background-color: #F8FAFC; -fx-border-color: #E2E8F0; -fx-border-radius: 5;");
+
+        // Instructions
+        Label instructionLabel = new Label("Après avoir scanné le QR code, entrez le code à 6 chiffres généré par l'application :");
+        instructionLabel.setWrapText(true);
+        instructionLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #2C3E50;");
+
+        TextField codeField = new TextField();
+        codeField.setPromptText("123456");
+        codeField.setStyle("-fx-font-size: 18px; -fx-alignment: center;");
+
+        Label errorLabel = new Label();
+        errorLabel.setStyle("-fx-text-fill: #E74C3C; -fx-font-size: 12px;");
+
+        content.getChildren().addAll(secretLabel, secretField, instructionLabel, codeField, errorLabel);
+        dialogPane.setContent(content);
+
+        // Boutons
+        ButtonType verifyButtonType = new ButtonType("VÉRIFIER ET ACTIVER", ButtonBar.ButtonData.OK_DONE);
+        dialogPane.getButtonTypes().addAll(verifyButtonType, ButtonType.CANCEL);
+
+        Button verifyButton = (Button) dialogPane.lookupButton(verifyButtonType);
+        verifyButton.setStyle("-fx-background-color: #F39C12; -fx-text-fill: white; -fx-font-weight: bold;");
+
+        // Validation
+        verifyButton.addEventFilter(ActionEvent.ACTION, e -> {
+            String code = codeField.getText().trim();
+            if (code.isEmpty()) {
+                errorLabel.setText("❌ Veuillez entrer le code");
+                e.consume();
+                return;
+            }
+
+            try {
+                int verificationCode = Integer.parseInt(code);
+                boolean activated = twoFAService.enable2FA(currentUser.getId(), verificationCode);
+
+                if (!activated) {
+                    errorLabel.setText("❌ Code invalide");
+                    e.consume();
+                }
+            } catch (NumberFormatException ex) {
+                errorLabel.setText("❌ Code invalide (doit être 6 chiffres)");
+                e.consume();
+            }
+        });
+
+        dialog.showAndWait().ifPresent(response -> {
+            if (response == verifyButtonType) {
+                updateTwoFAStatus();
+                showAlert("Succès", "2FA activée avec succès !", Alert.AlertType.INFORMATION);
+            }
+        });
+    }
+
+    private void show2FADisableDialog() {
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("🔐 Désactiver la 2FA");
+        confirm.setHeaderText("Êtes-vous sûr de vouloir désactiver la double authentification ?");
+        confirm.setContentText("Votre compte sera moins sécurisé.");
+
+        DialogPane dialogPane = confirm.getDialogPane();
+        dialogPane.setStyle("-fx-background-color: white; -fx-border-color: #E74C3C; -fx-border-width: 2; -fx-border-radius: 15; -fx-background-radius: 15;");
+
+        Optional<ButtonType> result = confirm.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            boolean disabled = twoFAService.disable2FA(currentUser.getId());
+            if (disabled) {
+                updateTwoFAStatus();
+                showAlert("Succès", "2FA désactivée", Alert.AlertType.INFORMATION);
+            } else {
+                showAlert("Erreur", "Impossible de désactiver la 2FA", Alert.AlertType.ERROR);
+            }
+        }
+    }
+
+    @FXML
+    private void handleLearnMore2FA(ActionEvent event) {
+        showAlert("🔐 Double authentification",
+                "La double authentification (2FA) ajoute une couche de sécurité supplémentaire à votre compte.\n\n" +
+                        "• À chaque connexion, un code temporaire vous sera demandé\n" +
+                        "• Ce code est généré par une application comme Google Authenticator\n" +
+                        "• Il change toutes les 30 secondes\n" +
+                        "• Même si quelqu'un vole votre mot de passe, il ne pourra pas se connecter sans le code",
+                Alert.AlertType.INFORMATION);
     }
 
     /**

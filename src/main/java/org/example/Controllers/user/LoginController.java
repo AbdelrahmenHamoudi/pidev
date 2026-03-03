@@ -9,18 +9,26 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.geometry.Insets;
+import javafx.scene.control.ButtonBar;
 import org.example.Entites.user.Role;
 import org.example.Entites.user.Status;
 import org.example.Entites.user.User;
+import org.example.Services.user.APIservices.TwoFAService;
 import org.example.Services.user.UserCRUD;
 import org.example.Services.user.ConnexionLogService;
 import org.example.Services.user.AdminNotificationService;
+
 import org.example.Controllers.user.customUserException;
 import org.example.Controllers.user.client.homeClientController;
 import org.example.Utils.UserSession;
 import org.example.Services.user.APIservices.JWTService;
 import org.example.Services.user.APIservices.EmailService;
+import org.example.Controllers.user.AlphabetCaptchaController;
+import org.example.Controllers.user.LocationController;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -42,9 +50,23 @@ public class LoginController implements Initializable {
     @FXML
     private Label passwordError;
 
+    @FXML
+    private VBox captchaContainer;
+
+    @FXML
+    private HBox locationContainer;
+
     private final UserCRUD userCRUD = new UserCRUD();
     private final ConnexionLogService logService = new ConnexionLogService();
+    private final TwoFAService twoFAService = new TwoFAService();
     private boolean isCheckingEmail = false;
+
+    private AlphabetCaptchaController captchaController;
+    private LocationController locationController;
+
+    // Variables pour stocker l'utilisateur en cours de connexion (pour la 2FA)
+    private User pendingUser;
+    private String pendingPassword;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -53,7 +75,34 @@ public class LoginController implements Initializable {
         // ✅ Vérifier s'il y a une session existante
         checkExistingSession();
 
+        // ✅ Initialiser le CAPTCHA
+        initCaptcha();
+
+        // ✅ Initialiser l'affichage de la localisation
+        initLocationDisplay();
+
         System.out.println("✅ Page de login initialisée avec contrôle de saisie en temps réel");
+    }
+
+    private void initCaptcha() {
+        captchaController = new AlphabetCaptchaController(new AlphabetCaptchaController.CaptchaCallback() {
+            @Override
+            public void onSuccess() {
+                System.out.println("✅ CAPTCHA alphabétique validé pour login");
+            }
+
+            @Override
+            public void onError(String error) {
+                System.err.println("❌ Erreur CAPTCHA login: " + error);
+            }
+        });
+
+        captchaContainer.getChildren().add(captchaController.getView());
+    }
+
+    private void initLocationDisplay() {
+        locationController = new LocationController();
+        locationContainer.getChildren().add(locationController.getView());
     }
 
     private void checkExistingSession() {
@@ -142,7 +191,7 @@ public class LoginController implements Initializable {
         try {
             return InetAddress.getLocalHost().getHostAddress();
         } catch (UnknownHostException e) {
-            return "127.0.0.1";
+            return "";
         }
     }
 
@@ -176,6 +225,15 @@ public class LoginController implements Initializable {
             return;
         }
 
+        // ✅ Vérification CAPTCHA
+        if (!captchaController.isVerified()) {
+            showAlert(AlertType.WARNING,
+                    "🔐 Validation requise",
+                    "Vérification de sécurité",
+                    "Veuillez recopier les lettres affichées");
+            return;
+        }
+
         Button loginBtn = (Button) emailField.getScene().lookup(".tunisia-login-btn");
         if (loginBtn != null) {
             loginBtn.setDisable(true);
@@ -199,8 +257,157 @@ public class LoginController implements Initializable {
             user.setE_mail(email);
             user.setMot_de_pass(password);
 
+            // ✅ Vérifier le mot de passe
             User authenticatedUser = userCRUD.signIn(user);
 
+            // ✅ Vérifier si la 2FA est activée
+            boolean is2FAEnabled = twoFAService.is2FAEnabled(authenticatedUser.getId());
+
+            if (is2FAEnabled) {
+                // Stocker l'utilisateur en attente et demander le code 2FA
+                pendingUser = authenticatedUser;
+                pendingPassword = password;
+                show2FADialog(event, authenticatedUser);
+
+                if (loginBtn != null) {
+                    loginBtn.setDisable(false);
+                    loginBtn.setText("SE CONNECTER");
+                }
+                return;
+            }
+
+            // ✅ Pas de 2FA, connexion directe
+            completeLogin(event, authenticatedUser, ipAddress, deviceInfo, loginBtn);
+
+        } catch (customUserException e) {
+            passwordField.clear();
+            passwordField.requestFocus();
+
+            String errorMessage = e.getMessage();
+
+            if (errorMessage.contains("Aucun compte")) {
+                showError(emailError, errorMessage);
+            } else if (errorMessage.contains("suspendu")) {
+                showAlert(AlertType.WARNING,
+                        "🚫 Compte suspendu",
+                        "Accès refusé",
+                        errorMessage + "\n\nContactez : support@re7la.tn");
+            } else if (errorMessage.contains("incorrect")) {
+                showError(passwordError, "❌ Email ou mot de passe incorrect");
+
+                User existingUser = userCRUD.getUserByEmail(email);
+                if (existingUser != null) {
+                    logService.logConnexion(existingUser.getId(), ipAddress, deviceInfo, false, "Mot de passe incorrect");
+                }
+            } else {
+                showError(passwordError, "❌ " + errorMessage);
+            }
+
+            if (loginBtn != null) {
+                loginBtn.setDisable(false);
+                loginBtn.setText("SE CONNECTER");
+            }
+
+        } catch (Exception e) {
+            logService.logConnexion(0, ipAddress, deviceInfo, false, "Erreur système: " + e.getMessage());
+
+            showAlert(AlertType.ERROR,
+                    "🌍 Erreur système",
+                    "Service temporairement indisponible",
+                    "Veuillez réessayer dans quelques instants.\n\nSi le problème persiste, contactez : support@re7la.tn");
+            e.printStackTrace();
+
+            if (loginBtn != null) {
+                loginBtn.setDisable(false);
+                loginBtn.setText("SE CONNECTER");
+            }
+        }
+    }
+
+    /**
+     * Affiche la boîte de dialogue pour le code 2FA
+     */
+    private void show2FADialog(ActionEvent event, User user) {
+        // Créer le dialogue
+        Dialog<String> dialog = new Dialog<>();
+        dialog.setTitle("🔐 Double authentification");
+        dialog.setHeaderText("Entrez le code à 6 chiffres généré par votre application");
+
+        DialogPane dialogPane = dialog.getDialogPane();
+        dialogPane.setStyle("-fx-background-color: white; -fx-border-color: #3498DB; -fx-border-width: 2; -fx-border-radius: 15; -fx-background-radius: 15;");
+        dialogPane.setPrefWidth(350);
+
+        // Contenu
+        VBox content = new VBox(15);
+        content.setPadding(new Insets(20));
+        content.setAlignment(javafx.geometry.Pos.CENTER);
+
+        Label instructionLabel = new Label("Code à 6 chiffres :");
+        instructionLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #2C3E50;");
+
+        TextField codeField = new TextField();
+        codeField.setPromptText("123456");
+        codeField.setStyle("-fx-font-size: 24px; -fx-alignment: center; -fx-pref-width: 200; -fx-font-family: monospace;");
+
+        Label errorLabel = new Label();
+        errorLabel.setStyle("-fx-text-fill: #E74C3C; -fx-font-size: 12px;");
+
+        content.getChildren().addAll(instructionLabel, codeField, errorLabel);
+        dialogPane.setContent(content);
+
+        // Boutons
+        ButtonType verifyButtonType = new ButtonType("VÉRIFIER", ButtonBar.ButtonData.OK_DONE);
+        dialogPane.getButtonTypes().addAll(verifyButtonType, ButtonType.CANCEL);
+
+        Button verifyButton = (Button) dialogPane.lookupButton(verifyButtonType);
+        verifyButton.setStyle("-fx-background-color: #F39C12; -fx-text-fill: white; -fx-font-weight: bold;");
+
+        // Validation
+        verifyButton.addEventFilter(ActionEvent.ACTION, e -> {
+            String code = codeField.getText().trim();
+            if (code.isEmpty()) {
+                errorLabel.setText("❌ Veuillez entrer le code");
+                e.consume();
+                return;
+            }
+
+            try {
+                int verificationCode = Integer.parseInt(code);
+                boolean isValid = twoFAService.verifyCode(user.getId(), verificationCode);
+
+                if (!isValid) {
+                    errorLabel.setText("❌ Code invalide");
+                    e.consume();
+                }
+            } catch (NumberFormatException ex) {
+                errorLabel.setText("❌ Code invalide (doit être 6 chiffres)");
+                e.consume();
+            }
+        });
+
+        Optional<String> result = dialog.showAndWait();
+        if (result.isPresent()) {
+            // Code valide, finaliser la connexion
+            String ipAddress = getClientIp();
+            String deviceInfo = getDeviceInfo();
+            Button loginBtn = (Button) emailField.getScene().lookup(".tunisia-login-btn");
+
+            completeLogin(event, user, ipAddress, deviceInfo, loginBtn);
+        } else {
+            // Annulé, remettre le bouton
+            Button loginBtn = (Button) emailField.getScene().lookup(".tunisia-login-btn");
+            if (loginBtn != null) {
+                loginBtn.setDisable(false);
+                loginBtn.setText("SE CONNECTER");
+            }
+        }
+    }
+
+    /**
+     * Finalise la connexion après validation (avec ou sans 2FA)
+     */
+    private void completeLogin(ActionEvent event, User authenticatedUser, String ipAddress, String deviceInfo, Button loginBtn) {
+        try {
             UserSession.getInstance().setCurrentUser(authenticatedUser);
             String token = UserSession.getInstance().getToken();
 
@@ -242,40 +449,13 @@ public class LoginController implements Initializable {
             showSuccessAnimation(loginBtn);
             redirectBasedOnRole(event, authenticatedUser);
 
-        } catch (customUserException e) {
-            passwordField.clear();
-            passwordField.requestFocus();
-
-            String errorMessage = e.getMessage();
-
-            if (errorMessage.contains("Aucun compte")) {
-                showError(emailError, errorMessage);
-            } else if (errorMessage.contains("suspendu")) {
-                showAlert(AlertType.WARNING,
-                        "🚫 Compte suspendu",
-                        "Accès refusé",
-                        errorMessage + "\n\nContactez : support@re7la.tn");
-            } else if (errorMessage.contains("incorrect")) {
-                showError(passwordError, "❌ Email ou mot de passe incorrect");
-
-                User existingUser = userCRUD.getUserByEmail(email);
-                if (existingUser != null) {
-                    logService.logConnexion(existingUser.getId(), ipAddress, deviceInfo, false, "Mot de passe incorrect");
-                }
-            } else {
-                showError(passwordError, "❌ " + errorMessage);
-            }
-
         } catch (Exception e) {
-            logService.logConnexion(0, ipAddress, deviceInfo, false, "Erreur système: " + e.getMessage());
-
-            showAlert(AlertType.ERROR,
-                    "🌍 Erreur système",
-                    "Service temporairement indisponible",
-                    "Veuillez réessayer dans quelques instants.\n\nSi le problème persiste, contactez : support@re7la.tn");
             e.printStackTrace();
+            showAlert(AlertType.ERROR,
+                    "❌ Erreur de connexion",
+                    "Impossible de finaliser la connexion",
+                    "Erreur: " + e.getMessage());
 
-        } finally {
             if (loginBtn != null) {
                 loginBtn.setDisable(false);
                 loginBtn.setText("SE CONNECTER");
@@ -283,6 +463,25 @@ public class LoginController implements Initializable {
         }
     }
 
+    @FXML
+    private void openFaceLogin() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/user/login/FaceLogin.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = new Stage();
+            stage.setTitle("Face ID");
+            stage.setScene(new Scene(root));
+            stage.initOwner(emailField.getScene().getWindow()); // optionnel
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert(AlertType.ERROR,
+                    "❌ Erreur de navigation",
+                    "Impossible d'accéder à la reconnaissance faciale",
+                    "Erreur: " + e.getMessage());
+        }
+    }
     private void redirectBasedOnRole(ActionEvent event, User user) {
         try {
             FXMLLoader loader;
@@ -370,14 +569,11 @@ public class LoginController implements Initializable {
 
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR,
+            showAlert(AlertType.ERROR,
                     "❌ Erreur de navigation",
                     "Redirection impossible",
                     "Impossible d'ouvrir la page de réinitialisation:\n" + e.getMessage());
         }
-    }
-
-    private void showAlert(AlertType alertType, String erreur, String s) {
     }
 
     private void showSuccessAnimation(Button loginBtn) {

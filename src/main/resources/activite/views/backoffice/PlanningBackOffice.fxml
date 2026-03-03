@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" 
+            fx:controller="org.example.Controllers.activite.PlanningBackOfficeController"
+            styleClass="admin-container" stylesheets="/activite/css/re7la-styles.css">
+    
+    <!-- Header -->
+    <top>
+        <VBox styleClass="admin-header" spacing="10">
+            <HBox alignment="CENTER_LEFT" spacing="15">
+                <Text text="📅" style="-fx-font-size: 35px;"/>
+                <VBox>
+                    <Text text="Gestion des Plannings" styleClass="admin-title"/>
+                    <Text fx:id="activiteNameText" text="Sélectionnez une activité" styleClass="admin-subtitle"/>
+                </VBox>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="+ Nouveau Planning" styleClass="btn-primary" onAction="#showAddPlanningDialog"/>
+            </HBox>
+        </VBox>
+    </top>
+    
+    <!-- Center Content -->
+    <center>
+        <VBox spacing="20" VBox.vgrow="ALWAYS">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            
+            <!-- Activity Selector -->
+            <HBox spacing="15" alignment="CENTER_LEFT" styleClass="card">
+                <Label text="Activité:" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #2C3E50;"/>
+                <ComboBox fx:id="activiteCombo" promptText="Sélectionner une activité" prefWidth="350" HBox.hgrow="ALWAYS"/>
+                <Button text="🔄 Actualiser" styleClass="btn-secondary" onAction="#refreshPlannings"/>
+            </HBox>
+            
+            <!-- Statistics Cards -->
+            <HBox spacing="20" alignment="CENTER">
+                <VBox styleClass="stat-card" spacing="5" HBox.hgrow="ALWAYS" alignment="CENTER">
+                    <Text fx:id="totalPlanningsText" text="0" styleClass="stat-value"/>
+                    <Text text="Plannings Créés" styleClass="stat-label"/>
+                </VBox>
+                <VBox styleClass="stat-card" spacing="5" HBox.hgrow="ALWAYS" alignment="CENTER">
+                    <Text fx:id="planningsDispoText" text="0" styleClass="stat-value" style="-fx-text-fill: #1ABC9C;"/>
+                    <Text text="Disponibles" styleClass="stat-label"/>
+                </VBox>
+                <VBox styleClass="stat-card" spacing="5" HBox.hgrow="ALWAYS" alignment="CENTER">
+                    <Text fx:id="placesTotalesText" text="0" styleClass="stat-value" style="-fx-text-fill: #F39C12;"/>
+                    <Text text="Places Restantes" styleClass="stat-label"/>
+                </VBox>
+            </HBox>
+            
+            <!-- Plannings Table -->
+            <VBox styleClass="card" VBox.vgrow="ALWAYS">
+                <VBox.margin>
+                    <Insets top="10"/>
+                </VBox.margin>
+                
+                <Text text="📋 Liste des Plannings" styleClass="card-header"/>
+                
+                <TableView fx:id="planningsTable" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="idColumn" text="ID" prefWidth="60"/>
+                        <TableColumn fx:id="dateColumn" text="Date" prefWidth="120"/>
+                        <TableColumn fx:id="heureDebutColumn" text="Heure Début" prefWidth="120"/>
+                        <TableColumn fx:id="heureFinColumn" text="Heure Fin" prefWidth="120"/>
+                        <TableColumn fx:id="etatColumn" text="État" prefWidth="120"/>
+                        <TableColumn fx:id="placesRestantesColumn" text="Places Restantes" prefWidth="140"/>
+                        <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="180"/>
+                    </columns>
+                    <placeholder>
+                        <VBox alignment="CENTER" spacing="10">
+                            <Text text="📅" style="-fx-font-size: 48px;"/>
+                            <Text text="Aucun planning trouvé" style="-fx-font-size: 16px; -fx-fill: #7F8C8D;"/>
+                            <Text text="Sélectionnez une activité et créez des plannings" style="-fx-font-size: 12px; -fx-fill: #95A5A6;"/>
+                        </VBox>
+                    </placeholder>
+                </TableView>
+            </VBox>
+        </VBox>
+    </center>
+</BorderPane>

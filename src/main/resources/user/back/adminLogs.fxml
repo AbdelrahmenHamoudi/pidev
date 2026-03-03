@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.PieChart?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.Circle?>
 
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.image.Image?>
+
 <BorderPane prefHeight="700.0" prefWidth="1100.0" stylesheets="@users.css"
             xmlns="http://javafx.com/javafx/22"
             xmlns:fx="http://javafx.com/fxml/1"
@@ -34,7 +36,10 @@
 
                 <Region HBox.hgrow="ALWAYS" />
 
-                <Button styleClass="btn-home" text="← Retour au dashboard" onAction="#handleBack" />
+                <HBox spacing="10">
+                    <Button onAction="#refreshStats" styleClass="secondary-button" text="🔄 Actualiser" />
+                    <Button styleClass="btn-home" text="← Retour au dashboard" onAction="#handleBack" />
+                </HBox>
             </HBox>
         </VBox>
     </top>
@@ -47,7 +52,7 @@
                     <Insets top="30" right="30" bottom="30" left="30" />
                 </padding>
 
-                <!-- STATS CARDS -->
+                <!-- STATS CARDS PRINCIPALES -->
                 <HBox spacing="20" alignment="CENTER">
                     <VBox styleClass="stat-card-users" prefWidth="200" prefHeight="100">
                         <Label styleClass="stat-title" text="Connexions aujourd'hui" />
@@ -62,6 +67,34 @@
                     <VBox styleClass="stat-card-users-standard" prefWidth="200" prefHeight="100">
                         <Label styleClass="stat-title" text="Actions admin" />
                         <Label fx:id="actionsCountLabel" styleClass="stat-value" text="0" />
+                    </VBox>
+                </HBox>
+
+                <!-- STATISTIQUES DE LOCALISATION -->
+                <HBox spacing="20" alignment="CENTER">
+                    <VBox styleClass="card" prefWidth="320" prefHeight="300" spacing="10">
+                        <Label styleClass="card-title" text="🌍 Connexions par pays" />
+                        <PieChart fx:id="countryPieChart" prefHeight="220" prefWidth="300"
+                                  style="-fx-background-color: transparent;"
+                                  animated="true" legendVisible="true"
+                                  labelsVisible="true" />
+                        <HBox spacing="20" alignment="CENTER">
+                            <VBox alignment="CENTER">
+                                <Label styleClass="stat-title" text="Pays le plus actif" />
+                                <Label fx:id="topCountryLabel" styleClass="stat-value-small" text="-" />
+                            </VBox>
+                            <VBox alignment="CENTER">
+                                <Label styleClass="stat-title" text="Pays uniques" />
+                                <Label fx:id="uniqueCountriesLabel" styleClass="stat-value-small" text="0" />
+                            </VBox>
+                        </HBox>
+                    </VBox>
+
+                    <VBox styleClass="card" prefWidth="320" prefHeight="300" spacing="10">
+                        <Label styleClass="card-title" text="📍 Top villes" />
+                        <ListView fx:id="cityListView" prefHeight="220" prefWidth="300"
+                                  styleClass="location-list" />
+                        <Label styleClass="stat-title" text="Villes les plus actives" />
                     </VBox>
                 </HBox>
 
@@ -93,6 +126,9 @@
                                     <TableColumn fx:id="colLogDevice" prefWidth="200" text="Appareil" />
                                     <TableColumn fx:id="colLogStatus" prefWidth="80" text="Statut" />
                                     <TableColumn fx:id="colLogDuration" prefWidth="100" text="Durée" />
+                                    <!-- NOUVELLES COLONNES DE LOCALISATION -->
+                                    <TableColumn fx:id="colLogCountry" prefWidth="100" text="Pays" />
+                                    <TableColumn fx:id="colLogCity" prefWidth="100" text="Ville" />
                                 </columns>
                             </TableView>
                         </VBox>

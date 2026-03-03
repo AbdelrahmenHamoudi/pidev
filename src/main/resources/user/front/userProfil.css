@@ -270,6 +270,102 @@
     -fx-background-color: #7f8c8d;
 }
 
+/* ========== SECTION SÉCURITÉ / 2FA ========== */
+.security-zone {
+    -fx-background-color: #F0F8FF;
+    -fx-background-radius: 30;
+    -fx-padding: 30;
+    -fx-border-color: #3498DB;
+    -fx-border-width: 2;
+    -fx-border-radius: 30;
+    -fx-effect: dropshadow(gaussian, rgba(52,152,219,0.1), 10, 0, 0, 3);
+}
+
+.security-title {
+    -fx-text-fill: #2C3E50;
+    -fx-font-size: 20px;
+    -fx-font-weight: 700;
+    -fx-alignment: center;
+}
+
+.security-card {
+    -fx-background-color: white;
+    -fx-background-radius: 25;
+    -fx-padding: 25;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 2);
+}
+
+.security-info-card {
+    -fx-background-color: white;
+    -fx-background-radius: 25;
+    -fx-padding: 25;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 2);
+}
+
+.security-icon {
+    -fx-alignment: center;
+}
+
+.security-emoji {
+    -fx-font-size: 40px;
+}
+
+.security-text {
+    -fx-text-fill: #2C3E50;
+    -fx-font-size: 16px;
+    -fx-font-weight: 700;
+}
+
+.security-status {
+    -fx-text-fill: #E74C3C;
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-background-color: rgba(231,76,60,0.1);
+    -fx-background-radius: 20;
+    -fx-padding: 5 15;
+}
+
+.security-status:enabled {
+    -fx-text-fill: #27AE60;
+    -fx-background-color: rgba(39,174,96,0.1);
+}
+
+.btn-security {
+    -fx-background-color: #3498DB;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-background-radius: 25;
+    -fx-padding: 10 20;
+    -fx-cursor: hand;
+}
+
+.btn-security:hover {
+    -fx-background-color: #2980b9;
+}
+
+.security-info-title {
+    -fx-text-fill: #2C3E50;
+    -fx-font-size: 15px;
+    -fx-font-weight: 700;
+}
+
+.security-info-text {
+    -fx-text-fill: #7F8C8D;
+    -fx-font-size: 12px;
+}
+
+.security-info-link {
+    -fx-text-fill: #3498DB;
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+}
+
+.security-info-link:hover {
+    -fx-text-fill: #2980b9;
+    -fx-underline: true;
+}
+
 /* ========== ZONE DANGEREUSE ========== */
 .danger-zone {
     -fx-background-color: #FEF5F5;

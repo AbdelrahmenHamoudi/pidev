@@ -61,9 +61,13 @@
         <Button fx:id="btnCredits" alignment="BASELINE_LEFT" maxWidth="Infinity"
                 mnemonicParsing="false" onAction="#handleShowCredits" styleClass="sidebar-button"
                 text="💰   Gestion des Trajets" />
+        <Button fx:id="btnCommunaute" alignment="BASELINE_LEFT" maxWidth="Infinity"
+                mnemonicParsing="false" onAction="#handleShowCommunaute" styleClass="sidebar-button"
+                text="💬   Gestion Communauté" />
         <Button fx:id="btnCashback" alignment="BASELINE_LEFT" maxWidth="Infinity"
                 mnemonicParsing="false" onAction="#handleShowCashback" styleClass="sidebar-button"
                 text="🎁   Gestion des Promotions" />
+
 
         <Region VBox.vgrow="ALWAYS" />
 

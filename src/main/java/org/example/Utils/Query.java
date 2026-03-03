@@ -79,4 +79,72 @@ public class Query {
                     "FROM reservation r " +
                     "INNER JOIN hebergement h ON r.hebergement_id = h.id_hebergement " +
                     "INNER JOIN users u ON r.user_id = u.id";  // ← CORRIGÉ: u.id au lieu de u.id_user
+
+    public static String addVoitureQuery =
+            "INSERT INTO voiture (marque, modele, immatriculation, prix_KM, avec_chauffeur, disponibilite, description, image ,nb_places) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    public static String deleteVoitureQuery =
+            "DELETE FROM voiture WHERE id_voiture = ?";
+    public static String updateVoitureQuery =
+            "UPDATE voiture SET " + "marque= ?, "+
+                    "modele= ?, "+
+                    "immatriculation= ?, "+
+                    "prix_KM= ?, "+
+                    "avec_chauffeur= ?, "+
+                    "disponibilite= ?, "+
+                    "description= ?, "+
+                    "image= ?, "+
+                    "nb_places= ? " +
+                    "WHERE id_voiture = ?";
+    public static String showVoiture = "SELECT * FROM voiture";
+
+
+    // Trajet
+    public static String addTrajetQuery =
+            "INSERT INTO trajet (id_voiture, id_utilisateur, point_depart, point_arrivee, distance_km, date_reservation, statut, nb_personnes) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+    public static String updateTrajetQuery =
+            "UPDATE trajet SET id_voiture=?, id_utilisateur=?, point_depart=?, point_arrivee=?, distance_km=?, date_reservation=?, statut=?, nb_personnes=? " +
+                    "WHERE id_trajet=?";
+
+    public static String deleteTrajetQuery =
+            "DELETE FROM trajet WHERE id_trajet=?";
+
+    public static String showTrajetQuery =
+            "SELECT t.*, " +
+                    "v.marque, v.modele, v.prix_KM, v.nb_places, v.image, v.avec_chauffeur " +
+                    "FROM trajet t " +
+                    "LEFT JOIN voiture v ON t.id_voiture = v.id_voiture";
+
+
+
+    //Publication
+    public static String addPublicationQuery =
+            "INSERT INTO publication (id_utilisateur, ImgURL, typeCible, dateCreation, dateModif, statutP, estVerifie, DescriptionP)\n" +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?);\n";
+
+    public static String updatePublicationQuery =
+            "UPDATE publication SET ImgURL=?, typeCible=?, dateCreation=?, dateModif=?, statutP=?, estVerifie=?, DescriptionP=?" +
+                    "WHERE idPublication=?";
+
+    public static String deletePublicationQuery =
+            "DELETE FROM publication WHERE idPublication=?";
+
+    public static String showPublicationQuery =
+            "SELECT * FROM publication";
+
+    public static String addCommentaireQuery =
+            "INSERT INTO commentaire (idCommentaire,id_utilisateur, idPublication, contenuC, dateCreationC, statutC)" +
+                    "VALUES (?, ?, ?, ?, ?, ?)";
+
+    public static String updateCommentaireQuery =
+            "UPDATE commentaire SET  id_utilisateur=?, idPublication=?, contenuC=?, dateCreationC=?, statutC=? " +
+                    "WHERE idCommentaire=?";
+
+    public static String deleteCommentaireQuery =
+            "DELETE FROM commentaire WHERE idCommentaire=?";
+
+    public static String showCommentaireQuery =
+            "SELECT * FROM commentaire";
 }

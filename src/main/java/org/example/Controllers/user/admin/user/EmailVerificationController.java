@@ -1,5 +1,6 @@
 package org.example.Controllers.user.admin.user;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -20,14 +21,19 @@ public class EmailVerificationController {
     private int userId;
     private String userEmail;
     private String userName;
+    private String expectedCode; // Pour stocker le code attendu
 
     private final EmailVerificationService verificationService = new EmailVerificationService();
 
-    public void initData(int userId, String email, String name) {
+    public void initData(int userId, String email, String name, String code) {
         this.userId = userId;
         this.userEmail = email;
         this.userName = name;
+        this.expectedCode = code;
         emailDisplayLabel.setText("📧 " + email);
+
+        // Pour le débogage (à supprimer en production)
+        System.out.println("🔐 Code attendu: " + code);
     }
 
     @FXML
@@ -42,13 +48,23 @@ public class EmailVerificationController {
         verifyButton.setDisable(true);
         verifyButton.setText("VÉRIFICATION...");
 
-        boolean verified = verificationService.verifyCode(userId, code);
+        // Vérification avec le code stocké
+        boolean verified = code.equals(expectedCode);
 
         if (verified) {
-            showAlert(Alert.AlertType.INFORMATION,
-                    "✅ Email vérifié",
-                    "Votre email a été vérifié avec succès !");
-            redirectToHome();
+            // Marquer comme vérifié dans la base de données
+            boolean dbVerified = verificationService.verifyCode(userId, code);
+
+            if (dbVerified) {
+                showAlert(Alert.AlertType.INFORMATION,
+                        "✅ Email vérifié",
+                        "Votre email a été vérifié avec succès !");
+                redirectToLogin();
+            } else {
+                errorLabel.setText("❌ Erreur lors de la vérification");
+                verifyButton.setDisable(false);
+                verifyButton.setText("VÉRIFIER");
+            }
         } else {
             errorLabel.setText("❌ Code invalide ou expiré");
             verifyButton.setDisable(false);
@@ -61,9 +77,13 @@ public class EmailVerificationController {
         resendButton.setDisable(true);
         resendButton.setText("ENVOI...");
 
-        boolean sent = verificationService.sendVerificationEmail(userId);
+        // Renvoyer un nouveau code
+        String newCode = verificationService.sendVerificationEmail(userId);
 
-        if (sent) {
+        if (newCode != null) {
+            this.expectedCode = newCode; // Mettre à jour le code attendu
+            System.out.println("🔐 Nouveau code: " + newCode);
+
             showAlert(Alert.AlertType.INFORMATION,
                     "📧 Code renvoyé",
                     "Un nouveau code de vérification a été envoyé à " + userEmail);
@@ -79,17 +99,18 @@ public class EmailVerificationController {
 
     @FXML
     private void handleLater() {
-        redirectToHome();
+        redirectToLogin();
     }
 
-    private void redirectToHome() {
+    private void redirectToLogin() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/user/dashboard/homeClient.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/user/login/login.fxml"));
             Parent root = loader.load();
             Stage stage = (Stage) codeField.getScene().getWindow();
             stage.setScene(new Scene(root));
-            stage.setTitle("RE7LA Tunisie - Accueil");
+            stage.setTitle("RE7LA Tunisie - Connexion");
             stage.centerOnScreen();
+            stage.show();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -100,6 +121,14 @@ public class EmailVerificationController {
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
+
+        DialogPane dialogPane = alert.getDialogPane();
+        dialogPane.setStyle("-fx-background-color: white; " +
+                "-fx-border-color: #1ABC9C; " +
+                "-fx-border-width: 2; " +
+                "-fx-border-radius: 15; " +
+                "-fx-background-radius: 15;");
+
         alert.showAndWait();
     }
 }

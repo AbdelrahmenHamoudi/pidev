@@ -644,3 +644,41 @@
     -fx-padding: 5 15;
     -fx-alignment: center;
 }
+/* Styles pour les statistiques de localisation */
+.stat-value-small {
+    -fx-font-size: 16px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #2C3E50;
+}
+
+.location-list {
+    -fx-background-color: transparent;
+    -fx-border-color: #E2E8F0;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+
+.location-list .list-cell {
+    -fx-padding: 8 12;
+    -fx-background-color: transparent;
+    -fx-border-color: transparent transparent #F1F5F9 transparent;
+}
+
+.location-list .list-cell:hover {
+    -fx-background-color: #FEF5E7;
+}
+
+/* Style pour le bouton Actualiser */
+.secondary-button {
+    -fx-background-color: #95A5A6;
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+    -fx-background-radius: 20;
+    -fx-padding: 8 15;
+    -fx-cursor: hand;
+}
+
+.secondary-button:hover {
+    -fx-background-color: #7f8c8d;
+}

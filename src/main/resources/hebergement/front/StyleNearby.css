@@ -1,0 +1,330 @@
+/* ================================================================
+   StyleNearby.css — RE7LA Travel App
+   Design : Dark Luxury / Slate & Amber
+   ================================================================ */
+
+/* ── ROOT & CONTAINER ─────────────────────────────────────────── */
+.root {
+    -fx-font-family: 'Segoe UI', 'Calibri', sans-serif;
+    -fx-background-color: #0F1923;
+}
+
+.nearby-root {
+    -fx-background-color: #0F1923;
+}
+
+/* ── HEADER PANEL ─────────────────────────────────────────────── */
+.header-panel {
+    -fx-background-color: #141F2C;
+    -fx-border-color: transparent transparent #1E2E40 transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 16, 0, 0, 4);
+}
+
+.header-top {
+    -fx-padding: 20 22 14 22;
+}
+
+.header-icon-wrap {
+    -fx-background-color: #1A3A5C;
+    -fx-background-radius: 14;
+    -fx-min-width: 48;
+    -fx-min-height: 48;
+    -fx-max-width: 48;
+    -fx-max-height: 48;
+    -fx-effect: dropshadow(gaussian, rgba(78,156,255,0.25), 10, 0, 0, 0);
+}
+
+.header-map-icon {
+    -fx-font-size: 22px;
+}
+
+.header-title {
+    -fx-font-size: 17px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #F0F6FF;
+    -fx-letter-spacing: 0.3;
+}
+
+.header-subtitle {
+    -fx-font-size: 11px;
+    -fx-text-fill: #4E7A9E;
+    -fx-font-style: italic;
+}
+
+.header-divider {
+    -fx-background-color: linear-gradient(to right,
+    transparent 0%,
+    #1E3A55 20%,
+    #2A7FBF 50%,
+    #1E3A55 80%,
+    transparent 100%);
+    -fx-min-height: 1.5;
+    -fx-max-height: 1.5;
+    -fx-margin: 0 22;
+}
+
+/* ── CLOSE BUTTON ─────────────────────────────────────────────── */
+.btn-close {
+    -fx-background-color: #1A2E42;
+    -fx-text-fill: #4E7A9E;
+    -fx-font-weight: 700;
+    -fx-font-size: 14px;
+    -fx-background-radius: 50;
+    -fx-border-radius: 50;
+    -fx-min-width: 36;
+    -fx-min-height: 36;
+    -fx-max-width: 36;
+    -fx-max-height: 36;
+    -fx-padding: 0;
+    -fx-cursor: hand;
+    -fx-border-color: #1E3A55;
+    -fx-border-width: 1.5;
+}
+.btn-close:hover {
+    -fx-background-color: #C0392B;
+    -fx-text-fill: white;
+    -fx-border-color: #E74C3C;
+}
+
+/* ── FILTER SCROLL & BAR ──────────────────────────────────────── */
+.filter-scroll {
+    -fx-background-color: #141F2C;
+    -fx-background: #141F2C;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+}
+.filter-scroll .viewport {
+    -fx-background-color: #141F2C;
+}
+.filter-scroll .scroll-bar:horizontal {
+    -fx-pref-height: 4;
+    -fx-background-color: transparent;
+}
+.filter-scroll .scroll-bar:horizontal .thumb {
+    -fx-background-color: #1E3A55;
+    -fx-background-radius: 2;
+}
+.filter-scroll .scroll-bar:horizontal .increment-button,
+.filter-scroll .scroll-bar:horizontal .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.filter-bar {
+    -fx-background-color: #141F2C;
+}
+
+/* ── FILTER CHIPS ─────────────────────────────────────────────── */
+.chip {
+    -fx-background-color: #1A2E42;
+    -fx-text-fill: #6B96BA;
+    -fx-font-size: 11px;
+    -fx-font-weight: 600;
+    -fx-padding: 5 14;
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-border-color: #1E3A55;
+    -fx-border-width: 1;
+    -fx-cursor: hand;
+}
+.chip:hover {
+    -fx-background-color: #1E3A55;
+    -fx-text-fill: #A8D4F5;
+    -fx-border-color: #2A7FBF;
+}
+
+.chip-active {
+    -fx-background-color: #D4A017;
+    -fx-text-fill: #0F1923;
+    -fx-font-size: 11px;
+    -fx-font-weight: 800;
+    -fx-padding: 5 14;
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-border-color: transparent;
+    -fx-border-width: 1;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(212,160,23,0.45), 8, 0, 0, 2);
+}
+.chip-active:hover {
+    -fx-background-color: #E6B020;
+}
+
+/* ── LOADING STRIP ────────────────────────────────────────────── */
+.loading-strip {
+    -fx-background-color: #0D1820;
+    -fx-border-color: transparent transparent #1E2E40 transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.loading-spinner {
+    -fx-accent: #D4A017;
+}
+
+.loading-text {
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #4E7A9E;
+    -fx-font-style: italic;
+}
+
+/* ── LIST SCROLL ──────────────────────────────────────────────── */
+.list-scroll {
+    -fx-background-color: transparent;
+    -fx-background: #0F1923;
+    -fx-border-color: transparent;
+}
+.list-scroll .viewport {
+    -fx-background-color: #0F1923;
+}
+.list-scroll .scroll-bar:vertical {
+    -fx-pref-width: 6;
+    -fx-background-color: transparent;
+}
+.list-scroll .scroll-bar:vertical .thumb {
+    -fx-background-color: #1E3A55;
+    -fx-background-radius: 3;
+}
+.list-scroll .scroll-bar:vertical .increment-button,
+.list-scroll .scroll-bar:vertical .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.places-container {
+    -fx-background-color: #0F1923;
+}
+
+/* ── CATEGORY SECTION HEADER ──────────────────────────────────── */
+.section-header {
+    -fx-font-size: 9.5px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #2A7FBF;
+    -fx-padding: 14 4 4 4;
+    -fx-letter-spacing: 1.5;
+}
+
+/* ── PLACE CARD ───────────────────────────────────────────────── */
+.place-card {
+    -fx-background-color: #141F2C;
+    -fx-background-radius: 14;
+    -fx-border-color: #1E2E40;
+    -fx-border-radius: 14;
+    -fx-border-width: 1;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 8, 0, 0, 2);
+}
+.place-card:hover {
+    -fx-background-color: #182538;
+    -fx-border-color: #2A7FBF;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(42,127,191,0.3), 14, 0, 0, 4);
+}
+
+.place-icon-wrap {
+    -fx-background-color: #0F1923;
+    -fx-background-radius: 10;
+    -fx-min-width: 40;
+    -fx-min-height: 40;
+    -fx-max-width: 40;
+    -fx-max-height: 40;
+    -fx-alignment: center;
+}
+
+.place-name {
+    -fx-font-size: 13px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #D8E8F5;
+}
+
+.place-category {
+    -fx-font-size: 10px;
+    -fx-text-fill: #3D6A8A;
+    -fx-font-weight: 600;
+    -fx-letter-spacing: 0.5;
+}
+
+.place-distance {
+    -fx-font-size: 11px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #D4A017;
+    -fx-background-color: #1F2D18;
+    -fx-background-color: rgba(212,160,23,0.12);
+    -fx-padding: 5 11;
+    -fx-background-radius: 10;
+    -fx-border-color: rgba(212,160,23,0.25);
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+    -fx-alignment: center;
+}
+
+/* ── FOOTER ───────────────────────────────────────────────────── */
+.footer-panel {
+    -fx-background-color: #141F2C;
+    -fx-padding: 14 20 16 20;
+    -fx-border-color: #1E2E40 transparent transparent transparent;
+    -fx-border-width: 1 0 0 0;
+}
+
+.stats-label {
+    -fx-font-size: 12.5px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #A8C8E8;
+}
+
+.badge-powered {
+    -fx-background-color: #0F1923;
+    -fx-background-radius: 20;
+    -fx-border-color: #1E3A55;
+    -fx-border-radius: 20;
+    -fx-border-width: 1;
+    -fx-padding: 4 10;
+}
+
+.badge-dot {
+    -fx-font-size: 7px;
+    -fx-text-fill: #D4A017;
+}
+
+.badge-text {
+    -fx-font-size: 10.5px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #4E7A9E;
+}
+
+.radius-label {
+    -fx-font-size: 10.5px;
+    -fx-text-fill: #2A5070;
+    -fx-font-weight: 600;
+    -fx-background-color: #0F1923;
+    -fx-background-radius: 20;
+    -fx-border-color: #1E3A55;
+    -fx-border-radius: 20;
+    -fx-border-width: 1;
+    -fx-padding: 4 10;
+}
+
+/* ── MAP BUTTON ───────────────────────────────────────────────── */
+.btn-map {
+    -fx-background-color: #1A3A5C;
+    -fx-text-fill: #A8D4F5;
+    -fx-font-weight: 700;
+    -fx-font-size: 13px;
+    -fx-padding: 12 20;
+    -fx-background-radius: 12;
+    -fx-cursor: hand;
+    -fx-border-color: #2A7FBF;
+    -fx-border-width: 1;
+    -fx-border-radius: 12;
+    -fx-effect: dropshadow(gaussian, rgba(42,127,191,0.2), 8, 0, 0, 2);
+}
+.btn-map:hover {
+    -fx-background-color: #2A7FBF;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, rgba(42,127,191,0.5), 14, 0, 0, 4);
+}
+.btn-map:pressed {
+    -fx-background-color: #1A5A8A;
+    -fx-effect: dropshadow(gaussian, rgba(42,127,191,0.15), 4, 0, 0, 1);
+}
